@@ -1,5 +1,6 @@
 let activeRowIndex = null;
 
+// this function applies the highlighting by adding/removing CSS classes and adjusting point size through its radius
 function applyLinkedHighlight() {
     const hasActive = activeRowIndex !== null;
 
@@ -27,6 +28,7 @@ function applyLinkedHighlight() {
         });
 }
 
+// this function calls the one above and also scrolls the linked elements into view
 function setActiveRowIndex(rowIndex) {
     activeRowIndex = rowIndex;
     applyLinkedHighlight();
@@ -41,11 +43,13 @@ function setActiveRowIndex(rowIndex) {
     });
 }
 
+// this is called to clear the active row
 function clearActiveRowIndex() {
     activeRowIndex = null;
     applyLinkedHighlight();
 }
 
+// this function basically renders everything again, as it we call it after we get our data
 function setupPanel(config) {
     const {
         containerSelector,
@@ -56,6 +60,7 @@ function setupPanel(config) {
         yLabelSelector,
         columns,
         data,
+        defaultChart = "table",
     } = config;
 
     const chartSelect = d3.select(chartSelectSelector);
@@ -76,6 +81,8 @@ function setupPanel(config) {
         chartSelect.selectAll('option[value="scatter"]').attr("disabled", true);
         return;
     }
+
+    chartSelect.property("value", defaultChart);
 
     populateAxisSelect(xAxisSelect, numericColumns);
     populateAxisSelect(yAxisSelect, numericColumns);
@@ -115,6 +122,7 @@ function setupPanel(config) {
     updatePanel();
 }
 
+// this function renders everything basically after we get the data
 d3.json("/api/portfolio-data")
     .then((rawData) => {
         if (!rawData || rawData.length === 0) {
@@ -141,6 +149,7 @@ d3.json("/api/portfolio-data")
             yLabelSelector: 'label[for="objectives-y-axis"]',
             columns: objectiveColumns,
             data,
+            defaultChart: "scatter",
         });
 
         setupPanel({
@@ -152,6 +161,7 @@ d3.json("/api/portfolio-data")
             yLabelSelector: 'label[for="decision-y-axis"]',
             columns: decisionColumns,
             data,
+            defaultChart: "table",
         });
     })
     .catch((error) => {

@@ -17,3 +17,24 @@
 .scatter-point.is-linked-dim {
     opacity: 0.2;
 }
+
+.scatter-tooltip {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+    background: rgba(17, 22, 31, 0.92);
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.38rem 0.5rem;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    box-shadow: 0 8px 20px rgba(10, 13, 18, 0.25);
+}
+
+.scatter-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}

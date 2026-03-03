@@ -3,6 +3,13 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
     const container = d3.select(containerSelector);
     container.selectAll("*").remove();
 
+    const tooltip = d3
+        .select("body")
+        .selectAll(".scatter-tooltip")
+        .data([null])
+        .join("div")
+        .attr("class", "scatter-tooltip");
+
     const containerNode = container.node();
     if (!containerNode) {
         return;
@@ -19,6 +26,8 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .map((row, index) => ({
             x: Number(row[xKey]),
             y: Number(row[yKey]),
+            rawX: row[xKey],
+            rawY: row[yKey],
             rowIndex: row.__rowIndex ?? index,
         }))
         .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
@@ -88,9 +97,22 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .attr("opacity", 0.9)
         .on("mouseenter", (event, point) => {
             onHoverStart(point.rowIndex);
+            tooltip
+                .classed("visible", true)
+                .html(
+                    `Point: ${point.rowIndex + 1}<br>${xKey}: ${Number(point.rawX).toFixed(3)}<br>${yKey}: ${Number(point.rawY).toFixed(3)}`,
+                )
+                .style("left", `${event.pageX + 12}px`)
+                .style("top", `${event.pageY - 36}px`);
+        })
+        .on("mousemove", (event) => {
+            tooltip
+                .style("left", `${event.pageX + 12}px`)
+                .style("top", `${event.pageY - 36}px`);
         })
         .on("mouseleave", () => {
             onHoverEnd();
+            tooltip.classed("visible", false);
         });
 }
 

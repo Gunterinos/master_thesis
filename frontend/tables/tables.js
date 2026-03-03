@@ -2,6 +2,7 @@ function renderTable(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {} } = options;
     const container = d3.select(containerSelector);
     container.selectAll("*").remove();
+    const tableColumns = ["Point", ...columns];
 
     const table = container.append("table");
     const thead = table.append("thead");
@@ -10,7 +11,7 @@ function renderTable(containerSelector, columns, data, options = {}) {
     thead
         .append("tr")
         .selectAll("th")
-        .data(columns)
+        .data(tableColumns)
         .enter()
         .append("th")
         .text((column) => column);
@@ -30,10 +31,14 @@ function renderTable(containerSelector, columns, data, options = {}) {
 
     rows
         .selectAll("td")
-        .data((row) => columns.map((column) => row[column]))
+        .data((row) => [row.__rowIndex + 1, ...columns.map((column) => row[column])])
         .enter()
         .append("td")
-        .text((value) => {
+        .text((value, cellIndex) => {
+            if (cellIndex === 0) {
+                return String(Math.trunc(Number(value)));
+            }
+
             const numericValue = Number(value);
             if (Number.isFinite(numericValue)) {
                 return numericValue.toFixed(3);
