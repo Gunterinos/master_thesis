@@ -1,5 +1,5 @@
 function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {} } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
     const container = d3.select(containerSelector);
     container.selectAll("*").remove();
     const tableColumns = ["Point", ...columns];
@@ -46,6 +46,16 @@ function renderTable(containerSelector, columns, data, options = {}) {
 
             return value;
         });
+
+    if (animate) {
+        rows
+            .style("opacity", 0)
+            .style("transform", "translateY(4px)")
+            .transition()
+            .duration(350)
+            .style("opacity", 1)
+            .style("transform", "translateY(0)");
+    }
 }
 
 function getNumericColumns(data, columns) {

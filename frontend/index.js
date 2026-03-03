@@ -1,34 +1,44 @@
 let activeRowIndex = null;
+let fullData = [];
+let filteredRowIndexSet = null;
+let chartRegistry = null;
 
-// this function applies the highlighting by adding/removing CSS classes and adjusting point size through its radius
 function applyLinkedHighlight() {
     const hasActive = activeRowIndex !== null;
+    const isActiveElement = (element) => hasActive && Number(element.dataset.rowIndex) === activeRowIndex;
 
     d3.selectAll("tr[data-row-index]")
         .classed("is-linked-highlight", function classRowHighlight() {
-            return hasActive && Number(this.dataset.rowIndex) === activeRowIndex;
+            return isActiveElement(this);
         })
         .classed("is-linked-dim", function classRowDim() {
-            return hasActive && Number(this.dataset.rowIndex) !== activeRowIndex;
+            return hasActive && !isActiveElement(this);
         });
 
     d3.selectAll("circle[data-row-index]")
         .classed("is-linked-highlight", function classPointHighlight() {
-            return hasActive && Number(this.dataset.rowIndex) === activeRowIndex;
+            return isActiveElement(this);
         })
         .classed("is-linked-dim", function classPointDim() {
-            return hasActive && Number(this.dataset.rowIndex) !== activeRowIndex;
+            return hasActive && !isActiveElement(this);
         })
         .attr("r", function sizePoint() {
             if (!hasActive) {
                 return 4;
             }
 
-            return Number(this.dataset.rowIndex) === activeRowIndex ? 7 : 3;
+            return isActiveElement(this) ? 7 : 3;
+        });
+
+    d3.selectAll(".bar-chart-segment[data-row-index]")
+        .classed("is-linked-highlight", function classBarChartHighlight() {
+            return isActiveElement(this);
+        })
+        .classed("is-linked-dim", function classBarChartDim() {
+            return hasActive && !isActiveElement(this);
         });
 }
 
-// this function calls the one above and also scrolls the linked elements into view
 function setActiveRowIndex(rowIndex) {
     activeRowIndex = rowIndex;
     applyLinkedHighlight();
@@ -43,13 +53,58 @@ function setActiveRowIndex(rowIndex) {
     });
 }
 
-// this is called to clear the active row
 function clearActiveRowIndex() {
     activeRowIndex = null;
     applyLinkedHighlight();
 }
 
-// this function renders everything basically after we get the data
+function getCurrentData() {
+    return filteredRowIndexSet
+        ? fullData.filter((row) => filteredRowIndexSet.has(row.__rowIndex))
+        : fullData;
+}
+
+function renderAllPanels(options = {}) {
+    const { animate = false } = options;
+    const dataToRender = getCurrentData();
+
+    initializeObjectivesSpacePanel({
+        data: dataToRender,
+        chartRegistry,
+        renderOptions: { animate },
+        onAfterRender: applyLinkedHighlight,
+    });
+
+    initializeDecisionSpacePanel({
+        data: dataToRender,
+        chartRegistry,
+        renderOptions: { animate },
+        onAfterRender: applyLinkedHighlight,
+    });
+}
+
+function updateClearSelectionButton() {
+    d3.select("#objectives-clear-selection").classed("hidden", !filteredRowIndexSet);
+}
+
+function applySelectionFilter(rowIndices) {
+    if (!rowIndices || rowIndices.length === 0) {
+        return;
+    }
+
+    filteredRowIndexSet = new Set(rowIndices);
+    activeRowIndex = null;
+    renderAllPanels({ animate: true });
+    updateClearSelectionButton();
+}
+
+function clearSelectionFilter() {
+    filteredRowIndexSet = null;
+    activeRowIndex = null;
+    renderAllPanels({ animate: true });
+    updateClearSelectionButton();
+}
+
 d3.json("/api/portfolio-data")
     .then((rawData) => {
         if (!rawData || rawData.length === 0) {
@@ -58,7 +113,7 @@ d3.json("/api/portfolio-data")
             return;
         }
 
-        const data = rawData.map((row, index) => ({
+        fullData = rawData.map((row, index) => ({
             ...row,
             __rowIndex: index,
         }));
@@ -66,21 +121,15 @@ d3.json("/api/portfolio-data")
         const interactionOptions = {
             onHoverStart: setActiveRowIndex,
             onHoverEnd: clearActiveRowIndex,
+            onSelectionChange: applySelectionFilter,
         };
 
-        const chartRegistry = createChartRegistry(interactionOptions);
+        chartRegistry = createChartRegistry(interactionOptions);
 
-        initializeObjectivesSpacePanel({
-            data,
-            chartRegistry,
-            onAfterRender: applyLinkedHighlight,
-        });
+        d3.select("#objectives-clear-selection").on("click", clearSelectionFilter);
 
-        initializeDecisionSpacePanel({
-            data,
-            chartRegistry,
-            onAfterRender: applyLinkedHighlight,
-        });
+        renderAllPanels({ animate: false });
+        updateClearSelectionButton();
     })
     .catch((error) => {
         d3.select("#objectives-container").append("p").text("Failed to load data.");

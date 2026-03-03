@@ -1,6 +1,22 @@
 function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {} } = options;
+    const {
+        onHoverStart = () => {},
+        onHoverEnd = () => {},
+        onSelectionChange = () => {},
+        animate = false,
+    } = options;
     const container = d3.select(containerSelector);
+    const containerNode = container.node();
+    if (!containerNode) {
+        return;
+    }
+
+    const prevXMin = Number(containerNode.dataset.prevXMin);
+    const prevXMax = Number(containerNode.dataset.prevXMax);
+    const prevYMin = Number(containerNode.dataset.prevYMin);
+    const prevYMax = Number(containerNode.dataset.prevYMax);
+    const hasPrevDomain = [prevXMin, prevXMax, prevYMin, prevYMax].every(Number.isFinite);
+
     container.selectAll("*").remove();
 
     const tooltip = d3
@@ -9,11 +25,6 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .data([null])
         .join("div")
         .attr("class", "scatter-tooltip");
-
-    const containerNode = container.node();
-    if (!containerNode) {
-        return;
-    }
 
     const containerWidth = Math.max(400, containerNode.clientWidth || 0);
     const containerHeight = Math.max(300, containerNode.clientHeight || 0);
@@ -53,6 +64,18 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .domain([yExtent[0] - yPadding, yExtent[1] + yPadding])
         .range([height, 0]);
 
+    const startXScale = animate && hasPrevDomain
+        ? d3.scaleLinear().domain([prevXMin, prevXMax]).range([0, width])
+        : xScale;
+    const startYScale = animate && hasPrevDomain
+        ? d3.scaleLinear().domain([prevYMin, prevYMax]).range([height, 0])
+        : yScale;
+
+    containerNode.dataset.prevXMin = String(xScale.domain()[0]);
+    containerNode.dataset.prevXMax = String(xScale.domain()[1]);
+    containerNode.dataset.prevYMin = String(yScale.domain()[0]);
+    containerNode.dataset.prevYMax = String(yScale.domain()[1]);
+
     const svg = container
         .append("svg")
         .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
@@ -60,12 +83,26 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    svg
-        .append("g")
-        .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
+    const plotArea = svg
+        .append("rect")
+        .attr("class", "scatter-lasso-layer")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height);
 
-    svg.append("g").call(d3.axisLeft(yScale));
+    const xAxisGroup = svg.append("g").attr("transform", `translate(0, ${height})`);
+    const yAxisGroup = svg.append("g");
+
+    if (animate) {
+        xAxisGroup.call(d3.axisBottom(startXScale));
+        yAxisGroup.call(d3.axisLeft(startYScale));
+        xAxisGroup.transition().duration(420).call(d3.axisBottom(xScale));
+        yAxisGroup.transition().duration(420).call(d3.axisLeft(yScale));
+    } else {
+        xAxisGroup.call(d3.axisBottom(xScale));
+        yAxisGroup.call(d3.axisLeft(yScale));
+    }
 
     svg
         .append("text")
@@ -82,7 +119,7 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .attr("text-anchor", "middle")
         .text(yKey);
 
-    svg
+    const pointSelection = svg
         .append("g")
         .selectAll("circle")
         .data(points)
@@ -90,8 +127,8 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .append("circle")
         .attr("class", "scatter-point")
         .attr("data-row-index", (point) => point.rowIndex)
-        .attr("cx", (point) => xScale(point.x))
-        .attr("cy", (point) => yScale(point.y))
+        .attr("cx", (point) => startXScale(point.x))
+        .attr("cy", (point) => startYScale(point.y))
         .attr("r", 4)
         .attr("fill", "#34c759")
         .attr("opacity", 0.9)
@@ -114,6 +151,73 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
             onHoverEnd();
             tooltip.classed("visible", false);
         });
+
+    if (animate) {
+        pointSelection
+            .transition()
+            .duration(420)
+            .attr("cx", (point) => xScale(point.x))
+            .attr("cy", (point) => yScale(point.y));
+    }
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const lassoPath = svg.append("path").attr("class", "scatter-lasso-path hidden");
+    let lassoPoints = [];
+
+    const updateLassoPath = () => {
+        if (lassoPoints.length < 2) {
+            return;
+        }
+
+        lassoPath
+            .classed("hidden", false)
+            .attr("d", `M${lassoPoints.map((point) => `${point[0]},${point[1]}`).join("L")}Z`);
+    };
+
+    const pointerToPlot = (event) => {
+        const [rawX, rawY] = d3.pointer(event, svg.node());
+        return [clamp(rawX, 0, width), clamp(rawY, 0, height)];
+    };
+
+    const finalizeLasso = () => {
+        if (lassoPoints.length < 3) {
+            lassoPath.classed("hidden", true);
+            lassoPoints = [];
+            return;
+        }
+
+        const selectedRows = points
+            .filter((point) => d3.polygonContains(lassoPoints, [xScale(point.x), yScale(point.y)]))
+            .map((point) => point.rowIndex);
+
+        lassoPath.classed("hidden", true);
+        lassoPoints = [];
+
+        if (selectedRows.length > 0) {
+            onSelectionChange(selectedRows);
+        }
+    };
+
+    plotArea.on("mousedown", (event) => {
+        if (event.button !== 0) {
+            return;
+        }
+
+        event.preventDefault();
+        lassoPoints = [pointerToPlot(event)];
+        lassoPath.classed("hidden", false);
+        updateLassoPath();
+
+        d3.select(window)
+            .on("mousemove.scatter-lasso", (moveEvent) => {
+                lassoPoints.push(pointerToPlot(moveEvent));
+                updateLassoPath();
+            })
+            .on("mouseup.scatter-lasso", () => {
+                d3.select(window).on("mousemove.scatter-lasso", null).on("mouseup.scatter-lasso", null);
+                finalizeLasso();
+            });
+    });
 }
 
 function populateAxisSelect(select, columns) {

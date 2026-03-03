@@ -18,6 +18,18 @@
     opacity: 0.2;
 }
 
+.scatter-lasso-layer {
+    fill: transparent;
+    cursor: crosshair;
+}
+
+.scatter-lasso-path {
+    fill: rgba(79, 140, 255, 0.16);
+    stroke: #4f8cff;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+}
+
 .scatter-tooltip {
     position: fixed;
     z-index: 999;

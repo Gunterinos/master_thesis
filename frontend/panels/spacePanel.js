@@ -11,6 +11,7 @@ function initializeSpacePanel(config) {
         defaultChart,
         chartKeys,
         chartRegistry,
+        renderOptions = {},
         onAfterRender = () => {},
     } = config;
 
@@ -23,6 +24,10 @@ function initializeSpacePanel(config) {
     const yAxisSelect = d3.select(yAxisSelector);
     const xLabel = d3.select(xLabelSelector);
     const yLabel = d3.select(yLabelSelector);
+
+    const previousChart = chartSelect.property("value");
+    const previousXAxis = xAxisSelect.property("value");
+    const previousYAxis = yAxisSelect.property("value");
 
     const numericColumns = getNumericColumns(data, columns);
     const charts = chartKeys
@@ -39,7 +44,9 @@ function initializeSpacePanel(config) {
         .text((chart) => chart.label);
 
     const fallbackChart = charts[0]?.key ?? "table";
-    const selectedChart = charts.some((chart) => chart.key === defaultChart) ? defaultChart : fallbackChart;
+    const selectedChart = [previousChart, defaultChart, fallbackChart].find((chartKey) =>
+        charts.some((chart) => chart.key === chartKey),
+    );
     chartSelect.property("value", selectedChart);
 
     const hasChartChoice = charts.length > 1;
@@ -50,8 +57,13 @@ function initializeSpacePanel(config) {
     if (scatterEnabled) {
         populateAxisSelect(xAxisSelect, numericColumns);
         populateAxisSelect(yAxisSelect, numericColumns);
-        xAxisSelect.property("value", numericColumns[0]);
-        yAxisSelect.property("value", numericColumns[1] || numericColumns[0]);
+
+        const defaultYAxis = numericColumns[1] || numericColumns[0];
+        const selectedXAxis = numericColumns.includes(previousXAxis) ? previousXAxis : numericColumns[0];
+        const selectedYAxis = numericColumns.includes(previousYAxis) ? previousYAxis : defaultYAxis;
+
+        xAxisSelect.property("value", selectedXAxis);
+        yAxisSelect.property("value", selectedYAxis);
     }
 
     const updatePanel = () => {
@@ -74,6 +86,7 @@ function initializeSpacePanel(config) {
             data,
             xAxis: xAxisSelect.property("value"),
             yAxis: yAxisSelect.property("value"),
+            animate: renderOptions.animate === true,
         });
 
         onAfterRender();

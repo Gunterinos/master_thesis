@@ -1,5 +1,5 @@
 function initializeObjectivesSpacePanel(config) {
-    const { data, chartRegistry, onAfterRender } = config;
+    const { data, chartRegistry, renderOptions = {}, onAfterRender } = config;
     const allColumns = Object.keys(data[0]);
     const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));
 
@@ -15,6 +15,7 @@ function initializeObjectivesSpacePanel(config) {
         defaultChart: "scatter",
         chartKeys: ["scatter"],
         chartRegistry,
+        renderOptions,
         onAfterRender,
     });
 }

@@ -1,5 +1,5 @@
 function initializeDecisionSpacePanel(config) {
-    const { data, chartRegistry, onAfterRender } = config;
+    const { data, chartRegistry, renderOptions = {}, onAfterRender } = config;
     const allColumns = Object.keys(data[0]);
     const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
 
@@ -12,9 +12,10 @@ function initializeDecisionSpacePanel(config) {
         yLabelSelector: 'label[for="decision-y-axis"]',
         columns: decisionColumns,
         data,
-        defaultChart: "table",
-        chartKeys: ["table"],
+        defaultChart: "barChart",
+        chartKeys: ["table", "barChart"],
         chartRegistry,
+        renderOptions,
         onAfterRender,
     });
 }

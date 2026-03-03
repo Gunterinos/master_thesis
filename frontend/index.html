@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='tables/tables.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='scatterplot/scatterplot.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='barChart/barChart.css') }}" />
 </head>
 <body>
     <div class="page">
@@ -18,6 +19,7 @@
                     <div class="panel-controls">
                         <label for="objectives-chart-select">Chart:</label>
                         <select id="objectives-chart-select"></select>
+                        <button id="objectives-clear-selection" class="hidden" type="button">Clear Selection</button>
                         <label for="objectives-x-axis" class="axis-label hidden">X:</label>
                         <select id="objectives-x-axis" class="hidden"></select>
                         <label for="objectives-y-axis" class="axis-label hidden">Y:</label>
@@ -44,6 +46,7 @@
     </div>
     <script src="{{ url_for('static', filename='tables/tables.js') }}"></script>
     <script src="{{ url_for('static', filename='scatterplot/scatterplot.js') }}"></script>
+    <script src="{{ url_for('static', filename='barChart/barChart.js') }}"></script>
     <script src="{{ url_for('static', filename='panels/chartRegistry.js') }}"></script>
     <script src="{{ url_for('static', filename='panels/spacePanel.js') }}"></script>
     <script src="{{ url_for('static', filename='panels/objectivesSpacePanel.js') }}"></script>
