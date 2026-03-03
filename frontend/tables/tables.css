@@ -1,0 +1,33 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th,
+td {
+    border: 1px solid #e5e8ee;
+    padding: 0.52rem 0.62rem;
+    text-align: left;
+    font-size: 0.86rem;
+}
+
+th {
+    background: #f6f8fb;
+    color: #525866;
+    font-weight: 600;
+}
+
+tbody tr {
+    cursor: pointer;
+    transition: opacity 0.18s ease, background-color 0.18s ease;
+}
+
+tbody tr.is-linked-highlight td {
+    background: #ecfff2;
+}
+
+tbody tr.is-linked-dim {
+    opacity: 0.35;
+}

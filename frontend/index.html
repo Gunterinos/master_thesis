@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Vis</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='tables/tables.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='scatterplot/scatterplot.css') }}" />
+</head>
+<body>
+    <div class="page">
+        <div class="layout">
+            <div class="table-panel">
+                <div class="panel-header">
+                    <h2>Objectives</h2>
+                    <div class="panel-controls">
+                        <label for="objectives-chart-select">Chart:</label>
+                        <select id="objectives-chart-select">
+                            <option value="table">Table</option>
+                            <option value="scatter">2D Scatterplot</option>
+                        </select>
+                        <label for="objectives-x-axis" class="axis-label hidden">X:</label>
+                        <select id="objectives-x-axis" class="hidden"></select>
+                        <label for="objectives-y-axis" class="axis-label hidden">Y:</label>
+                        <select id="objectives-y-axis" class="hidden"></select>
+                    </div>
+                </div>
+                <div id="objectives-container" class="panel-content"></div>
+            </div>
+            <div class="table-panel">
+                <div class="panel-header">
+                    <h2>Decision Space</h2>
+                    <div class="panel-controls">
+                        <label for="decision-chart-select">Chart:</label>
+                        <select id="decision-chart-select">
+                            <option value="table">Table</option>
+                            <option value="scatter">2D Scatterplot</option>
+                        </select>
+                        <label for="decision-x-axis" class="axis-label hidden">X:</label>
+                        <select id="decision-x-axis" class="hidden"></select>
+                        <label for="decision-y-axis" class="axis-label hidden">Y:</label>
+                        <select id="decision-y-axis" class="hidden"></select>
+                    </div>
+                </div>
+                <div id="decision-container" class="panel-content"></div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='tables/tables.js') }}"></script>
+    <script src="{{ url_for('static', filename='scatterplot/scatterplot.js') }}"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
