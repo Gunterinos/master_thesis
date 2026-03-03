@@ -14,13 +14,10 @@
         <div class="layout">
             <div class="table-panel">
                 <div class="panel-header">
-                    <h2>Objectives</h2>
+                    <h2>Objectives Space</h2>
                     <div class="panel-controls">
                         <label for="objectives-chart-select">Chart:</label>
-                        <select id="objectives-chart-select">
-                            <option value="table">Table</option>
-                            <option value="scatter">2D Scatterplot</option>
-                        </select>
+                        <select id="objectives-chart-select"></select>
                         <label for="objectives-x-axis" class="axis-label hidden">X:</label>
                         <select id="objectives-x-axis" class="hidden"></select>
                         <label for="objectives-y-axis" class="axis-label hidden">Y:</label>
@@ -34,10 +31,7 @@
                     <h2>Decision Space</h2>
                     <div class="panel-controls">
                         <label for="decision-chart-select">Chart:</label>
-                        <select id="decision-chart-select">
-                            <option value="table">Table</option>
-                            <option value="scatter">2D Scatterplot</option>
-                        </select>
+                        <select id="decision-chart-select"></select>
                         <label for="decision-x-axis" class="axis-label hidden">X:</label>
                         <select id="decision-x-axis" class="hidden"></select>
                         <label for="decision-y-axis" class="axis-label hidden">Y:</label>
@@ -50,6 +44,10 @@
     </div>
     <script src="{{ url_for('static', filename='tables/tables.js') }}"></script>
     <script src="{{ url_for('static', filename='scatterplot/scatterplot.js') }}"></script>
+    <script src="{{ url_for('static', filename='panels/chartRegistry.js') }}"></script>
+    <script src="{{ url_for('static', filename='panels/spacePanel.js') }}"></script>
+    <script src="{{ url_for('static', filename='panels/objectivesSpacePanel.js') }}"></script>
+    <script src="{{ url_for('static', filename='panels/decisionSpacePanel.js') }}"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
 </html>

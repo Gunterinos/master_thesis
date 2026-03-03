@@ -49,79 +49,6 @@ function clearActiveRowIndex() {
     applyLinkedHighlight();
 }
 
-// this function basically renders everything again, as it we call it after we get our data
-function setupPanel(config) {
-    const {
-        containerSelector,
-        chartSelectSelector,
-        xAxisSelector,
-        yAxisSelector,
-        xLabelSelector,
-        yLabelSelector,
-        columns,
-        data,
-        defaultChart = "table",
-    } = config;
-
-    const chartSelect = d3.select(chartSelectSelector);
-    const xAxisSelect = d3.select(xAxisSelector);
-    const yAxisSelect = d3.select(yAxisSelector);
-    const xLabel = d3.select(xLabelSelector);
-    const yLabel = d3.select(yLabelSelector);
-
-    const numericColumns = getNumericColumns(data, columns);
-    const hasScatter = numericColumns.length >= 2;
-
-    const interactionOptions = {
-        onHoverStart: setActiveRowIndex,
-        onHoverEnd: clearActiveRowIndex,
-    };
-
-    if (!hasScatter) {
-        chartSelect.selectAll('option[value="scatter"]').attr("disabled", true);
-        return;
-    }
-
-    chartSelect.property("value", defaultChart);
-
-    populateAxisSelect(xAxisSelect, numericColumns);
-    populateAxisSelect(yAxisSelect, numericColumns);
-
-    xAxisSelect.property("value", numericColumns[0]);
-    yAxisSelect.property("value", numericColumns[1] || numericColumns[0]);
-
-    const updatePanel = () => {
-        const chartType = chartSelect.property("value");
-        const isScatter = chartType === "scatter";
-
-        xAxisSelect.classed("hidden", !isScatter);
-        yAxisSelect.classed("hidden", !isScatter);
-        xLabel.classed("hidden", !isScatter);
-        yLabel.classed("hidden", !isScatter);
-
-        if (isScatter) {
-            renderScatterplot(
-                containerSelector,
-                data,
-                xAxisSelect.property("value"),
-                yAxisSelect.property("value"),
-                interactionOptions,
-            );
-            applyLinkedHighlight();
-            return;
-        }
-
-        renderTable(containerSelector, columns, data, interactionOptions);
-        applyLinkedHighlight();
-    };
-
-    chartSelect.on("change", updatePanel);
-    xAxisSelect.on("change", updatePanel);
-    yAxisSelect.on("change", updatePanel);
-
-    updatePanel();
-}
-
 // this function renders everything basically after we get the data
 d3.json("/api/portfolio-data")
     .then((rawData) => {
@@ -136,32 +63,23 @@ d3.json("/api/portfolio-data")
             __rowIndex: index,
         }));
 
-        const allColumns = Object.keys(data[0]);
-        const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));
-        const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
+        const interactionOptions = {
+            onHoverStart: setActiveRowIndex,
+            onHoverEnd: clearActiveRowIndex,
+        };
 
-        setupPanel({
-            containerSelector: "#objectives-container",
-            chartSelectSelector: "#objectives-chart-select",
-            xAxisSelector: "#objectives-x-axis",
-            yAxisSelector: "#objectives-y-axis",
-            xLabelSelector: 'label[for="objectives-x-axis"]',
-            yLabelSelector: 'label[for="objectives-y-axis"]',
-            columns: objectiveColumns,
+        const chartRegistry = createChartRegistry(interactionOptions);
+
+        initializeObjectivesSpacePanel({
             data,
-            defaultChart: "scatter",
+            chartRegistry,
+            onAfterRender: applyLinkedHighlight,
         });
 
-        setupPanel({
-            containerSelector: "#decision-container",
-            chartSelectSelector: "#decision-chart-select",
-            xAxisSelector: "#decision-x-axis",
-            yAxisSelector: "#decision-y-axis",
-            xLabelSelector: 'label[for="decision-x-axis"]',
-            yLabelSelector: 'label[for="decision-y-axis"]',
-            columns: decisionColumns,
+        initializeDecisionSpacePanel({
             data,
-            defaultChart: "table",
+            chartRegistry,
+            onAfterRender: applyLinkedHighlight,
         });
     })
     .catch((error) => {
