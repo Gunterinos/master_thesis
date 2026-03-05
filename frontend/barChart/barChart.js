@@ -1,7 +1,6 @@
 function renderBarChart(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
     const container = d3.select(containerSelector);
-    container.selectAll("*").remove();
 
     const tooltip = d3
         .select("body")
@@ -97,7 +96,12 @@ function renderBarChart(containerSelector, columns, data, options = {}) {
         })
         .filter((row) => row !== null);
 
+    // Use incremental update when animate=true and an SVG already exists.
+    const existingSvg = container.select("svg");
+    const isUpdate = animate && !existingSvg.empty();
+
     if (rows.length === 0) {
+        container.selectAll("*").remove();
         container.append("p").text("No valid non-negative numeric bar chart data.");
         return;
     }
@@ -113,132 +117,238 @@ function renderBarChart(containerSelector, columns, data, options = {}) {
 
     const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(columns);
 
-    const svg = container
-        .append("svg")
-        .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
-        .attr("preserveAspectRatio", "none")
-        .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
     const xAxis = d3.axisBottom(xScale);
     if (rows.length > 20) {
         const step = Math.ceil(rows.length / 10);
         xAxis.tickValues(rows.filter((row, idx) => idx % step === 0).map((row) => row.pointLabel));
     }
 
-    svg.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+    const transition = d3.transition().duration(420);
 
-    svg.append("g").call(
-        d3
-            .axisLeft(yScale)
-            .ticks(5)
-            .tickFormat((value) => `${Math.round(value * 100)}%`),
-    );
+    // Full redraw (first render or non-animated call)
+    if (!isUpdate) {
+        container.selectAll("*").remove();
 
-    svg
-        .append("text")
-        .attr("x", width / 2)
-        .attr("y", height + 44)
-        .attr("text-anchor", "middle")
-        .text("Point");
+        const svgRoot = container
+            .append("svg")
+            .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
+            .attr("preserveAspectRatio", "none");
 
-    svg
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("x", -height / 2)
-        .attr("y", -40)
-        .attr("text-anchor", "middle")
-        .text("Percentage");
+        const svg = svgRoot
+            .append("g")
+            .attr("class", "chart-root")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    const legendGroup = svg
-        .append("g")
-        .attr("class", "bar-chart-legend")
-        .attr("transform", `translate(0, ${height + 64})`);
+        svg.append("g").attr("class", "x-axis").attr("transform", `translate(0, ${height})`).call(xAxis);
 
-    const legendItems = legendGroup
-        .selectAll("g")
-        .data(columns)
-        .enter()
-        .append("g")
-        .attr("transform", (column, index) => {
-            const rowIndex = Math.floor(index / legendItemsPerRow);
-            const columnIndex = index % legendItemsPerRow;
-            return `translate(${columnIndex * legendItemWidth}, ${rowIndex * legendRowHeight})`;
-        });
+        svg.append("g").attr("class", "y-axis").call(
+            d3
+                .axisLeft(yScale)
+                .ticks(5)
+                .tickFormat((value) => `${Math.round(value * 100)}%`),
+        );
 
-    legendItems
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", 1)
-        .attr("width", 12)
-        .attr("height", 12)
-        .attr("rx", 3)
-        .attr("fill", (column) => colorScale(column));
+        svg
+            .append("text")
+            .attr("class", "x-label")
+            .attr("x", width / 2)
+            .attr("y", height + 44)
+            .attr("text-anchor", "middle")
+            .text("Point");
 
-    legendItems
-        .append("text")
-        .attr("x", 18)
-        .attr("y", 11)
-        .text((column) => column);
+        svg
+            .append("text")
+            .attr("class", "y-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -40)
+            .attr("text-anchor", "middle")
+            .text("Percentage");
 
-    const barGroup = svg
-        .append("g")
-        .selectAll("g")
-        .data(rows)
+        const legendGroup = svg
+            .append("g")
+            .attr("class", "bar-chart-legend")
+            .attr("transform", `translate(0, ${height + 64})`);
+
+        const legendItems = legendGroup
+            .selectAll("g")
+            .data(columns)
+            .enter()
+            .append("g")
+            .attr("transform", (column, index) => {
+                const rowIndex = Math.floor(index / legendItemsPerRow);
+                const columnIndex = index % legendItemsPerRow;
+                return `translate(${columnIndex * legendItemWidth}, ${rowIndex * legendRowHeight})`;
+            });
+
+        legendItems
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", 1)
+            .attr("width", 12)
+            .attr("height", 12)
+            .attr("rx", 3)
+            .attr("fill", (column) => colorScale(column));
+
+        legendItems
+            .append("text")
+            .attr("x", 18)
+            .attr("y", 11)
+            .text((column) => column);
+
+        const barsRoot = svg.append("g").attr("class", "bars-root");
+
+        const barGroup = barsRoot
+            .selectAll("g.bar-chart-bar")
+            .data(rows, (row) => row.rowIndex)
+            .enter()
+            .append("g")
+            .attr("class", "bar-chart-bar")
+            .attr("data-row-index", (row) => row.rowIndex)
+            .attr("transform", (row) => `translate(${xScale(row.pointLabel)}, 0)`);
+
+        barGroup
+            .selectAll("rect")
+            .data((row) =>
+                row.segments.map((segment) => ({
+                    ...segment,
+                    rowIndex: row.rowIndex,
+                    pointLabel: row.pointLabel,
+                    allSegments: row.segments,
+                })),
+                (segment) => segment.key,
+            )
+            .enter()
+            .append("rect")
+            .attr("class", "bar-chart-segment")
+            .attr("data-row-index", (segment) => segment.rowIndex)
+            .attr("x", 0)
+            .attr("y", (segment) => (animate ? yScale(0) : yScale(segment.y1)))
+            .attr("width", xScale.bandwidth())
+            .attr("height", (segment) => (animate ? 0 : yScale(segment.y0) - yScale(segment.y1)))
+            .attr("fill", (segment) => colorScale(segment.key))
+            .on("mouseenter", (event, segment) => {
+                onHoverStart(segment.rowIndex);
+                const compositionDetails = segment.allSegments
+                    .map((entry) => `${entry.key}: ${(entry.share * 100).toFixed(2)}%`)
+                    .join("<br>");
+                tooltip
+                    .classed("visible", true)
+                    .html(`Point: ${segment.pointLabel}<br>${compositionDetails}`);
+                positionTooltip(event);
+            })
+            .on("mousemove", (event) => {
+                positionTooltip(event);
+            })
+            .on("mouseleave", () => {
+                onHoverEnd();
+                tooltip.classed("visible", false);
+            });
+
+        if (animate) {
+            barGroup
+                .selectAll("rect")
+                .transition(transition)
+                .attr("y", (segment) => yScale(segment.y1))
+                .attr("height", (segment) => yScale(segment.y0) - yScale(segment.y1));
+        }
+
+        return;
+    }
+
+    // Incremental animated update
+    const svg = existingSvg.select("g.chart-root");
+
+    // Update axes with transition
+    svg.select(".x-axis").transition(transition).call(xAxis);
+
+    // Update bar groups keyed by rowIndex
+    const barsRoot = svg.select(".bars-root");
+    const barGroupSel = barsRoot
+        .selectAll("g.bar-chart-bar")
+        .data(rows, (row) => row.rowIndex);
+
+    // EXIT: shrink segments to zero, then remove
+    barGroupSel
+        .exit()
+        .selectAll("rect.bar-chart-segment")
+        .transition(transition)
+        .attr("y", yScale(0))
+        .attr("height", 0);
+
+    barGroupSel.exit().transition(transition).remove();
+
+    // ENTER: start at zero height so they grow in
+    const barGroupEnter = barGroupSel
         .enter()
         .append("g")
         .attr("class", "bar-chart-bar")
         .attr("data-row-index", (row) => row.rowIndex)
         .attr("transform", (row) => `translate(${xScale(row.pointLabel)}, 0)`);
 
-    barGroup
-        .selectAll("rect")
-        .data((row) =>
-            row.segments.map((segment) => ({
-                ...segment,
-                rowIndex: row.rowIndex,
-                pointLabel: row.pointLabel,
-                allSegments: row.segments,
-            })),
-        )
-        .enter()
-        .append("rect")
-        .attr("class", "bar-chart-segment")
-        .attr("data-row-index", (segment) => segment.rowIndex)
-        .attr("x", 0)
-        .attr("y", (segment) => (animate ? yScale(0) : yScale(segment.y1)))
-        .attr("width", xScale.bandwidth())
-        .attr("height", (segment) => (animate ? 0 : yScale(segment.y0) - yScale(segment.y1)))
-        .attr("fill", (segment) => colorScale(segment.key))
-        .on("mouseenter", (event, segment) => {
-            onHoverStart(segment.rowIndex);
+    // ENTER + UPDATE
+    const barGroupMerge = barGroupEnter.merge(barGroupSel);
 
-            const compositionDetails = segment.allSegments
-                .map(
-                    (entry) =>
-                        `${entry.key}: ${(entry.share * 100).toFixed(2)}%`,
-                )
-                .join("<br>");
+    // Slide existing bars to their new x positions
+    barGroupMerge.transition(transition).attr("transform", (row) => `translate(${xScale(row.pointLabel)}, 0)`);
 
-            tooltip
-                .classed("visible", true)
-                .html(`Point: ${segment.pointLabel}<br>${compositionDetails}`);
-            positionTooltip(event);
-        })
-        .on("mousemove", (event) => {
-            positionTooltip(event);
-        })
-        .on("mouseleave", () => {
-            onHoverEnd();
-            tooltip.classed("visible", false);
-        });
+    // Update segment rects per bar
+    barGroupMerge.each(function (row) {
+        const g = d3.select(this);
+        const segmentData = row.segments.map((segment) => ({
+            ...segment,
+            rowIndex: row.rowIndex,
+            pointLabel: row.pointLabel,
+            allSegments: row.segments,
+        }));
 
-    if (animate) {
-        barGroup
-            .selectAll("rect")
-            .transition()
-            .duration(420)
+        const segSel = g
+            .selectAll("rect.bar-chart-segment")
+            .data(segmentData, (segment) => segment.key);
+
+        // EXIT segments: shrink to zero and remove
+        segSel
+            .exit()
+            .transition(transition)
+            .attr("y", yScale(0))
+            .attr("height", 0)
+            .remove();
+
+        // ENTER segments: start at zero height
+        const segEnter = segSel
+            .enter()
+            .append("rect")
+            .attr("class", "bar-chart-segment")
+            .attr("data-row-index", (segment) => segment.rowIndex)
+            .attr("x", 0)
+            .attr("y", yScale(0))
+            .attr("width", xScale.bandwidth())
+            .attr("height", 0)
+            .attr("fill", (segment) => colorScale(segment.key))
+            .on("mouseenter", (event, segment) => {
+                onHoverStart(segment.rowIndex);
+                const compositionDetails = segment.allSegments
+                    .map((entry) => `${entry.key}: ${(entry.share * 100).toFixed(2)}%`)
+                    .join("<br>");
+                tooltip
+                    .classed("visible", true)
+                    .html(`Point: ${segment.pointLabel}<br>${compositionDetails}`);
+                positionTooltip(event);
+            })
+            .on("mousemove", (event) => {
+                positionTooltip(event);
+            })
+            .on("mouseleave", () => {
+                onHoverEnd();
+                tooltip.classed("visible", false);
+            });
+
+        // ENTER + UPDATE: transition to target position
+        segEnter
+            .merge(segSel)
+            .transition(transition)
             .attr("y", (segment) => yScale(segment.y1))
-            .attr("height", (segment) => yScale(segment.y0) - yScale(segment.y1));
-    }
+            .attr("height", (segment) => yScale(segment.y0) - yScale(segment.y1))
+            .attr("width", xScale.bandwidth());
+    });
 }

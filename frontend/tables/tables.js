@@ -1,61 +1,98 @@
 function renderTable(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
     const container = d3.select(containerSelector);
-    container.selectAll("*").remove();
     const tableColumns = ["Point", ...columns];
 
-    const table = container.append("table");
-    const thead = table.append("thead");
-    const tbody = table.append("tbody");
+    const existingTable = container.select("table");
+    const isUpdate = animate && !existingTable.empty();
 
-    thead
-        .append("tr")
-        .selectAll("th")
-        .data(tableColumns)
-        .enter()
-        .append("th")
-        .text((column) => column);
+    const formatCell = (value, cellIndex) => {
+        if (cellIndex === 0) {
+            return String(Math.trunc(Number(value)));
+        }
+        const numericValue = Number(value);
+        if (Number.isFinite(numericValue)) {
+            return numericValue.toFixed(3);
+        }
+        return value;
+    };
 
-    const rows = tbody
+    const attachRowEvents = (rowSelection) => {
+        rowSelection
+            .on("mouseenter", (event, row) => {
+                onHoverStart(row.__rowIndex);
+            })
+            .on("mouseleave", () => {
+                onHoverEnd();
+            });
+    };
+
+    // Full redraw (first render or non-animated call) 
+    if (!isUpdate) {
+        container.selectAll("*").remove();
+
+        const table = container.append("table");
+        const thead = table.append("thead");
+        const tbody = table.append("tbody");
+
+        thead
+            .append("tr")
+            .selectAll("th")
+            .data(tableColumns)
+            .enter()
+            .append("th")
+            .text((column) => column);
+
+        const rows = tbody
+            .selectAll("tr")
+            .data(data, (row) => row.__rowIndex)
+            .enter()
+            .append("tr")
+            .attr("data-row-index", (row) => row.__rowIndex);
+
+        attachRowEvents(rows);
+
+        rows
+            .selectAll("td")
+            .data((row) => [row.__rowIndex + 1, ...columns.map((column) => row[column])])
+            .enter()
+            .append("td")
+            .text(formatCell);
+
+        return;
+    }
+
+    // Incremental update
+    const tbody = existingTable.select("tbody");
+    const rowSel = tbody
         .selectAll("tr")
-        .data(data)
+        .data(data, (row) => row.__rowIndex);
+
+    // EXIT: remove rows no longer in the dataset
+    rowSel.exit().remove();
+
+    // ENTER: add rows for new data points
+    const rowEnter = rowSel
         .enter()
         .append("tr")
-        .attr("data-row-index", (row, index) => row.__rowIndex ?? index)
-        .on("mouseenter", (event, row) => {
-            onHoverStart(row.__rowIndex);
-        })
-        .on("mouseleave", () => {
-            onHoverEnd();
-        });
+        .attr("data-row-index", (row) => row.__rowIndex);
 
-    rows
+    attachRowEvents(rowEnter);
+
+    rowEnter
         .selectAll("td")
         .data((row) => [row.__rowIndex + 1, ...columns.map((column) => row[column])])
         .enter()
         .append("td")
-        .text((value, cellIndex) => {
-            if (cellIndex === 0) {
-                return String(Math.trunc(Number(value)));
-            }
+        .text(formatCell);
 
-            const numericValue = Number(value);
-            if (Number.isFinite(numericValue)) {
-                return numericValue.toFixed(3);
-            }
-
-            return value;
-        });
-
-    if (animate) {
-        rows
-            .style("opacity", 0)
-            .style("transform", "translateY(4px)")
-            .transition()
-            .duration(350)
-            .style("opacity", 1)
-            .style("transform", "translateY(0)");
-    }
+    // UPDATE: refresh cell text for rows that stayed
+    rowSel.each(function (row) {
+        d3.select(this)
+            .selectAll("td")
+            .data([row.__rowIndex + 1, ...columns.map((column) => row[column])])
+            .text(formatCell);
+    });
 }
 
 function getNumericColumns(data, columns) {
