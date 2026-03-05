@@ -10,6 +10,7 @@ function initializeObjectivesSpacePanel(config) {
         yAxisSelector: "#objectives-y-axis",
         xLabelSelector: 'label[for="objectives-x-axis"]',
         yLabelSelector: 'label[for="objectives-y-axis"]',
+        labelsToggleSelector: "#objectives-labels-toggle",
         columns: objectiveColumns,
         data,
         defaultChart: "scatter",

@@ -46,6 +46,27 @@
     box-shadow: 0 8px 20px rgba(10, 13, 18, 0.25);
 }
 
+.scatter-point-label.is-linked-dim {
+    opacity: 0.15;
+}
+
+.scatter-grid .domain {
+    display: none;
+}
+
+.scatter-grid .tick line {
+    stroke: #e0e4ec;
+    stroke-dasharray: 3 3;
+}
+
+.scatter-point-label {
+    font-size: 0.72rem;
+    fill: #5f6673;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.15s ease;
+}
+
 .scatter-tooltip.visible {
     opacity: 1;
     transform: translateY(0);

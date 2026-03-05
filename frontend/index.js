@@ -30,6 +30,14 @@ function applyLinkedHighlight() {
             return isActiveElement(this) ? 7 : 3;
         });
 
+    d3.selectAll(".scatter-point-label[data-row-index]")
+        .classed("is-linked-highlight", function classLabelHighlight() {
+            return isActiveElement(this);
+        })
+        .classed("is-linked-dim", function classLabelDim() {
+            return hasActive && !isActiveElement(this);
+        });
+
     d3.selectAll(".bar-chart-segment[data-row-index]")
         .classed("is-linked-highlight", function classBarChartHighlight() {
             return isActiveElement(this);

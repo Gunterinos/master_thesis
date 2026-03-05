@@ -4,6 +4,7 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         onHoverEnd = () => {},
         onSelectionChange = () => {},
         animate = false,
+        showLabels = false,
     } = options;
     const container = d3.select(containerSelector);
     const containerNode = container.node();
@@ -91,15 +92,23 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .attr("width", width)
         .attr("height", height);
 
+    const xGridGroup = svg.append("g").attr("class", "scatter-grid scatter-grid-x").attr("transform", `translate(0, ${height})`);
+    const yGridGroup = svg.append("g").attr("class", "scatter-grid scatter-grid-y");
     const xAxisGroup = svg.append("g").attr("transform", `translate(0, ${height})`);
     const yAxisGroup = svg.append("g");
 
     if (animate) {
+        xGridGroup.call(d3.axisBottom(startXScale).tickSize(-height).tickFormat(""));
+        yGridGroup.call(d3.axisLeft(startYScale).tickSize(-width).tickFormat(""));
         xAxisGroup.call(d3.axisBottom(startXScale));
         yAxisGroup.call(d3.axisLeft(startYScale));
+        xGridGroup.transition().duration(420).call(d3.axisBottom(xScale).tickSize(-height).tickFormat(""));
+        yGridGroup.transition().duration(420).call(d3.axisLeft(yScale).tickSize(-width).tickFormat(""));
         xAxisGroup.transition().duration(420).call(d3.axisBottom(xScale));
         yAxisGroup.transition().duration(420).call(d3.axisLeft(yScale));
     } else {
+        xGridGroup.call(d3.axisBottom(xScale).tickSize(-height).tickFormat(""));
+        yGridGroup.call(d3.axisLeft(yScale).tickSize(-width).tickFormat(""));
         xAxisGroup.call(d3.axisBottom(xScale));
         yAxisGroup.call(d3.axisLeft(yScale));
     }
@@ -118,6 +127,28 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .attr("y", -40)
         .attr("text-anchor", "middle")
         .text(yKey);
+
+    if (showLabels) {
+        const labelGroup = svg.append("g").attr("class", "scatter-point-labels");
+        const labelSelection = labelGroup
+            .selectAll("text")
+            .data(points)
+            .enter()
+            .append("text")
+            .attr("class", "scatter-point-label")
+            .attr("data-row-index", (point) => point.rowIndex)
+            .attr("x", (point) => (animate ? startXScale(point.x) : xScale(point.x)) + 6)
+            .attr("y", (point) => (animate ? startYScale(point.y) : yScale(point.y)) - 6)
+            .text((point) => `op${point.rowIndex + 1}`);
+
+        if (animate) {
+            labelSelection
+                .transition()
+                .duration(420)
+                .attr("x", (point) => xScale(point.x) + 6)
+                .attr("y", (point) => yScale(point.y) - 6);
+        }
+    }
 
     const pointSelection = svg
         .append("g")

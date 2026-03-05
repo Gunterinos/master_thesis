@@ -10,6 +10,7 @@ function initializeDecisionSpacePanel(config) {
         yAxisSelector: "#decision-y-axis",
         xLabelSelector: 'label[for="decision-x-axis"]',
         yLabelSelector: 'label[for="decision-y-axis"]',
+        labelsToggleSelector: "#decision-labels-toggle",
         columns: decisionColumns,
         data,
         defaultChart: "barChart",

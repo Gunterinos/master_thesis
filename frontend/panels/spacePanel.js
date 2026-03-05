@@ -6,6 +6,7 @@ function initializeSpacePanel(config) {
         yAxisSelector,
         xLabelSelector,
         yLabelSelector,
+        labelsToggleSelector = null,
         columns,
         data,
         defaultChart,
@@ -24,6 +25,9 @@ function initializeSpacePanel(config) {
     const yAxisSelect = d3.select(yAxisSelector);
     const xLabel = d3.select(xLabelSelector);
     const yLabel = d3.select(yLabelSelector);
+    const labelsToggle = labelsToggleSelector ? d3.select(labelsToggleSelector) : null;
+    // Persist showLabels state across re-renders via button's active class
+    let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
 
     const previousChart = chartSelect.property("value");
     const previousXAxis = xAxisSelect.property("value");
@@ -75,6 +79,9 @@ function initializeSpacePanel(config) {
         yAxisSelect.classed("hidden", !isScatter);
         xLabel.classed("hidden", !isScatter);
         yLabel.classed("hidden", !isScatter);
+        if (labelsToggle) {
+            labelsToggle.classed("hidden", !isScatter);
+        }
 
         if (!chartConfig) {
             return;
@@ -87,10 +94,19 @@ function initializeSpacePanel(config) {
             xAxis: xAxisSelect.property("value"),
             yAxis: yAxisSelect.property("value"),
             animate: renderOptions.animate === true,
+            showLabels,
         });
 
         onAfterRender();
     };
+
+    if (labelsToggle) {
+        labelsToggle.on("click", () => {
+            showLabels = !showLabels;
+            labelsToggle.classed("active", showLabels);
+            updatePanel();
+        });
+    }
 
     chartSelect.on("change", updatePanel);
     xAxisSelect.on("change", updatePanel);

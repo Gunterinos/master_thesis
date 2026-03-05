@@ -101,6 +101,13 @@ body {
     box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.16), 0 2px 8px rgba(33, 40, 56, 0.08);
 }
 
+.panel-controls button.active {
+    background: #4f8cff;
+    border-color: #4f8cff;
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(79, 140, 255, 0.35);
+}
+
 .hidden {
     display: none !important;
 }
