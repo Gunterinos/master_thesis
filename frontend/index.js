@@ -1,6 +1,8 @@
 let activeRowIndex = null;
 let fullData = [];
 let filteredRowIndexSet = null;
+let selectedRowIndexSet = null;
+let isZoomed = false;
 let chartRegistry = null;
 
 function applyLinkedHighlight() {
@@ -80,19 +82,39 @@ function renderAllPanels(options = {}) {
         data: dataToRender,
         chartRegistry,
         renderOptions: { animate },
-        onAfterRender: applyLinkedHighlight,
+        onAfterRender: () => { applyLinkedHighlight(); applySelectionDimming(); },
     });
 
     initializeDecisionSpacePanel({
         data: dataToRender,
         chartRegistry,
         renderOptions: { animate },
-        onAfterRender: applyLinkedHighlight,
+        onAfterRender: () => { applyLinkedHighlight(); applySelectionDimming(); },
     });
 }
 
-function updateClearSelectionButton() {
-    d3.select("#objectives-clear-selection").classed("hidden", !filteredRowIndexSet);
+function applySelectionDimming() {
+    const rowIndexSet = (selectedRowIndexSet !== null && !isZoomed) ? selectedRowIndexSet : null;
+
+    setScatterSelection(rowIndexSet);
+
+    const hasSelection = rowIndexSet !== null;
+    const isSelected = (element) => rowIndexSet && rowIndexSet.has(Number(element.dataset.rowIndex));
+
+    d3.selectAll("tr[data-row-index]").classed("is-selection-dim", function () {
+        return hasSelection && !isSelected(this);
+    });
+    d3.selectAll(".bar-chart-segment[data-row-index]").classed("is-selection-dim", function () {
+        return hasSelection && !isSelected(this);
+    });
+}
+
+function updateSelectionButtons() {
+    const hasSelection = selectedRowIndexSet !== null;
+    d3.select("#objectives-clear-selection").classed("hidden", !hasSelection);
+    d3.select("#objectives-zoom-toggle")
+        .classed("hidden", !hasSelection)
+        .text(isZoomed ? "Zoom Out" : "Zoom In");
 }
 
 function applySelectionFilter(rowIndices) {
@@ -100,17 +122,39 @@ function applySelectionFilter(rowIndices) {
         return;
     }
 
-    filteredRowIndexSet = new Set(rowIndices);
+    selectedRowIndexSet = new Set(rowIndices);
+    isZoomed = false;
+    filteredRowIndexSet = null;
     activeRowIndex = null;
-    renderAllPanels({ animate: true });
-    updateClearSelectionButton();
+    applySelectionDimming();
+    updateSelectionButtons();
+}
+
+function toggleZoom() {
+    if (!selectedRowIndexSet) { return; }
+
+    if (isZoomed) {
+        isZoomed = false;
+        filteredRowIndexSet = null;
+        activeRowIndex = null;
+        renderAllPanels({ animate: true });
+    } else {
+        isZoomed = true;
+        filteredRowIndexSet = selectedRowIndexSet;
+        activeRowIndex = null;
+        renderAllPanels({ animate: true });
+    }
+    updateSelectionButtons();
 }
 
 function clearSelectionFilter() {
+    selectedRowIndexSet = null;
     filteredRowIndexSet = null;
+    isZoomed = false;
     activeRowIndex = null;
+    applySelectionDimming();
     renderAllPanels({ animate: true });
-    updateClearSelectionButton();
+    updateSelectionButtons();
 }
 
 d3.json("/api/portfolio-data")
@@ -130,14 +174,40 @@ d3.json("/api/portfolio-data")
             onHoverStart: setActiveRowIndex,
             onHoverEnd: clearActiveRowIndex,
             onSelectionChange: applySelectionFilter,
+            onShiftClick: (rowIndex) => {
+                if (!selectedRowIndexSet) {
+                    selectedRowIndexSet = new Set();
+                }
+                if (selectedRowIndexSet.has(rowIndex)) {
+                    selectedRowIndexSet.delete(rowIndex);
+                } else {
+                    selectedRowIndexSet.add(rowIndex);
+                }
+                if (selectedRowIndexSet.size === 0) {
+                    selectedRowIndexSet = null;
+                    isZoomed = false;
+                    filteredRowIndexSet = null;
+                }
+                applySelectionDimming();
+                updateSelectionButtons();
+            },
         };
 
         chartRegistry = createChartRegistry(interactionOptions);
 
         d3.select("#objectives-clear-selection").on("click", clearSelectionFilter);
+        d3.select("#objectives-zoom-toggle").on("click", toggleZoom);
+
+        d3.select(window)
+            .on("keydown.shifthold", (event) => {
+                if (event.key === "Shift") { document.body.classList.add("shift-held"); }
+            })
+            .on("keyup.shifthold", (event) => {
+                if (event.key === "Shift") { document.body.classList.remove("shift-held"); }
+            });
 
         renderAllPanels({ animate: false });
-        updateClearSelectionButton();
+        updateSelectionButtons();
     })
     .catch((error) => {
         d3.select("#objectives-container").append("p").text("Failed to load data.");

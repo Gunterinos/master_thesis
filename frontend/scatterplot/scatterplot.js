@@ -1,8 +1,15 @@
+const _scatterInstances = new Map();
+
+function setScatterSelection(rowIndexSet) {
+    _scatterInstances.forEach((setSelection) => setSelection(rowIndexSet));
+}
+
 function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
     const {
         onHoverStart = () => {},
         onHoverEnd = () => {},
         onSelectionChange = () => {},
+        onShiftClick = () => {},
         animate = false,
         showLabels = false,
     } = options;
@@ -163,6 +170,12 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         .attr("r", 4)
         .attr("fill", "#34c759")
         .attr("opacity", 0.9)
+        .on("click", (event, point) => {
+            if (event.shiftKey) {
+                event.stopPropagation();
+                onShiftClick(point.rowIndex);
+            }
+        })
         .on("mouseenter", (event, point) => {
             onHoverStart(point.rowIndex);
             tooltip
@@ -229,8 +242,36 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
         }
     };
 
+    svg
+        .append("text")
+        .attr("class", "scatter-hint")
+        .attr("x", width)
+        .attr("y", height + margin.bottom - 8)
+        .attr("text-anchor", "end")
+        .text("Shift+click to select points");
+
+    function setSelection(rowIndexSet) {
+        const hasSelection = rowIndexSet !== null && rowIndexSet.size > 0;
+        container.selectAll("circle[data-row-index]")
+            .classed("is-selection-dim", function () {
+                return hasSelection && !rowIndexSet.has(Number(this.dataset.rowIndex));
+            })
+            .classed("is-point-selected", function () {
+                return hasSelection && rowIndexSet.has(Number(this.dataset.rowIndex));
+            });
+        container.selectAll(".scatter-point-label[data-row-index]")
+            .classed("is-selection-dim", function () {
+                return hasSelection && !rowIndexSet.has(Number(this.dataset.rowIndex));
+            })
+            .classed("is-point-selected", function () {
+                return hasSelection && rowIndexSet.has(Number(this.dataset.rowIndex));
+            });
+    }
+
+    _scatterInstances.set(containerSelector, setSelection);
+
     plotArea.on("mousedown", (event) => {
-        if (event.button !== 0) {
+        if (event.button !== 0 || event.shiftKey) {
             return;
         }
 

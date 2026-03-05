@@ -112,6 +112,16 @@ body {
     display: none !important;
 }
 
+.is-selection-dim {
+    opacity: 0.15;
+    transition: opacity 0.2s ease;
+}
+
+body.shift-held .is-selection-dim {
+    opacity: 0.9;
+    transition: opacity 0.1s ease;
+}
+
 .layout {
     display: flex;
     gap: 1rem;
