@@ -37,5 +37,17 @@ function createChartRegistry(interactionOptions) {
                 });
             },
         },
+        pcp: {
+            key: "pcp",
+            label: "Parallel Coordinates",
+            needsAxes: false,
+            canRender: ({ numericColumns }) => numericColumns.length >= 2,
+            render: ({ containerSelector, columns, data, animate = false }) => {
+                renderParallelCoords(containerSelector, columns, data, {
+                    ...interactionOptions,
+                    animate,
+                });
+            },
+        },
     };
 }

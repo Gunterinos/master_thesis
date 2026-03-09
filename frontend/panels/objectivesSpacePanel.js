@@ -14,7 +14,7 @@ function initializeObjectivesSpacePanel(config) {
         columns: objectiveColumns,
         data,
         defaultChart: "scatter",
-        chartKeys: ["scatter"],
+        chartKeys: ["scatter", "pcp"],
         chartRegistry,
         renderOptions,
         onAfterRender,

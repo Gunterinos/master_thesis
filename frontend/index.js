@@ -47,6 +47,14 @@ function applyLinkedHighlight() {
         .classed("is-linked-dim", function classBarChartDim() {
             return hasActive && !isActiveElement(this);
         });
+
+    d3.selectAll(".pcp-line[data-row-index]")
+        .classed("is-linked-highlight", function classPcpHighlight() {
+            return isActiveElement(this);
+        })
+        .classed("is-linked-dim", function classPcpDim() {
+            return hasActive && !isActiveElement(this);
+        });
 }
 
 function setActiveRowIndex(rowIndex) {
@@ -97,6 +105,7 @@ function applySelectionDimming() {
     const rowIndexSet = (selectedRowIndexSet !== null && !isZoomed) ? selectedRowIndexSet : null;
 
     setScatterSelection(rowIndexSet);
+    setParallelCoordsSelection(rowIndexSet);
 
     const hasSelection = rowIndexSet !== null;
     const isSelected = (element) => rowIndexSet && rowIndexSet.has(Number(element.dataset.rowIndex));
