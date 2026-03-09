@@ -30,13 +30,23 @@
 }
 
 .pcp-line.is-selection-dim {
-    stroke-opacity: 0.06;
+    stroke-opacity: 0.8;
 }
 
 .pcp-line.is-line-selected {
-    stroke: #4f8cff;
+    stroke: #34c759;
     stroke-opacity: 0.9;
-    stroke-width: 2;
+    stroke-width: 2.5;
+}
+
+body.shift-held .pcp-line.is-selection-dim {
+    stroke-opacity: 0.55;
+}
+
+body.shift-held .pcp-line.is-line-selected {
+    stroke: #ff9500;
+    stroke-opacity: 1;
+    stroke-width: 2.5;
 }
 
 /* ── Axes ────────────────────────────────────────────── *//* The whole axis group has no pointer-events by default;

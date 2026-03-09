@@ -1,7 +1,9 @@
 const _pcpState = new Map();
 const _pcpSetSelectionFns = new Map();
+const _pcpLastSelection = new Map();
 
 function setParallelCoordsSelection(rowIndexSet) {
+    _pcpLastSelection.forEach((_, key) => _pcpLastSelection.set(key, rowIndexSet));
     _pcpSetSelectionFns.forEach((fn) => fn(rowIndexSet));
 }
 
@@ -9,6 +11,7 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
     const {
         onHoverStart = () => {},
         onHoverEnd = () => {},
+        onShiftClick = () => {},
         animate = false,
     } = options;
 
@@ -23,6 +26,7 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
             enabledAxes: new Set(allColumns),
             dropdownOpen: false,
             prevAxisPositions: {},
+            prevYDomains: {},
         });
     }
     const state = _pcpState.get(containerSelector);
@@ -139,6 +143,7 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // ── Y scales ─────────────────────────────────────────────────
+    const prevYDomains = { ...state.prevYDomains };
     const yScales = {};
     activeAxes.forEach((axis) => {
         const ext = d3.extent(data, (row) => +row[axis]);
@@ -147,12 +152,24 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
             .scaleLinear()
             .domain([ext[0] - pad, ext[1] + pad])
             .range([height, 0]);
+        state.prevYDomains[axis] = yScales[axis].domain();
     });
 
+    // Build start Y scales from previous domains for animation
+    const startYScales = {};
+    const hasPrevY = Object.keys(prevYDomains).length > 0;
+    if (animate && hasPrevY) {
+        activeAxes.forEach((axis) => {
+            const prevDom = prevYDomains[axis];
+            startYScales[axis] = prevDom
+                ? d3.scaleLinear().domain(prevDom).range([height, 0])
+                : yScales[axis];
+        });
+    }
+
     // ── Line helper ───────────────────────────────────────────────
-    // positions: { axisName -> x } — draw lines in the order axes appear left→right
-    const buildPath = (orderedAxes, positions, row) =>
-        d3.line()(orderedAxes.map((axis) => [positions[axis], yScales[axis](+row[axis])]));
+    const buildPath = (orderedAxes, positions, scales, row) =>
+        d3.line()(orderedAxes.map((axis) => [positions[axis], scales[axis](+row[axis])]));
 
     const currentPositions = {};
     activeAxes.forEach((axis) => { currentPositions[axis] = xScale(axis); });
@@ -167,6 +184,12 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         .append("path")
         .attr("class", "pcp-line")
         .attr("data-row-index", (row, i) => row.__rowIndex ?? i)
+        .on("click", function (event) {
+            if (event.shiftKey) {
+                event.stopPropagation();
+                onShiftClick(+(this.dataset.rowIndex));
+            }
+        })
         .on("mouseenter", function () {
             onHoverStart(+(this.dataset.rowIndex));
             d3.select(this).raise();
@@ -174,23 +197,23 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         .on("mouseleave", () => onHoverEnd());
 
     const hasPrev = Object.keys(prevAxisPositions).length > 0;
+    const shouldAnimate = animate && (hasPrev || hasPrevY);
 
-    if (animate && hasPrev) {
-        // Start lines at previous positions, then transition to new positions.
-        // Only axes present in both states can interpolate; for new axes fall back to current position.
+    if (shouldAnimate) {
         const startPos = {};
         activeAxes.forEach((axis) => {
             startPos[axis] = prevAxisPositions[axis] ?? xScale(axis);
         });
+        const startScales = hasPrevY ? startYScales : yScales;
 
         linePaths
-            .attr("d", (row) => buildPath(activeAxes, startPos, row))
+            .attr("d", (row) => buildPath(activeAxes, startPos, startScales, row))
             .transition()
             .duration(420)
             .ease(d3.easeCubicInOut)
-            .attr("d", (row) => buildPath(activeAxes, currentPositions, row));
+            .attr("d", (row) => buildPath(activeAxes, currentPositions, yScales, row));
     } else {
-        linePaths.attr("d", (row) => buildPath(activeAxes, currentPositions, row));
+        linePaths.attr("d", (row) => buildPath(activeAxes, currentPositions, yScales, row));
     }
 
     // ── Axis groups ───────────────────────────────────────────────
@@ -204,7 +227,7 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
 
     // Initial transform: animate from previous position or appear in-place
     axisGs.attr("transform", (axis) => {
-        if (animate && hasPrev && prevAxisPositions[axis] !== undefined) {
+        if (shouldAnimate && prevAxisPositions[axis] !== undefined) {
             return `translate(${prevAxisPositions[axis]}, 0)`;
         }
         return `translate(${xScale(axis)}, 0)`;
@@ -213,7 +236,13 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
     // Draw tick marks via d3.axisLeft and add vertical spine line
     axisGs.each(function (axis) {
         const grp = d3.select(this);
-        grp.call(d3.axisLeft(yScales[axis]).ticks(5));
+        if (shouldAnimate && hasPrevY && startYScales[axis]) {
+            grp.call(d3.axisLeft(startYScales[axis]).ticks(5));
+            grp.transition().duration(420).ease(d3.easeCubicInOut)
+                .call(d3.axisLeft(yScales[axis]).ticks(5));
+        } else {
+            grp.call(d3.axisLeft(yScales[axis]).ticks(5));
+        }
         grp.select(".domain").remove();
         grp.append("line")
             .attr("class", "pcp-axis-spine")
@@ -238,7 +267,7 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         .attr("height", 30);
 
     // Transition existing axes to their new positions
-    if (animate && hasPrev) {
+    if (shouldAnimate) {
         axisGs
             .filter((axis) => prevAxisPositions[axis] !== undefined)
             .transition()
@@ -300,7 +329,7 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
             // Redraw lines using live positions & live order
             linesGroup
                 .selectAll("path.pcp-line")
-                .attr("d", (row) => buildPath(liveOrder, livePositions, row));
+                .attr("d", (row) => buildPath(liveOrder, livePositions, yScales, row));
         })
         .on("end", function (event, axis) {
             d3.select(this).classed("pcp-axis--dragging", false);
@@ -331,4 +360,11 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
     }
 
     _pcpSetSelectionFns.set(containerSelector, setSelection);
+    _pcpLastSelection.set(containerSelector, _pcpLastSelection.get(containerSelector) ?? null);
+
+    // Reapply last-known selection (covers internal rerenders from drag/dropdown)
+    const lastSel = _pcpLastSelection.get(containerSelector);
+    if (lastSel && lastSel.size > 0) {
+        setSelection(lastSel);
+    }
 }
