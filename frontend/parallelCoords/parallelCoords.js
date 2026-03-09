@@ -2,6 +2,30 @@ const _pcpState = new Map();
 const _pcpSetSelectionFns = new Map();
 const _pcpLastSelection = new Map();
 
+// ── Zoom integration ─────────────────────────────────────────────────────
+// Called by index.js before zooming in: hides all currently active filters
+function pcpEnterZoomAll() {
+    _pcpState.forEach((state) => {
+        state.hiddenFilters = new Set(Object.keys(state.axisFilters));
+    });
+}
+
+// Called by index.js before zooming out: reveals all filters again
+function pcpExitZoomAll() {
+    _pcpState.forEach((state) => {
+        state.hiddenFilters.clear();
+    });
+}
+
+// Called by index.js when "Clear Selection" is pressed
+function pcpClearFiltersAll() {
+    _pcpState.forEach((state) => {
+        state.axisFilters = {};
+        state.hiddenFilters.clear();
+        state.hadActiveBrushFilters = false; // prevents spurious null notification on next rerender
+    });
+}
+
 function setParallelCoordsSelection(rowIndexSet) {
     _pcpLastSelection.forEach((_, key) => _pcpLastSelection.set(key, rowIndexSet));
     _pcpSetSelectionFns.forEach((fn) => fn(rowIndexSet));
@@ -12,6 +36,8 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         onHoverStart = () => {},
         onHoverEnd = () => {},
         onShiftClick = () => {},
+        onBrushFilterChange = () => {},
+        disableBrush = false,
         animate = false,
     } = options;
 
@@ -27,9 +53,14 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
             dropdownOpen: false,
             prevAxisPositions: {},
             prevYDomains: {},
+            axisFilters: {},
+            hiddenFilters: new Set(),
         });
     }
     const state = _pcpState.get(containerSelector);
+    // Migrate state from older renders that didn't have filter fields
+    if (!state.axisFilters) state.axisFilters = {};
+    if (!state.hiddenFilters) state.hiddenFilters = new Set();
 
     // Sync state with potentially changed column list
     const addedCols = allColumns.filter((c) => !state.axisOrder.includes(c));
@@ -192,9 +223,45 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         })
         .on("mouseenter", function () {
             onHoverStart(+(this.dataset.rowIndex));
-            d3.select(this).raise();
         })
         .on("mouseleave", () => onHoverEnd());
+
+    // ── Brush filter helper ───────────────────────────────────────────────
+    // Dims lines outside any active (non-hidden) axis brush filter and notifies
+    // the app so Clear / Zoom buttons appear / disappear like lasso selection.
+    function updateFilteredLines() {
+        const activeFilters = Object.entries(state.axisFilters)
+            .filter(([axis]) => !state.hiddenFilters.has(axis) && activeAxes.includes(axis));
+
+        const hasBrushFilter = activeFilters.length > 0;
+        linesGroup.selectAll("path.pcp-line").classed("is-brush-filtered", function (row) {
+            if (!hasBrushFilter) return false;
+            return activeFilters.some(([axis, filter]) => {
+                const val = +row[axis];
+                return val < filter.min || val > filter.max;
+            });
+        });
+
+        // When only hidden filters remain (zoom context) don't touch external selection.
+        const hasOnlyHiddenFilters = Object.keys(state.axisFilters).length > 0 && !hasBrushFilter;
+        if (hasOnlyHiddenFilters) return;
+
+        const wasActive = state.hadActiveBrushFilters || false;
+        state.hadActiveBrushFilters = hasBrushFilter;
+
+        if (hasBrushFilter) {
+            const passingIndices = data
+                .filter((row) => activeFilters.every(([axis, filter]) => {
+                    const val = +row[axis];
+                    return val >= filter.min && val <= filter.max;
+                }))
+                .map((row, i) => row.__rowIndex ?? i);
+            onBrushFilterChange(passingIndices);
+        } else if (wasActive) {
+            // Filters were just cleared — notify so the app can remove the selection
+            onBrushFilterChange(null);
+        }
+    }
 
     const hasPrev = Object.keys(prevAxisPositions).length > 0;
     const shouldAnimate = animate && (hasPrev || hasPrevY);
@@ -291,6 +358,10 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
     let liveOrder = [...activeAxes]; // axis order according to live positions
 
     const drag = d3.drag()
+        // Don't start a drag when the user is interacting with a brush
+        .filter(function (event) {
+            return !event.target.closest || !event.target.closest(".pcp-brush");
+        })
         .on("start", function () {
             d3.select(this).raise().classed("pcp-axis--dragging", true);
         })
@@ -345,6 +416,78 @@ function renderParallelCoords(containerSelector, allColumns, data, options = {})
         });
 
     axisGs.call(drag);
+
+    // ── Axis brush filters ────────────────────────────────────────────────
+    // Each axis gets a brushY that lets users filter lines by value range.
+    // Filters are stored in data-value space (min/max) so they survive re-renders.
+    // Brushes are disabled while zoomed in so users can't add new filters then.
+    if (!disableBrush) axisGs.each(function (axis) {
+        const grp = d3.select(this);
+        const existingFilter = state.axisFilters[axis];
+        const isHidden = state.hiddenFilters.has(axis);
+
+        // When this filter was applied before a zoom-in, don't show any UI for it.
+        if (isHidden) return;
+
+        const brush = d3.brushY()
+            .extent([[-12, 0], [12, height]])
+            .on("brush", function (event) {
+                if (!event.sourceEvent) return; // skip programmatic moves
+                if (!event.selection) return;
+                const [y0, y1] = event.selection;
+                // y0 = top pixel (higher value), y1 = bottom pixel (lower value)
+                state.axisFilters[axis] = {
+                    min: yScales[axis].invert(y1),
+                    max: yScales[axis].invert(y0),
+                };
+                updateFilteredLines();
+            })
+            .on("end", function (event) {
+                if (!event.sourceEvent) return; // skip programmatic moves
+                if (!event.selection) {
+                    // User cleared the brush — remove the filter
+                    delete state.axisFilters[axis];
+                    state.hiddenFilters.delete(axis);
+                    updateFilteredLines();
+                }
+            });
+
+        const brushG = grp.append("g")
+            .attr("class", "pcp-brush")
+            .call(brush);
+
+        // Parent .pcp-axis has pointer-events:none — re-enable for brush rects
+        brushG.selectAll("rect").style("pointer-events", "all");
+
+        // Restore a saved filter (e.g. after axis reorder re-render)
+        if (existingFilter) {
+            const py0 = yScales[axis](existingFilter.max); // max value → smaller y
+            const py1 = yScales[axis](existingFilter.min); // min value → larger y
+            const clamped0 = Math.max(0, Math.min(height, Math.min(py0, py1)));
+            const clamped1 = Math.max(0, Math.min(height, Math.max(py0, py1)));
+            if (clamped1 > clamped0) {
+                brush.move(brushG, [clamped0, clamped1]);
+            }
+        }
+
+        // Double-click on the selection rectangle removes the filter
+        brushG.on("dblclick.remove", function (event) {
+            const selPixels = d3.brushSelection(this);
+            if (!selPixels) return;
+            const [, yCoord] = d3.pointer(event, this);
+            // Small tolerance so the user doesn't have to click pixel-perfectly
+            if (yCoord >= selPixels[0] - 4 && yCoord <= selPixels[1] + 4) {
+                event.stopPropagation();
+                brush.move(brushG, null);
+                delete state.axisFilters[axis];
+                state.hiddenFilters.delete(axis);
+                updateFilteredLines();
+            }
+        });
+    });
+
+    // Apply any carry-over filters from before the re-render
+    updateFilteredLines();
 
     // ── Selection state ───────────────────────────────────────────
     function setSelection(rowIndexSet) {

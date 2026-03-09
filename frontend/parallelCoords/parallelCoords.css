@@ -180,3 +180,39 @@ body.shift-held .pcp-line.is-line-selected {
     font-size: 0.9rem;
     text-align: center;
 }
+
+/* ── Axis brush filters ────────────────────────────────────────── */
+/* Override the parent pointer-events:none so the brush is interactive */
+.pcp-brush .overlay,
+.pcp-brush .selection,
+.pcp-brush .handle--n,
+.pcp-brush .handle--s {
+    pointer-events: all;
+}
+
+.pcp-brush .overlay {
+    cursor: ns-resize;
+    fill: transparent;
+}
+
+.pcp-brush .selection {
+    fill: rgba(79, 140, 255, 0.18);
+    stroke: #4f8cff;
+    stroke-width: 1.5;
+    rx: 3px;
+    cursor: ns-resize;
+}
+
+.pcp-brush .handle--n,
+.pcp-brush .handle--s {
+    fill: #4f8cff;
+    height: 4px;
+    rx: 2px;
+}
+
+/* Lines dimmed by an active brush filter */
+.pcp-line.is-brush-filtered {
+    stroke-opacity: 0.8;
+    stroke-width: 1.5;
+}
+

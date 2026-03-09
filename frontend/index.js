@@ -146,17 +146,20 @@ function toggleZoom() {
         isZoomed = false;
         filteredRowIndexSet = null;
         activeRowIndex = null;
+        pcpExitZoomAll();            // reveal all pre-zoom brush filters
         renderAllPanels({ animate: true });
     } else {
         isZoomed = true;
         filteredRowIndexSet = selectedRowIndexSet;
         activeRowIndex = null;
+        pcpEnterZoomAll();           // hide all currently applied brush filters
         renderAllPanels({ animate: true });
     }
     updateSelectionButtons();
 }
 
 function clearSelectionFilter() {
+    pcpClearFiltersAll();          // remove any brush filters before rerender
     selectedRowIndexSet = null;
     filteredRowIndexSet = null;
     isZoomed = false;
@@ -183,6 +186,22 @@ d3.json("/api/portfolio-data")
             onHoverStart: setActiveRowIndex,
             onHoverEnd: clearActiveRowIndex,
             onSelectionChange: applySelectionFilter,
+            get disableBrush() { return isZoomed; },
+            onBrushFilterChange: (passingRowIndices) => {
+                if (passingRowIndices === null) {
+                    // All brush filters removed — clear the selection they were driving
+                    selectedRowIndexSet = null;
+                    activeRowIndex = null;
+                    applySelectionDimming();
+                    updateSelectionButtons();
+                } else {
+                    // Active brush filter — treat passing rows as the current selection
+                    selectedRowIndexSet = new Set(passingRowIndices);
+                    activeRowIndex = null;
+                    applySelectionDimming();
+                    updateSelectionButtons();
+                }
+            },
             onShiftClick: (rowIndex) => {
                 if (!selectedRowIndexSet) {
                     selectedRowIndexSet = new Set();
