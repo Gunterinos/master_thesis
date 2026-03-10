@@ -1,3 +1,6 @@
+import * as d3 from 'd3';
+import './parallelCoords.css';
+
 const _pcpState = new Map();
 const _pcpSetSelectionFns = new Map();
 const _pcpLastSelection = new Map();

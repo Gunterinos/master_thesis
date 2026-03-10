@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+import './index.css';
 import { setScatterSelection } from './scatterplot/scatterplot.js';
 import { setParallelCoordsSelection, pcpEnterZoomAll, pcpExitZoomAll, pcpClearFiltersAll } from './parallelCoords/parallelCoords.js';
 import { createChartRegistry } from './panels/chartRegistry.js';

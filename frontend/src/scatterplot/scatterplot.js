@@ -1,3 +1,6 @@
+import * as d3 from 'd3';
+import './scatterplot.css';
+
 const _scatterInstances = new Map();
 
 export function setScatterSelection(rowIndexSet) {

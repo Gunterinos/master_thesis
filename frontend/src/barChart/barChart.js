@@ -1,3 +1,6 @@
+import * as d3 from 'd3';
+import './barChart.css';
+
 export function renderBarChart(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
     const container = d3.select(containerSelector);

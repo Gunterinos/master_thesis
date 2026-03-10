@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { getNumericColumns } from '../tables/tables.js';
 import { populateAxisSelect } from '../scatterplot/scatterplot.js';
 
