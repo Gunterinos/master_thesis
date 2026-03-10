@@ -1,4 +1,7 @@
-function initializeSpacePanel(config) {
+import { getNumericColumns } from '../tables/tables.js';
+import { populateAxisSelect } from '../scatterplot/scatterplot.js';
+
+export function initializeSpacePanel(config) {
     const {
         containerSelector,
         chartSelectSelector,

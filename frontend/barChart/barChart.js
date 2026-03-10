@@ -1,4 +1,4 @@
-function renderBarChart(containerSelector, columns, data, options = {}) {
+export function renderBarChart(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
     const container = d3.select(containerSelector);
 

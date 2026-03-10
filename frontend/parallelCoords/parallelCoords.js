@@ -4,21 +4,21 @@ const _pcpLastSelection = new Map();
 
 // ── Zoom integration ─────────────────────────────────────────────────────
 // Called by index.js before zooming in: hides all currently active filters
-function pcpEnterZoomAll() {
+export function pcpEnterZoomAll() {
     _pcpState.forEach((state) => {
         state.hiddenFilters = new Set(Object.keys(state.axisFilters));
     });
 }
 
 // Called by index.js before zooming out: reveals all filters again
-function pcpExitZoomAll() {
+export function pcpExitZoomAll() {
     _pcpState.forEach((state) => {
         state.hiddenFilters.clear();
     });
 }
 
 // Called by index.js when "Clear Selection" is pressed
-function pcpClearFiltersAll() {
+export function pcpClearFiltersAll() {
     _pcpState.forEach((state) => {
         state.axisFilters = {};
         state.hiddenFilters.clear();
@@ -26,12 +26,12 @@ function pcpClearFiltersAll() {
     });
 }
 
-function setParallelCoordsSelection(rowIndexSet) {
+export function setParallelCoordsSelection(rowIndexSet) {
     _pcpLastSelection.forEach((_, key) => _pcpLastSelection.set(key, rowIndexSet));
     _pcpSetSelectionFns.forEach((fn) => fn(rowIndexSet));
 }
 
-function renderParallelCoords(containerSelector, allColumns, data, options = {}) {
+export function renderParallelCoords(containerSelector, allColumns, data, options = {}) {
     const {
         onHoverStart = () => {},
         onHoverEnd = () => {},

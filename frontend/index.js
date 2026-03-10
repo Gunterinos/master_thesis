@@ -1,3 +1,9 @@
+import { setScatterSelection } from './scatterplot/scatterplot.js';
+import { setParallelCoordsSelection, pcpEnterZoomAll, pcpExitZoomAll, pcpClearFiltersAll } from './parallelCoords/parallelCoords.js';
+import { createChartRegistry } from './panels/chartRegistry.js';
+import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js';
+import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
+
 let activeRowIndex = null;
 let fullData = [];
 let filteredRowIndexSet = null;
