@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import './index.css';
+import './style.css';
 import { setScatterSelection } from './scatterplot/scatterplot.js';
 import { setParallelCoordsSelection, pcpEnterZoomAll, pcpExitZoomAll, pcpClearFiltersAll } from './parallelCoords/parallelCoords.js';
 import { createChartRegistry } from './panels/chartRegistry.js';
@@ -244,9 +244,11 @@ d3.json("/api/portfolio-data")
 
         renderAllPanels({ animate: false });
         updateSelectionButtons();
+        document.querySelector('.page').style.opacity = '1';
     })
     .catch((error) => {
         d3.select("#objectives-container").append("p").text("Failed to load data.");
         d3.select("#decision-container").append("p").text("Failed to load data.");
+        document.querySelector('.page').style.opacity = '1';
         console.error(error);
     });
