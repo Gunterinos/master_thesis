@@ -1,4 +1,6 @@
-function renderTable(containerSelector, columns, data, options = {}) {
+import './tables.css';
+
+export function renderTable(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
     const container = d3.select(containerSelector);
     const tableColumns = ["Point", ...columns];
@@ -95,7 +97,7 @@ function renderTable(containerSelector, columns, data, options = {}) {
     });
 }
 
-function getNumericColumns(data, columns) {
+export function getNumericColumns(data, columns) {
     if (!data || data.length === 0) {
         return [];
     }

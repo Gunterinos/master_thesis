@@ -4,12 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Vis</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='tables/tables.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='scatterplot/scatterplot.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='barChart/barChart.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='parallelCoords/parallelCoords.css') }}" />
 </head>
 <body>
     <div class="page">
@@ -48,14 +42,6 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='tables/tables.js') }}"></script>
-    <script src="{{ url_for('static', filename='scatterplot/scatterplot.js') }}"></script>
-    <script src="{{ url_for('static', filename='barChart/barChart.js') }}"></script>
-    <script src="{{ url_for('static', filename='parallelCoords/parallelCoords.js') }}"></script>
-    <script src="{{ url_for('static', filename='panels/chartRegistry.js') }}"></script>
-    <script src="{{ url_for('static', filename='panels/spacePanel.js') }}"></script>
-    <script src="{{ url_for('static', filename='panels/objectivesSpacePanel.js') }}"></script>
-    <script src="{{ url_for('static', filename='panels/decisionSpacePanel.js') }}"></script>
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>

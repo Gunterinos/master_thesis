@@ -1,4 +1,6 @@
-function initializeDecisionSpacePanel(config) {
+import { initializeSpacePanel } from './spacePanel.js';
+
+export function initializeDecisionSpacePanel(config) {
     const { data, chartRegistry, renderOptions = {}, onAfterRender } = config;
     const allColumns = Object.keys(data[0]);
     const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));

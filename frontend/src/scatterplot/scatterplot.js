@@ -1,10 +1,13 @@
+import * as d3 from 'd3';
+import './scatterplot.css';
+
 const _scatterInstances = new Map();
 
-function setScatterSelection(rowIndexSet) {
+export function setScatterSelection(rowIndexSet) {
     _scatterInstances.forEach((setSelection) => setSelection(rowIndexSet));
 }
 
-function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
+export function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
     const {
         onHoverStart = () => {},
         onHoverEnd = () => {},
@@ -292,7 +295,7 @@ function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
     });
 }
 
-function populateAxisSelect(select, columns) {
+export function populateAxisSelect(select, columns) {
     select.selectAll("*").remove();
 
     select

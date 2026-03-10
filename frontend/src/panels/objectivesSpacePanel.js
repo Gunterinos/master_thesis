@@ -1,4 +1,6 @@
-function initializeObjectivesSpacePanel(config) {
+import { initializeSpacePanel } from './spacePanel.js';
+
+export function initializeObjectivesSpacePanel(config) {
     const { data, chartRegistry, renderOptions = {}, onAfterRender } = config;
     const allColumns = Object.keys(data[0]);
     const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));

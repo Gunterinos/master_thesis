@@ -1,4 +1,9 @@
-function createChartRegistry(interactionOptions) {
+import { renderTable } from '../tables/tables.js';
+import { renderScatterplot } from '../scatterplot/scatterplot.js';
+import { renderBarChart } from '../barChart/barChart.js';
+import { renderParallelCoords } from '../parallelCoords/parallelCoords.js';
+
+export function createChartRegistry(interactionOptions) {
     return {
         table: {
             key: "table",
