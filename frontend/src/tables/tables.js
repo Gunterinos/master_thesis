@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import './tables.css';
-import { subscribe, getActiveRowIndex } from '../state/appState.js';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyTableHighlight(rowIndex) {
     const hasActive = rowIndex !== null;
@@ -17,7 +17,16 @@ function applyTableHighlight(rowIndex) {
     }
 }
 
+function applyTableSelection(rowIndexSet) {
+    const hasSelection = rowIndexSet !== null;
+    const isSelected = (el) => rowIndexSet && rowIndexSet.has(Number(el.dataset.rowIndex));
+    d3.selectAll('tr[data-row-index]').classed('is-selection-dim', function () {
+        return hasSelection && !isSelected(this);
+    });
+}
+
 subscribe('hover-change', applyTableHighlight);
+subscribe('selection-change', applyTableSelection);
 
 export function renderTable(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
@@ -116,6 +125,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     });
 
     applyTableHighlight(getActiveRowIndex());
+    applyTableSelection(getEffectiveSelection());
 }
 
 export function getNumericColumns(data, columns) {

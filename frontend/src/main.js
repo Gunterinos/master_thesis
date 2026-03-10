@@ -1,23 +1,18 @@
 import * as d3 from 'd3';
 import './style.css';
-import { setScatterSelection } from './scatterplot/scatterplot.js';
-import { setParallelCoordsSelection, pcpEnterZoomAll, pcpExitZoomAll, pcpClearFiltersAll } from './parallelCoords/parallelCoords.js';
 import { createChartRegistry } from './panels/chartRegistry.js';
 import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js';
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
-import { setActiveRowIndex, clearActiveRowIndex } from './state/appState.js';
+import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
+         getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
 
 let fullData = [];
-let filteredRowIndexSet = null;
-let selectedRowIndexSet = null;
-let isZoomed = false;
 let chartRegistry = null;
 
-
-
 function getCurrentData() {
-    return filteredRowIndexSet
-        ? fullData.filter((row) => filteredRowIndexSet.has(row.__rowIndex))
+    const filtered = getFilteredRowIndexSet();
+    return filtered
+        ? fullData.filter((row) => filtered.has(row.__rowIndex))
         : fullData;
 }
 
@@ -29,40 +24,21 @@ function renderAllPanels(options = {}) {
         data: dataToRender,
         chartRegistry,
         renderOptions: { animate },
-        onAfterRender: () => { applySelectionDimming(); },
     });
 
     initializeDecisionSpacePanel({
         data: dataToRender,
         chartRegistry,
         renderOptions: { animate },
-        onAfterRender: () => { applySelectionDimming(); },
-    });
-}
-
-function applySelectionDimming() {
-    const rowIndexSet = (selectedRowIndexSet !== null && !isZoomed) ? selectedRowIndexSet : null;
-
-    setScatterSelection(rowIndexSet);
-    setParallelCoordsSelection(rowIndexSet);
-
-    const hasSelection = rowIndexSet !== null;
-    const isSelected = (element) => rowIndexSet && rowIndexSet.has(Number(element.dataset.rowIndex));
-
-    d3.selectAll("tr[data-row-index]").classed("is-selection-dim", function () {
-        return hasSelection && !isSelected(this);
-    });
-    d3.selectAll(".bar-chart-segment[data-row-index]").classed("is-selection-dim", function () {
-        return hasSelection && !isSelected(this);
     });
 }
 
 function updateSelectionButtons() {
-    const hasSelection = selectedRowIndexSet !== null;
+    const hasSelection = getSelectedRowIndexSet() !== null;
     d3.select("#objectives-clear-selection").classed("hidden", !hasSelection);
     d3.select("#objectives-zoom-toggle")
         .classed("hidden", !hasSelection)
-        .text(isZoomed ? "Zoom Out" : "Zoom In");
+        .text(getIsZoomed() ? "Zoom Out" : "Zoom In");
 }
 
 function applySelectionFilter(rowIndices) {
@@ -70,40 +46,28 @@ function applySelectionFilter(rowIndices) {
         return;
     }
 
-    selectedRowIndexSet = new Set(rowIndices);
-    isZoomed = false;
-    filteredRowIndexSet = null;
     clearActiveRowIndex();
-    applySelectionDimming();
+    setSelectionState({ selected: new Set(rowIndices), filtered: null, zoomed: false });
     updateSelectionButtons();
 }
 
 function toggleZoom() {
-    if (!selectedRowIndexSet) { return; }
+    const sel = getSelectedRowIndexSet();
+    if (!sel) { return; }
 
-    if (isZoomed) {
-        isZoomed = false;
-        filteredRowIndexSet = null;
-        clearActiveRowIndex();
-        pcpExitZoomAll();            
-        renderAllPanels({ animate: true });
+    clearActiveRowIndex();
+    if (getIsZoomed()) {
+        setSelectionState({ selected: sel, filtered: null, zoomed: false });
     } else {
-        isZoomed = true;
-        filteredRowIndexSet = selectedRowIndexSet;
-        clearActiveRowIndex();
-        pcpEnterZoomAll();           
-        renderAllPanels({ animate: true });
+        setSelectionState({ selected: sel, filtered: sel, zoomed: true });
     }
+    renderAllPanels({ animate: true });
     updateSelectionButtons();
 }
 
 function clearSelectionFilter() {
-    pcpClearFiltersAll();          // remove any brush filters before rerender
-    selectedRowIndexSet = null;
-    filteredRowIndexSet = null;
-    isZoomed = false;
     clearActiveRowIndex();
-    applySelectionDimming();
+    clearSelectionState();
     renderAllPanels({ animate: true });
     updateSelectionButtons();
 }
@@ -125,37 +89,31 @@ d3.json("/api/portfolio-data")
             onHoverStart: setActiveRowIndex,
             onHoverEnd: clearActiveRowIndex,
             onSelectionChange: applySelectionFilter,
-            get disableBrush() { return isZoomed; },
+            get disableBrush() { return getIsZoomed(); },
             onBrushFilterChange: (passingRowIndices) => {
+                clearActiveRowIndex();
                 if (passingRowIndices === null) {
                     // All brush filters removed — clear the selection they were driving
-                    selectedRowIndexSet = null;
-                    clearActiveRowIndex();
-                    applySelectionDimming();
-                    updateSelectionButtons();
+                    setSelectionState({ selected: null, filtered: null, zoomed: false });
                 } else {
                     // Active brush filter — treat passing rows as the current selection
-                    selectedRowIndexSet = new Set(passingRowIndices);
-                    clearActiveRowIndex();
-                    applySelectionDimming();
-                    updateSelectionButtons();
+                    setSelectionState({ selected: new Set(passingRowIndices), filtered: null, zoomed: false });
                 }
+                updateSelectionButtons();
             },
             onShiftClick: (rowIndex) => {
-                if (!selectedRowIndexSet) {
-                    selectedRowIndexSet = new Set();
-                }
-                if (selectedRowIndexSet.has(rowIndex)) {
-                    selectedRowIndexSet.delete(rowIndex);
+                const current = getSelectedRowIndexSet();
+                const newSet = current ? new Set(current) : new Set();
+                if (newSet.has(rowIndex)) {
+                    newSet.delete(rowIndex);
                 } else {
-                    selectedRowIndexSet.add(rowIndex);
+                    newSet.add(rowIndex);
                 }
-                if (selectedRowIndexSet.size === 0) {
-                    selectedRowIndexSet = null;
-                    isZoomed = false;
-                    filteredRowIndexSet = null;
+                if (newSet.size === 0) {
+                    setSelectionState({ selected: null, filtered: null, zoomed: false });
+                } else {
+                    setSelectionState({ selected: newSet, filtered: getFilteredRowIndexSet(), zoomed: getIsZoomed() });
                 }
-                applySelectionDimming();
                 updateSelectionButtons();
             },
         };

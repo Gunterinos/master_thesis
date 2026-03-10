@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import './barChart.css';
-import { subscribe, getActiveRowIndex } from '../state/appState.js';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyBarChartHighlight(rowIndex) {
     const hasActive = rowIndex !== null;
@@ -11,7 +11,16 @@ function applyBarChartHighlight(rowIndex) {
         .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
 }
 
+function applyBarChartSelection(rowIndexSet) {
+    const hasSelection = rowIndexSet !== null;
+    const isSelected = (el) => rowIndexSet && rowIndexSet.has(Number(el.dataset.rowIndex));
+    d3.selectAll('.bar-chart-segment[data-row-index]').classed('is-selection-dim', function () {
+        return hasSelection && !isSelected(this);
+    });
+}
+
 subscribe('hover-change', applyBarChartHighlight);
+subscribe('selection-change', applyBarChartSelection);
 
 export function renderBarChart(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
@@ -368,4 +377,5 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     });
 
     applyBarChartHighlight(getActiveRowIndex());
+    applyBarChartSelection(getEffectiveSelection());
 }

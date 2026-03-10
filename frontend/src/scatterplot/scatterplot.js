@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import './scatterplot.css';
-import { subscribe, getActiveRowIndex } from '../state/appState.js';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyScatterHighlight(rowIndex) {
     const hasActive = rowIndex !== null;
@@ -26,6 +26,8 @@ const _scatterInstances = new Map();
 export function setScatterSelection(rowIndexSet) {
     _scatterInstances.forEach((setSelection) => setSelection(rowIndexSet));
 }
+
+subscribe('selection-change', setScatterSelection);
 
 export function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
     const {
@@ -292,6 +294,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
     }
 
     _scatterInstances.set(containerSelector, setSelection);
+    setSelection(getEffectiveSelection());
 
     plotArea.on("mousedown", (event) => {
         if (event.button !== 0 || event.shiftKey) {
