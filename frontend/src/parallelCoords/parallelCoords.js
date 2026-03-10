@@ -1,5 +1,17 @@
 import * as d3 from 'd3';
 import './parallelCoords.css';
+import { subscribe, getActiveRowIndex } from '../state/appState.js';
+
+function applyPcpHighlight(rowIndex) {
+    const hasActive = rowIndex !== null;
+    const isActive = (el) => hasActive && Number(el.dataset.rowIndex) === rowIndex;
+
+    d3.selectAll('.pcp-line[data-row-index]')
+        .classed('is-linked-highlight', function () { return isActive(this); })
+        .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
+}
+
+subscribe('hover-change', applyPcpHighlight);
 
 const _pcpState = new Map();
 const _pcpSetSelectionFns = new Map();
@@ -513,4 +525,6 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     if (lastSel && lastSel.size > 0) {
         setSelection(lastSel);
     }
+
+    applyPcpHighlight(getActiveRowIndex());
 }

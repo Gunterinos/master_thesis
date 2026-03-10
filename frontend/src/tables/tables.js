@@ -1,4 +1,23 @@
+import * as d3 from 'd3';
 import './tables.css';
+import { subscribe, getActiveRowIndex } from '../state/appState.js';
+
+function applyTableHighlight(rowIndex) {
+    const hasActive = rowIndex !== null;
+    const isActive = (el) => hasActive && Number(el.dataset.rowIndex) === rowIndex;
+
+    d3.selectAll('tr[data-row-index]')
+        .classed('is-linked-highlight', function () { return isActive(this); })
+        .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
+
+    if (rowIndex !== null) {
+        document.querySelectorAll(`tr[data-row-index="${rowIndex}"]`).forEach((rowElement) => {
+            rowElement.scrollIntoView({ block: 'nearest', behavior: 'smooth', inline: 'nearest' });
+        });
+    }
+}
+
+subscribe('hover-change', applyTableHighlight);
 
 export function renderTable(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
@@ -95,6 +114,8 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             .data([row.__rowIndex + 1, ...columns.map((column) => row[column])])
             .text(formatCell);
     });
+
+    applyTableHighlight(getActiveRowIndex());
 }
 
 export function getNumericColumns(data, columns) {

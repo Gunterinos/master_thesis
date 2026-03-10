@@ -5,84 +5,15 @@ import { setParallelCoordsSelection, pcpEnterZoomAll, pcpExitZoomAll, pcpClearFi
 import { createChartRegistry } from './panels/chartRegistry.js';
 import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js';
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
+import { setActiveRowIndex, clearActiveRowIndex } from './state/appState.js';
 
-let activeRowIndex = null;
 let fullData = [];
 let filteredRowIndexSet = null;
 let selectedRowIndexSet = null;
 let isZoomed = false;
 let chartRegistry = null;
 
-function applyLinkedHighlight() {
-    const hasActive = activeRowIndex !== null;
-    const isActiveElement = (element) => hasActive && Number(element.dataset.rowIndex) === activeRowIndex;
 
-    d3.selectAll("tr[data-row-index]")
-        .classed("is-linked-highlight", function classRowHighlight() {
-            return isActiveElement(this);
-        })
-        .classed("is-linked-dim", function classRowDim() {
-            return hasActive && !isActiveElement(this);
-        });
-
-    d3.selectAll("circle[data-row-index]")
-        .classed("is-linked-highlight", function classPointHighlight() {
-            return isActiveElement(this);
-        })
-        .classed("is-linked-dim", function classPointDim() {
-            return hasActive && !isActiveElement(this);
-        })
-        .attr("r", function sizePoint() {
-            if (!hasActive) {
-                return 4;
-            }
-
-            return isActiveElement(this) ? 7 : 3;
-        });
-
-    d3.selectAll(".scatter-point-label[data-row-index]")
-        .classed("is-linked-highlight", function classLabelHighlight() {
-            return isActiveElement(this);
-        })
-        .classed("is-linked-dim", function classLabelDim() {
-            return hasActive && !isActiveElement(this);
-        });
-
-    d3.selectAll(".bar-chart-segment[data-row-index]")
-        .classed("is-linked-highlight", function classBarChartHighlight() {
-            return isActiveElement(this);
-        })
-        .classed("is-linked-dim", function classBarChartDim() {
-            return hasActive && !isActiveElement(this);
-        });
-
-    d3.selectAll(".pcp-line[data-row-index]")
-        .classed("is-linked-highlight", function classPcpHighlight() {
-            return isActiveElement(this);
-        })
-        .classed("is-linked-dim", function classPcpDim() {
-            return hasActive && !isActiveElement(this);
-        });
-}
-
-function setActiveRowIndex(rowIndex) {
-    activeRowIndex = rowIndex;
-    applyLinkedHighlight();
-
-    const linkedRows = document.querySelectorAll(`tr[data-row-index="${rowIndex}"]`);
-    linkedRows.forEach((rowElement) => {
-        rowElement.scrollIntoView({
-            block: "nearest",
-            behavior: "smooth",
-            inline: "nearest",
-        });
-    });
-}
-
-function clearActiveRowIndex() {
-    activeRowIndex = null;
-    applyLinkedHighlight();
-}
 
 function getCurrentData() {
     return filteredRowIndexSet
@@ -98,14 +29,14 @@ function renderAllPanels(options = {}) {
         data: dataToRender,
         chartRegistry,
         renderOptions: { animate },
-        onAfterRender: () => { applyLinkedHighlight(); applySelectionDimming(); },
+        onAfterRender: () => { applySelectionDimming(); },
     });
 
     initializeDecisionSpacePanel({
         data: dataToRender,
         chartRegistry,
         renderOptions: { animate },
-        onAfterRender: () => { applyLinkedHighlight(); applySelectionDimming(); },
+        onAfterRender: () => { applySelectionDimming(); },
     });
 }
 
@@ -142,7 +73,7 @@ function applySelectionFilter(rowIndices) {
     selectedRowIndexSet = new Set(rowIndices);
     isZoomed = false;
     filteredRowIndexSet = null;
-    activeRowIndex = null;
+    clearActiveRowIndex();
     applySelectionDimming();
     updateSelectionButtons();
 }
@@ -153,14 +84,14 @@ function toggleZoom() {
     if (isZoomed) {
         isZoomed = false;
         filteredRowIndexSet = null;
-        activeRowIndex = null;
-        pcpExitZoomAll();            // reveal all pre-zoom brush filters
+        clearActiveRowIndex();
+        pcpExitZoomAll();            
         renderAllPanels({ animate: true });
     } else {
         isZoomed = true;
         filteredRowIndexSet = selectedRowIndexSet;
-        activeRowIndex = null;
-        pcpEnterZoomAll();           // hide all currently applied brush filters
+        clearActiveRowIndex();
+        pcpEnterZoomAll();           
         renderAllPanels({ animate: true });
     }
     updateSelectionButtons();
@@ -171,7 +102,7 @@ function clearSelectionFilter() {
     selectedRowIndexSet = null;
     filteredRowIndexSet = null;
     isZoomed = false;
-    activeRowIndex = null;
+    clearActiveRowIndex();
     applySelectionDimming();
     renderAllPanels({ animate: true });
     updateSelectionButtons();
@@ -199,13 +130,13 @@ d3.json("/api/portfolio-data")
                 if (passingRowIndices === null) {
                     // All brush filters removed — clear the selection they were driving
                     selectedRowIndexSet = null;
-                    activeRowIndex = null;
+                    clearActiveRowIndex();
                     applySelectionDimming();
                     updateSelectionButtons();
                 } else {
                     // Active brush filter — treat passing rows as the current selection
                     selectedRowIndexSet = new Set(passingRowIndices);
-                    activeRowIndex = null;
+                    clearActiveRowIndex();
                     applySelectionDimming();
                     updateSelectionButtons();
                 }

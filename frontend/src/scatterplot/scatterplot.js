@@ -1,5 +1,25 @@
 import * as d3 from 'd3';
 import './scatterplot.css';
+import { subscribe, getActiveRowIndex } from '../state/appState.js';
+
+function applyScatterHighlight(rowIndex) {
+    const hasActive = rowIndex !== null;
+    const isActive = (el) => hasActive && Number(el.dataset.rowIndex) === rowIndex;
+
+    d3.selectAll('circle[data-row-index]')
+        .classed('is-linked-highlight', function () { return isActive(this); })
+        .classed('is-linked-dim', function () { return hasActive && !isActive(this); })
+        .attr('r', function () {
+            if (!hasActive) return 4;
+            return isActive(this) ? 7 : 3;
+        });
+
+    d3.selectAll('.scatter-point-label[data-row-index]')
+        .classed('is-linked-highlight', function () { return isActive(this); })
+        .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
+}
+
+subscribe('hover-change', applyScatterHighlight);
 
 const _scatterInstances = new Map();
 
@@ -293,6 +313,8 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
                 finalizeLasso();
             });
     });
+
+    applyScatterHighlight(getActiveRowIndex());
 }
 
 export function populateAxisSelect(select, columns) {
