@@ -1,11 +1,31 @@
 import * as d3 from 'd3';
 import './scatterplot.css';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+
+function applyScatterHighlight(rowIndex) {
+    d3.selectAll('circle[data-row-index]')
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; })
+        .attr('r', function () {
+            // here we establish the size of the radius of the points
+            if (rowIndex === null) return 4;
+            return Number(this.dataset.rowIndex) === rowIndex ? 7 : 3;
+        });
+
+    d3.selectAll('.scatter-point-label[data-row-index]')
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
+}
+
+subscribe('hover-change', applyScatterHighlight);
 
 const _scatterInstances = new Map();
 
 export function setScatterSelection(rowIndexSet) {
     _scatterInstances.forEach((setSelection) => setSelection(rowIndexSet));
 }
+
+subscribe('selection-change', setScatterSelection);
 
 export function renderScatterplot(containerSelector, data, xKey, yKey, options = {}) {
     const {
@@ -272,6 +292,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
     }
 
     _scatterInstances.set(containerSelector, setSelection);
+    setSelection(getEffectiveSelection());
 
     plotArea.on("mousedown", (event) => {
         if (event.button !== 0 || event.shiftKey) {
@@ -293,6 +314,9 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
                 finalizeLasso();
             });
     });
+
+    // Subscribers don't fire on re-render, so reapply state manually.
+    applyScatterHighlight(getActiveRowIndex());
 }
 
 export function populateAxisSelect(select, columns) {

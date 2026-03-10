@@ -1,4 +1,27 @@
+import * as d3 from 'd3';
 import './tables.css';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+
+function applyTableHighlight(rowIndex) {
+    d3.selectAll('tr[data-row-index]')
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; })
+
+    if (rowIndex !== null) {
+        document.querySelectorAll(`tr[data-row-index="${rowIndex}"]`).forEach((rowElement) => {
+            rowElement.scrollIntoView({ block: 'nearest', behavior: 'smooth', inline: 'nearest' });
+        });
+    }
+}
+
+function applyTableSelection(rowIndexSet) {
+    d3.selectAll('tr[data-row-index]').classed('is-selection-dim', function () {
+        return rowIndexSet !== null && !rowIndexSet.has(Number(this.dataset.rowIndex));
+    });
+}
+
+subscribe('hover-change', applyTableHighlight);
+subscribe('selection-change', applyTableSelection);
 
 export function renderTable(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
@@ -95,6 +118,10 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             .data([row.__rowIndex + 1, ...columns.map((column) => row[column])])
             .text(formatCell);
     });
+
+    // Subscribers don't fire on re-render, so reapply state manually.
+    applyTableHighlight(getActiveRowIndex());
+    applyTableSelection(getEffectiveSelection());
 }
 
 export function getNumericColumns(data, columns) {

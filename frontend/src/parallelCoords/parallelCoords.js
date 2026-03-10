@@ -1,5 +1,18 @@
 import * as d3 from 'd3';
 import './parallelCoords.css';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+
+function applyPcpHighlight(rowIndex) {
+    d3.selectAll('.pcp-line[data-row-index]')
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
+}
+
+subscribe('hover-change', applyPcpHighlight);
+subscribe('selection-change', setParallelCoordsSelection);
+subscribe('zoom-enter', pcpEnterZoomAll);
+subscribe('zoom-exit', pcpExitZoomAll);
+subscribe('filters-clear', pcpClearFiltersAll);
 
 const _pcpState = new Map();
 const _pcpSetSelectionFns = new Map();
@@ -7,21 +20,21 @@ const _pcpLastSelection = new Map();
 
 // ── Zoom integration ─────────────────────────────────────────────────────
 // Called by index.js before zooming in: hides all currently active filters
-export function pcpEnterZoomAll() {
+function pcpEnterZoomAll() {
     _pcpState.forEach((state) => {
         state.hiddenFilters = new Set(Object.keys(state.axisFilters));
     });
 }
 
 // Called by index.js before zooming out: reveals all filters again
-export function pcpExitZoomAll() {
+function pcpExitZoomAll() {
     _pcpState.forEach((state) => {
         state.hiddenFilters.clear();
     });
 }
 
 // Called by index.js when "Clear Selection" is pressed
-export function pcpClearFiltersAll() {
+function pcpClearFiltersAll() {
     _pcpState.forEach((state) => {
         state.axisFilters = {};
         state.hiddenFilters.clear();
@@ -506,11 +519,14 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     }
 
     _pcpSetSelectionFns.set(containerSelector, setSelection);
-    _pcpLastSelection.set(containerSelector, _pcpLastSelection.get(containerSelector) ?? null);
+    _pcpLastSelection.set(containerSelector, _pcpLastSelection.get(containerSelector) ?? getEffectiveSelection());
 
     // Reapply last-known selection (covers internal rerenders from drag/dropdown)
     const lastSel = _pcpLastSelection.get(containerSelector);
     if (lastSel && lastSel.size > 0) {
         setSelection(lastSel);
     }
+
+    // Subscribers don't fire on re-render, so reapply state manually.
+    applyPcpHighlight(getActiveRowIndex());
 }

@@ -1,5 +1,21 @@
 import * as d3 from 'd3';
 import './barChart.css';
+import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+
+function applyBarChartHighlight(rowIndex) {
+    d3.selectAll('.bar-chart-segment[data-row-index]')
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
+}
+
+function applyBarChartSelection(rowIndexSet) {
+    d3.selectAll('.bar-chart-segment[data-row-index]').classed('is-selection-dim', function () {
+        return rowIndexSet !== null && !rowIndexSet.has(Number(this.dataset.rowIndex));
+    });
+}
+
+subscribe('hover-change', applyBarChartHighlight);
+subscribe('selection-change', applyBarChartSelection);
 
 export function renderBarChart(containerSelector, columns, data, options = {}) {
     const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
@@ -354,4 +370,8 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr("height", (segment) => yScale(segment.y0) - yScale(segment.y1))
             .attr("width", xScale.bandwidth());
     });
+
+    // Subscribers don't fire on re-render, so reapply state manually.
+    applyBarChartHighlight(getActiveRowIndex());
+    applyBarChartSelection(getEffectiveSelection());
 }
