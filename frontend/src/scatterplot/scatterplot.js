@@ -317,6 +317,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             });
     });
 
+    // Subscribers don't fire on re-render, so reapply state manually.
     applyScatterHighlight(getActiveRowIndex());
 }
 

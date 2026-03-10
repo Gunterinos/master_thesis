@@ -530,5 +530,6 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         setSelection(lastSel);
     }
 
+    // Subscribers don't fire on re-render, so reapply state manually.
     applyPcpHighlight(getActiveRowIndex());
 }

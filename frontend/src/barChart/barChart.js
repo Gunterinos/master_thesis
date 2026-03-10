@@ -376,6 +376,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr("width", xScale.bandwidth());
     });
 
+    // Subscribers don't fire on re-render, so reapply state manually.
     applyBarChartHighlight(getActiveRowIndex());
     applyBarChartSelection(getEffectiveSelection());
 }

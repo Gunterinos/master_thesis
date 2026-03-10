@@ -124,6 +124,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             .text(formatCell);
     });
 
+    // Subscribers don't fire on re-render, so reapply state manually.
     applyTableHighlight(getActiveRowIndex());
     applyTableSelection(getEffectiveSelection());
 }
