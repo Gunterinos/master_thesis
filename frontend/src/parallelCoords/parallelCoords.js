@@ -3,12 +3,9 @@ import './parallelCoords.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyPcpHighlight(rowIndex) {
-    const hasActive = rowIndex !== null;
-    const isActive = (el) => hasActive && Number(el.dataset.rowIndex) === rowIndex;
-
     d3.selectAll('.pcp-line[data-row-index]')
-        .classed('is-linked-highlight', function () { return isActive(this); })
-        .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
 }
 
 subscribe('hover-change', applyPcpHighlight);

@@ -3,19 +3,14 @@ import './barChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyBarChartHighlight(rowIndex) {
-    const hasActive = rowIndex !== null;
-    const isActive = (el) => hasActive && Number(el.dataset.rowIndex) === rowIndex;
-
     d3.selectAll('.bar-chart-segment[data-row-index]')
-        .classed('is-linked-highlight', function () { return isActive(this); })
-        .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
 }
 
 function applyBarChartSelection(rowIndexSet) {
-    const hasSelection = rowIndexSet !== null;
-    const isSelected = (el) => rowIndexSet && rowIndexSet.has(Number(el.dataset.rowIndex));
     d3.selectAll('.bar-chart-segment[data-row-index]').classed('is-selection-dim', function () {
-        return hasSelection && !isSelected(this);
+        return rowIndexSet !== null && !rowIndexSet.has(Number(this.dataset.rowIndex));
     });
 }
 

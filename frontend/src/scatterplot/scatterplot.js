@@ -3,20 +3,18 @@ import './scatterplot.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyScatterHighlight(rowIndex) {
-    const hasActive = rowIndex !== null;
-    const isActive = (el) => hasActive && Number(el.dataset.rowIndex) === rowIndex;
-
     d3.selectAll('circle[data-row-index]')
-        .classed('is-linked-highlight', function () { return isActive(this); })
-        .classed('is-linked-dim', function () { return hasActive && !isActive(this); })
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; })
         .attr('r', function () {
-            if (!hasActive) return 4;
-            return isActive(this) ? 7 : 3;
+            // here we establish the size of the radius of the points
+            if (rowIndex === null) return 4;
+            return Number(this.dataset.rowIndex) === rowIndex ? 7 : 3;
         });
 
     d3.selectAll('.scatter-point-label[data-row-index]')
-        .classed('is-linked-highlight', function () { return isActive(this); })
-        .classed('is-linked-dim', function () { return hasActive && !isActive(this); });
+        .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
 }
 
 subscribe('hover-change', applyScatterHighlight);

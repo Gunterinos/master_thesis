@@ -10,9 +10,9 @@ let fullData = [];
 let chartRegistry = null;
 
 function getCurrentData() {
-    const filtered = getFilteredRowIndexSet();
-    return filtered
-        ? fullData.filter((row) => filtered.has(row.__rowIndex))
+    const filteredRowIndices = getFilteredRowIndexSet();
+    return filteredRowIndices
+        ? fullData.filter((row) => filteredRowIndices.has(row.__rowIndex))
         : fullData;
 }
 
@@ -52,14 +52,14 @@ function applySelectionFilter(rowIndices) {
 }
 
 function toggleZoom() {
-    const sel = getSelectedRowIndexSet();
-    if (!sel) { return; }
+    const selectedRowIndices = getSelectedRowIndexSet();
+    if (!selectedRowIndices) { return; }
 
     clearActiveRowIndex();
     if (getIsZoomed()) {
-        setSelectionState({ selected: sel, filtered: null, zoomed: false });
+        setSelectionState({ selected: selectedRowIndices, filtered: null, zoomed: false });
     } else {
-        setSelectionState({ selected: sel, filtered: sel, zoomed: true });
+        setSelectionState({ selected: selectedRowIndices, filtered: selectedRowIndices, zoomed: true });
     }
     renderAllPanels({ animate: true });
     updateSelectionButtons();
@@ -93,10 +93,8 @@ d3.json("/api/portfolio-data")
             onBrushFilterChange: (passingRowIndices) => {
                 clearActiveRowIndex();
                 if (passingRowIndices === null) {
-                    // All brush filters removed — clear the selection they were driving
                     setSelectionState({ selected: null, filtered: null, zoomed: false });
                 } else {
-                    // Active brush filter — treat passing rows as the current selection
                     setSelectionState({ selected: new Set(passingRowIndices), filtered: null, zoomed: false });
                 }
                 updateSelectionButtons();
