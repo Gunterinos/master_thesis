@@ -15,6 +15,7 @@ export function initializeSpacePanel(config) {
         zLabelSelector = null,
         labelsToggleSelector = null,
         surfaceToggleSelector = null,
+        dominatedToggleSelector = null,
         columns,
         data,
         defaultChart,
@@ -37,9 +38,11 @@ export function initializeSpacePanel(config) {
     const zLabel = zLabelSelector ? d3.select(zLabelSelector) : null;
     const labelsToggle = labelsToggleSelector ? d3.select(labelsToggleSelector) : null;
     const surfaceToggle = surfaceToggleSelector ? d3.select(surfaceToggleSelector) : null;
+    const dominatedToggle = dominatedToggleSelector ? d3.select(dominatedToggleSelector) : null;
     // Persist showLabels state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
     let showSurface = surfaceToggle ? surfaceToggle.classed("active") : false;
+    let showDominated = dominatedToggle ? dominatedToggle.classed("active") : false;
 
     const previousChart = chartSelect.property("value");
     const previousXAxis = xAxisSelect.property("value");
@@ -108,6 +111,9 @@ export function initializeSpacePanel(config) {
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);
         }
+        if (dominatedToggle) {
+            dominatedToggle.classed("hidden", !needsZ);
+        }
 
         if (!chartConfig) {
             return;
@@ -123,6 +129,7 @@ export function initializeSpacePanel(config) {
             animate: renderOptions.animate === true,
             showLabels,
             showSurface,
+            showDominated,
         });
 
         onAfterRender();
@@ -140,6 +147,14 @@ export function initializeSpacePanel(config) {
         surfaceToggle.on("click", () => {
             showSurface = !showSurface;
             surfaceToggle.classed("active", showSurface);
+            updatePanel();
+        });
+    }
+
+    if (dominatedToggle) {
+        dominatedToggle.on("click", () => {
+            showDominated = !showDominated;
+            dominatedToggle.classed("active", showDominated);
             updatePanel();
         });
     }

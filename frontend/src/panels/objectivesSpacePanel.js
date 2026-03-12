@@ -16,6 +16,7 @@ export function initializeObjectivesSpacePanel(config) {
         zLabelSelector: 'label[for="objectives-z-axis"]',
         labelsToggleSelector: "#objectives-labels-toggle",
         surfaceToggleSelector: "#objectives-surface-toggle",
+        dominatedToggleSelector: "#objectives-dominated-toggle",
         columns: objectiveColumns,
         data,
         defaultChart: "scatter",

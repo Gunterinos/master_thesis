@@ -78,3 +78,11 @@ body.shift-held .scatter3d-label.is-point-selected {
 .scatter3d-surface-group {
     pointer-events: none;
 }
+
+.scatter3d-dominated-point {
+    pointer-events: none;
+}
+
+.scatter3d-dominated-group {
+    pointer-events: none;
+}

@@ -61,6 +61,55 @@ function project(x, y, z, rotX, rotZ, centerX, centerY, scale) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Pareto front + dominated cloud helpers                             */
+/* ------------------------------------------------------------------ */
+
+/** Returns the subset of points that are non-dominated (assuming minimisation on xVal/yVal/zVal). */
+function computeParetoFront3d(points) {
+    return points.filter(p =>
+        !points.some(q =>
+            q !== p &&
+            q.xVal <= p.xVal && q.yVal <= p.yVal && q.zVal <= p.zVal &&
+            (q.xVal < p.xVal  || q.yVal < p.yVal  || q.zVal < p.zVal)
+        )
+    );
+}
+
+/**
+ * Generates `count` dominated pseudo-points by perturbing each Pareto-front
+ * point in the positive direction (worse objectives).  Uses a deterministic
+ * seeded PRNG so the cloud is stable across re-renders for the same data.
+ */
+function generateDominatedCloud(paretoFront, xDomain, yDomain, zDomain, count = 280) {
+    if (paretoFront.length === 0) return [];
+
+    const xRange = (xDomain[1] - xDomain[0]) || 1;
+    const yRange = (yDomain[1] - yDomain[0]) || 1;
+    const zRange = (zDomain[1] - zDomain[0]) || 1;
+
+    // Seeded LCG – deterministic for the same Pareto front
+    let seed = paretoFront.reduce((s, p) => (s + p.xVal * 7 + p.yVal * 13 + p.zVal * 17) | 0, 0);
+    const rand = () => {
+        seed = (seed * 1664525 + 1013904223) | 0;
+        return (seed >>> 0) / 0xFFFFFFFF;
+    };
+
+    const result = [];
+    const perPoint = Math.ceil(count / paretoFront.length);
+
+    for (const p of paretoFront) {
+        for (let i = 0; i < perPoint && result.length < count; i++) {
+            // All offsets ≥ 0 → generated point is always dominated by p
+            const dx = rand() * xRange * 0.4;
+            const dy = rand() * yRange * 0.4;
+            const dz = rand() * zRange * 0.4;
+            result.push({ xVal: p.xVal - dx, yVal: p.yVal - dy, zVal: p.zVal - dz });
+        }
+    }
+    return result;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main render function                                               */
 /* ------------------------------------------------------------------ */
 
@@ -73,6 +122,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         animate         = false,
         showLabels      = false,
         showSurface     = false,
+        showDominated   = false,
     } = options;
 
     const container     = d3.select(containerSelector);
@@ -155,6 +205,13 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
     containerNode.dataset.prev3dZMin = String(zScale.domain()[0]);
     containerNode.dataset.prev3dZMax = String(zScale.domain()[1]);
 
+    /* ---- pre-compute dominated cloud (stable per Pareto front) ---- */
+    let dominatedCloud = [];
+    if (showDominated && points.length > 0) {
+        const paretoFront = computeParetoFront3d(points);
+        dominatedCloud = generateDominatedCloud(paretoFront, xScale.domain(), yScale.domain(), zScale.domain());
+    }
+
     /* ---- SVG ---- */
     const svg = container.append('svg')
         .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
@@ -207,6 +264,26 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
                      endNx, endNy, endNz };
         });
         projected.sort((a, b) => a.depth - b.depth);  // painter's order
+
+        /* ---- dominated cloud (behind surface and real points) ---- */
+        if (showDominated && dominatedCloud.length > 0) {
+            const domG = g.append('g').attr('class', 'scatter3d-dominated-group');
+            const projectedDom = dominatedCloud.map(p => {
+                const pr = proj(xScale(p.xVal), yScale(p.yVal), zScale(p.zVal));
+                return { sx: pr.x, sy: pr.y, depth: pr.depth };
+            });
+            projectedDom.sort((a, b) => a.depth - b.depth);
+            domG.selectAll('.scatter3d-dominated-point')
+                .data(projectedDom)
+                .enter()
+                .append('circle')
+                .attr('class', 'scatter3d-dominated-point')
+                .attr('cx', d => d.sx)
+                .attr('cy', d => d.sy)
+                .attr('r', 2)
+                .attr('fill', '#8a9ab0')
+                .attr('opacity', 0.2);
+        }
 
         /* ---- Delaunay surface (between axes and points) ---- */
         if (showSurface) {
