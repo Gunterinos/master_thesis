@@ -72,6 +72,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         onShiftClick    = () => {},
         animate         = false,
         showLabels      = false,
+        showSurface     = false,
     } = options;
 
     const container     = d3.select(containerSelector);
@@ -202,9 +203,18 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
             const endNz = zScale(p.zVal);
             const endPr = proj(endNx, endNy, endNz);
             return { ...p, sx: pr.x, sy: pr.y, depth: pr.depth,
-                     endSx: endPr.x, endSy: endPr.y, endDepth: endPr.depth };
+                     endSx: endPr.x, endSy: endPr.y, endDepth: endPr.depth,
+                     endNx, endNy, endNz };
         });
         projected.sort((a, b) => a.depth - b.depth);  // painter's order
+
+        /* ---- Delaunay surface (between axes and points) ---- */
+        if (showSurface) {
+            const surfaceG = drawDelaunaySurface(g, projected);
+            if (animateThis) {
+                surfaceG.attr('opacity', 0).transition().duration(DUR).attr('opacity', 1);
+            }
+        }
 
         /* ---- labels (under the circles so circles get events) ---- */
         if (showLabels) {
@@ -290,6 +300,88 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         /* ---- re-apply global state ---- */
         applyScatter3dHighlight(getActiveRowIndex());
         setSelection(getEffectiveSelection());
+    }
+
+    /* ============================================================= */
+    /*  Delaunay surface mesh                                          */
+    /* ============================================================= */
+    function drawDelaunaySurface(g, projected) {
+        const surfaceG = g.append('g').attr('class', 'scatter3d-surface-group');
+
+        const delaunay = d3.Delaunay.from(projected, d => d.endSx, d => d.endSy);
+        const tris = delaunay.triangles;
+
+        // Fixed light in view space (x2=screen-right, z2=screen-up, y2=depth).
+        // Upper-left-front: (-0.4, -0.3, 0.9) normalised.
+        const rawL = { x: -0.4, y: -0.3, z: 0.9 };
+        const rawLm = Math.sqrt(rawL.x**2 + rawL.y**2 + rawL.z**2);
+        const light = { x: rawL.x/rawLm, y: rawL.y/rawLm, z: rawL.z/rawLm };
+
+        // Rotate an object-space vector into view space (same matrices as project()).
+        function rotateVec(nx, ny, nz) {
+            const radX = rotationX * Math.PI / 180;
+            const radZ = rotationZ * Math.PI / 180;
+            const x1 =  nx * Math.cos(radZ) - ny * Math.sin(radZ);
+            const y1 =  nx * Math.sin(radZ) + ny * Math.cos(radZ);
+            const z1 =  nz;
+            const x2 = x1;
+            const y2 = y1 * Math.cos(radX) - z1 * Math.sin(radX);
+            const z2 = y1 * Math.sin(radX) + z1 * Math.cos(radX);
+            return { x: x2, y: y2, z: z2 };
+        }
+
+        const triData = [];
+        for (let i = 0; i < tris.length; i += 3) {
+            const p0 = projected[tris[i]];
+            const p1 = projected[tris[i + 1]];
+            const p2 = projected[tris[i + 2]];
+
+            // Surface normal in object space via cross product of edge vectors.
+            const v1x = p1.endNx - p0.endNx, v1y = p1.endNy - p0.endNy, v1z = p1.endNz - p0.endNz;
+            const v2x = p2.endNx - p0.endNx, v2y = p2.endNy - p0.endNy, v2z = p2.endNz - p0.endNz;
+            const onx = v1y * v2z - v1z * v2y;
+            const ony = v1z * v2x - v1x * v2z;
+            const onz = v1x * v2y - v1y * v2x;
+            const onm = Math.sqrt(onx**2 + ony**2 + onz**2);
+            if (onm < 1e-10) continue;
+
+            // Rotate normal to view space then dot with light.
+            const rn  = rotateVec(onx/onm, ony/onm, onz/onm);
+            const dot = rn.x * light.x + rn.y * light.y + rn.z * light.z;
+
+            // Signed dot distinguishes front (dot > 0) from back (dot < 0).
+            // Front: grey range [0.55 – 1.0]  Back: grey range [0.15 – 0.38]
+            const shade = dot >= 0
+                ? 0.55 + 0.45 * dot
+                : 0.15 + 0.23 * (-dot);
+
+            triData.push({
+                pts: [p0, p1, p2],
+                depth: (p0.endDepth + p1.endDepth + p2.endDepth) / 3,
+                shade,
+            });
+        }
+
+        // Painter's algorithm: far triangles first.
+        triData.sort((a, b) => a.depth - b.depth);
+
+        triData.forEach(tri => {
+            const v  = Math.round(255 * tri.shade);
+            const sv = Math.round(v  * 0.72);          // stroke slightly darker
+            const d  = `M${tri.pts[0].endSx},${tri.pts[0].endSy}`
+                     + `L${tri.pts[1].endSx},${tri.pts[1].endSy}`
+                     + `L${tri.pts[2].endSx},${tri.pts[2].endSy}Z`;
+            surfaceG.append('path')
+                .attr('class', 'scatter3d-surface-tri')
+                .attr('d', d)
+                .attr('fill', `rgb(${v},${v},${v})`)
+                .attr('fill-opacity', 0.45)
+                .attr('stroke', `rgb(${sv},${sv},${sv})`)
+                .attr('stroke-opacity', 0.65)
+                .attr('stroke-width', 0.5);
+        });
+
+        return surfaceG;
     }
 
     /* ============================================================= */

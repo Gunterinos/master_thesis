@@ -70,3 +70,11 @@ body.shift-held .scatter3d-label.is-point-selected {
     pointer-events: none;
     user-select: none;
 }
+
+.scatter3d-surface-tri {
+    pointer-events: none;
+}
+
+.scatter3d-surface-group {
+    pointer-events: none;
+}

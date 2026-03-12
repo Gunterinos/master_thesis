@@ -14,6 +14,7 @@ export function initializeSpacePanel(config) {
         yLabelSelector,
         zLabelSelector = null,
         labelsToggleSelector = null,
+        surfaceToggleSelector = null,
         columns,
         data,
         defaultChart,
@@ -35,8 +36,10 @@ export function initializeSpacePanel(config) {
     const yLabel = d3.select(yLabelSelector);
     const zLabel = zLabelSelector ? d3.select(zLabelSelector) : null;
     const labelsToggle = labelsToggleSelector ? d3.select(labelsToggleSelector) : null;
+    const surfaceToggle = surfaceToggleSelector ? d3.select(surfaceToggleSelector) : null;
     // Persist showLabels state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
+    let showSurface = surfaceToggle ? surfaceToggle.classed("active") : false;
 
     const previousChart = chartSelect.property("value");
     const previousXAxis = xAxisSelect.property("value");
@@ -102,6 +105,9 @@ export function initializeSpacePanel(config) {
         if (labelsToggle) {
             labelsToggle.classed("hidden", !isScatter);
         }
+        if (surfaceToggle) {
+            surfaceToggle.classed("hidden", !needsZ);
+        }
 
         if (!chartConfig) {
             return;
@@ -116,6 +122,7 @@ export function initializeSpacePanel(config) {
             zAxis: zAxisSelect ? zAxisSelect.property("value") : undefined,
             animate: renderOptions.animate === true,
             showLabels,
+            showSurface,
         });
 
         onAfterRender();
@@ -125,6 +132,14 @@ export function initializeSpacePanel(config) {
         labelsToggle.on("click", () => {
             showLabels = !showLabels;
             labelsToggle.classed("active", showLabels);
+            updatePanel();
+        });
+    }
+
+    if (surfaceToggle) {
+        surfaceToggle.on("click", () => {
+            showSurface = !showSurface;
+            surfaceToggle.classed("active", showSurface);
             updatePanel();
         });
     }
