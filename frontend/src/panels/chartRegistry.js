@@ -44,6 +44,7 @@ export function createChartRegistry(interactionOptions) {
                     showLabels,
                     showSurface,
                     showDominated,
+                    disableBrush: interactionOptions.disableBrush,
                 });
             },
         },

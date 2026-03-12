@@ -3,6 +3,49 @@ import './scatterplot3d.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 /* ------------------------------------------------------------------ */
+/*  Per-instance 3-D brush filter state                                */
+/* ------------------------------------------------------------------ */
+
+// axisFilters: { xKey?: {min,max}, yKey?: {min,max}, zKey?: {min,max} }
+// hiddenFilters: Set of axis keys (hidden while zoomed, like PCP)
+const _scatter3dFilterState = new Map();
+
+function getFilterState(containerSelector) {
+    if (!_scatter3dFilterState.has(containerSelector)) {
+        _scatter3dFilterState.set(containerSelector, {
+            axisFilters: {},
+            hiddenFilters: new Set(),
+            hadActiveBrushFilters: false,
+        });
+    }
+    return _scatter3dFilterState.get(containerSelector);
+}
+
+function scatter3dEnterZoomAll() {
+    _scatter3dFilterState.forEach((state) => {
+        Object.keys(state.axisFilters).forEach(k => state.hiddenFilters.add(k));
+    });
+}
+
+function scatter3dExitZoomAll() {
+    _scatter3dFilterState.forEach((state) => {
+        state.hiddenFilters.clear();
+    });
+}
+
+function scatter3dClearFiltersAll() {
+    _scatter3dFilterState.forEach((state) => {
+        state.axisFilters = {};
+        state.hiddenFilters.clear();
+        state.hadActiveBrushFilters = false;
+    });
+}
+
+subscribe('zoom-enter',    scatter3dEnterZoomAll);
+subscribe('zoom-exit',     scatter3dExitZoomAll);
+subscribe('filters-clear', scatter3dClearFiltersAll);
+
+/* ------------------------------------------------------------------ */
 /*  Global hover highlight (linked across all charts)                  */
 /* ------------------------------------------------------------------ */
 
@@ -115,15 +158,23 @@ function generateDominatedCloud(paretoFront, xDomain, yDomain, zDomain, count = 
 
 export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, options = {}) {
     const {
-        onHoverStart    = () => {},
-        onHoverEnd      = () => {},
-        onSelectionChange = () => {},
-        onShiftClick    = () => {},
-        animate         = false,
-        showLabels      = false,
-        showSurface     = false,
-        showDominated   = false,
+        onHoverStart       = () => {},
+        onHoverEnd         = () => {},
+        onSelectionChange  = () => {},
+        onShiftClick       = () => {},
+        onBrushFilterChange = () => {},
+        disableBrush       = false,
+        animate            = false,
+        showLabels         = false,
+        showSurface        = false,
+        showDominated      = false,
     } = options;
+
+    // Convenience re-render closure (used by brush callbacks)
+    const rerender = (anim) =>
+        renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, { ...options, animate: anim });
+
+    const filterState = getFilterState(containerSelector);
 
     const container     = d3.select(containerSelector);
     const containerNode = container.node();
@@ -212,6 +263,49 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         dominatedCloud = generateDominatedCloud(paretoFront, xScale.domain(), yScale.domain(), zScale.domain());
     }
 
+    /* ---- brush filter helper ---- */
+    // axisScaleMeta: the three axis definitions reused by brushes + planes
+    const axisScaleMeta = [
+        { key: xKey, valKey: 'xVal', scale: xScale, dir: [2,0,0], start: [-1,-1,-1], corner0: [-1,-1,-1], corner1: [-1,1,-1], corner2: [-1,1,1], corner3: [-1,-1,1], color: '#e74c3c' },
+        { key: yKey, valKey: 'yVal', scale: yScale, dir: [0,2,0], start: [-1,-1,-1], corner0: [-1,-1,-1], corner1: [1,-1,-1], corner2: [1,-1,1], corner3: [-1,-1,1], color: '#27ae60' },
+        { key: zKey, valKey: 'zVal', scale: zScale, dir: [0,0,2], start: [-1,-1,-1], corner0: [-1,-1,-1], corner1: [1,-1,-1], corner2: [1,1,-1], corner3: [-1,1,-1], color: '#3498db' },
+    ];
+
+    function updateFilteredPoints() {
+        const activeFilters = Object.entries(filterState.axisFilters)
+            .filter(([axis]) => !filterState.hiddenFilters.has(axis));
+        const hasBrushFilter = activeFilters.length > 0;
+
+        container.selectAll('.scatter3d-point[data-row-index]')
+            .classed('is-brush-filtered', function () {
+                if (!hasBrushFilter) return false;
+                const row = data[Number(this.dataset.rowIndex)];
+                if (!row) return false;
+                return activeFilters.some(([axis, f]) => {
+                    const val = Number(row[axis]);
+                    return val < f.min || val > f.max;
+                });
+            });
+
+        const hasOnlyHidden = Object.keys(filterState.axisFilters).length > 0 && !hasBrushFilter;
+        if (hasOnlyHidden) return;
+
+        const wasActive = filterState.hadActiveBrushFilters || false;
+        filterState.hadActiveBrushFilters = hasBrushFilter;
+
+        if (hasBrushFilter) {
+            const passing = data
+                .filter(row => activeFilters.every(([axis, f]) => {
+                    const val = Number(row[axis]);
+                    return val >= f.min && val <= f.max;
+                }))
+                .map((row, i) => row.__rowIndex ?? i);
+            onBrushFilterChange(passing);
+        } else if (wasActive) {
+            onBrushFilterChange(null);
+        }
+    }
+
     /* ---- SVG ---- */
     const svg = container.append('svg')
         .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
@@ -227,6 +321,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
 
     function drawScene(animateThis) {
         svg.selectAll('g.scene').remove();
+        svg.selectAll('.scatter3d-axis-brush').remove();
         const g = svg.append('g').attr('class', 'scene');
 
         /* -- helper to project a normalised 3-tuple -- */
@@ -372,11 +467,199 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
             .attr('x', containerWidth - 10)
             .attr('y', containerHeight - 10)
             .attr('text-anchor', 'end')
-            .text('Drag to rotate · Shift+click to select');
+            .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
 
         /* ---- re-apply global state ---- */
         applyScatter3dHighlight(getActiveRowIndex());
         setSelection(getEffectiveSelection());
+        updateFilteredPoints();
+
+        /* ---- filter planes (one per active axis filter) ---- */
+        if (!disableBrush) drawFilterPlanes(g, proj);
+
+        /* ---- brush overlays on each axis spine ---- */
+        if (!disableBrush) drawAxisBrushes(svg, proj);
+    }
+
+    /* ============================================================= */
+    /*  Filter planes                                                  */
+    /* ============================================================= */
+    function drawFilterPlanes(g, proj) {
+        const planesG = g.append('g').attr('class', 'scatter3d-filter-planes');
+
+        axisScaleMeta.forEach(({ key, scale, dir, color }) => {
+            const filter = filterState.axisFilters[key];
+            const isHidden = filterState.hiddenFilters.has(key);
+            if (!filter || isHidden) return;
+
+            [filter.min, filter.max].forEach(dataVal => {
+                // Normalised position along this axis (–1…1)
+                const t = scale(dataVal);  // already maps data → norm
+
+                // Build the 4 corners of the plane perpendicular to this axis.
+                // dir = which axis moves: [2,0,0] for X, [0,2,0] for Y, [0,0,2] for Z
+                // The plane spans the full –1…1 square of the other two axes.
+                let c0, c1, c2, c3;
+                if (dir[0] !== 0) {
+                    // X-axis plane: spans Y (–1…1) and Z (–1…1)
+                    c0 = proj(t, -1, -1);
+                    c1 = proj(t,  1, -1);
+                    c2 = proj(t,  1,  1);
+                    c3 = proj(t, -1,  1);
+                } else if (dir[1] !== 0) {
+                    // Y-axis plane: spans X (–1…1) and Z (–1…1)
+                    c0 = proj(-1, t, -1);
+                    c1 = proj( 1, t, -1);
+                    c2 = proj( 1, t,  1);
+                    c3 = proj(-1, t,  1);
+                } else {
+                    // Z-axis plane: spans X (–1…1) and Y (–1…1)
+                    c0 = proj(-1, -1, t);
+                    c1 = proj( 1, -1, t);
+                    c2 = proj( 1,  1, t);
+                    c3 = proj(-1,  1, t);
+                }
+
+                const pathD = `M${c0.x},${c0.y}L${c1.x},${c1.y}L${c2.x},${c2.y}L${c3.x},${c3.y}Z`;
+                planesG.append('path')
+                    .attr('class', 'scatter3d-filter-plane')
+                    .attr('d', pathD)
+                    .attr('fill', color)
+                    .attr('fill-opacity', 0.12)
+                    .attr('stroke', color)
+                    .attr('stroke-opacity', 0.7)
+                    .attr('stroke-width', 1.5)
+                    .attr('stroke-dasharray', '5,3');
+            });
+        });
+
+        return planesG;
+    }
+
+    /* ============================================================= */
+    /*  Axis brush overlays                                            */
+    /* ============================================================= */
+    // We overlay a small HTML element for each axis that holds a D3 brushY.
+    // The brush operates in "spine-pixel" space (the projected length of the
+    // axis line on screen) and we map back to data-space via the axis scale.
+    function drawAxisBrushes(svg, proj) {
+        axisScaleMeta.forEach(({ key, scale, dir, color }) => {
+            const isHidden = filterState.hiddenFilters.has(key);
+            if (isHidden) return;
+
+            // Projected start and end of this axis spine
+            const axisOrigin = proj(-1, -1, -1);
+            // End tip of axis
+            let axisEnd;
+            if (dir[0] !== 0)      axisEnd = proj(1, -1, -1);
+            else if (dir[1] !== 0) axisEnd = proj(-1, 1, -1);
+            else                   axisEnd = proj(-1, -1, 1);
+
+            // Screen-space length and angle of the spine
+            const dx = axisEnd.x - axisOrigin.x;
+            const dy = axisEnd.y - axisOrigin.y;
+            const spineLen = Math.sqrt(dx * dx + dy * dy);
+            if (spineLen < 10) return;
+
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            // Mid-point for label overlay
+            const mx = (axisOrigin.x + axisEnd.x) / 2;
+            const my = (axisOrigin.y + axisEnd.y) / 2;
+
+            // We draw the brush in a thin <g> rotated along the spine.
+            // brushY operates vertically; we rotate it to align with the spine.
+            const HALF = spineLen / 2;
+            const BRUSH_W = 8; // half-width each side of the spine
+
+            const brushG = svg.append('g')
+                .attr('class', 'scatter3d-axis-brush')
+                .attr('data-axis', key)
+                .attr('transform', `translate(${mx},${my}) rotate(${angle})`);
+
+            // Invisible wider hit-area rect behind the brush
+            brushG.append('rect')
+                .attr('class', 'scatter3d-axis-brush-bg')
+                .attr('x', -HALF)
+                .attr('y', -BRUSH_W * 2)
+                .attr('width', spineLen)
+                .attr('height', BRUSH_W * 4)
+                .attr('fill', 'none');
+
+            // The brush extent: along the local X axis (which is the spine direction)
+            const brush = d3.brushX()
+                .extent([[-HALF, -BRUSH_W], [HALF, BRUSH_W]])
+                .on('brush', function (event) {
+                    if (!event.sourceEvent) return;
+                    if (!event.selection) return;
+                    const [px0, px1] = event.selection;
+                    // Map from pixel offset (–HALF…+HALF) → normalised (–1…1) → data value
+                    const norm0 = (px0 / HALF);          // –1 … +1
+                    const norm1 = (px1 / HALF);
+                    const dataMin = scale.invert(norm0);
+                    const dataMax = scale.invert(norm1);
+                    filterState.axisFilters[key] = {
+                        min: Math.min(dataMin, dataMax),
+                        max: Math.max(dataMin, dataMax),
+                    };
+                    updateFilteredPoints();
+                    // Redraw planes without full re-render
+                    svg.select('.scatter3d-filter-planes').remove();
+                    const sceneG = svg.select('g.scene');
+                    drawFilterPlanes(sceneG, proj);
+                })
+                .on('end', function (event) {
+                    if (!event.sourceEvent) return;
+                    if (!event.selection) {
+                        delete filterState.axisFilters[key];
+                        filterState.hiddenFilters.delete(key);
+                        updateFilteredPoints();
+                        svg.select('.scatter3d-filter-planes').remove();
+                        const sceneG = svg.select('g.scene');
+                        drawFilterPlanes(sceneG, proj);
+                    }
+                });
+
+            brushG.call(brush);
+
+            // Double-click on the selection rect removes the filter
+            brushG.on('dblclick.remove', function (event) {
+                const selPixels = d3.brushSelection(this);
+                if (!selPixels) return;
+                const [localX] = d3.pointer(event, this);
+                if (localX >= selPixels[0] - 4 && localX <= selPixels[1] + 4) {
+                    event.stopPropagation();
+                    brush.move(brushG, null);
+                    delete filterState.axisFilters[key];
+                    filterState.hiddenFilters.delete(key);
+                    updateFilteredPoints();
+                    svg.select('.scatter3d-filter-planes').remove();
+                    drawFilterPlanes(svg.select('g.scene'), proj);
+                }
+            });
+
+            // Reset SVG cursor when mouse leaves the brush widget,
+            // since D3 brush may have set an inline cursor on the SVG.
+            brushG.on('mouseleave.cursor', () => {
+                if (!isDragging) svg.style('cursor', null);
+            });
+
+            // Restore previous filter position
+            const existing = filterState.axisFilters[key];
+            if (existing) {
+                const px0 = scale(existing.min)  * HALF;   // norm → pixel
+                const px1 = scale(existing.max)  * HALF;
+                const lo = Math.max(-HALF, Math.min(HALF, Math.min(px0, px1)));
+                const hi = Math.max(-HALF, Math.min(HALF, Math.max(px0, px1)));
+                if (hi > lo) brush.move(brushG, [lo, hi]);
+            }
+
+            // Style the brush selection rect
+            brushG.select('.selection')
+                .attr('fill', color)
+                .attr('fill-opacity', 0.25)
+                .attr('stroke', color)
+                .attr('stroke-opacity', 0.8);
+        });
     }
 
     /* ============================================================= */
@@ -511,8 +794,9 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
 
     svg.on('mousedown.rotate', (event) => {
         if (event.button !== 0) return;
-        // Don't start drag if clicking on a point
+        // Don't start drag if clicking on a point or a brush overlay
         if (event.target.classList.contains('scatter3d-point')) return;
+        if (event.target.closest && event.target.closest('.scatter3d-axis-brush')) return;
         isDragging = true;
         lastX = event.clientX;
         lastY = event.clientY;
@@ -534,7 +818,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
             })
             .on('mouseup.scatter3d-rotate', () => {
                 isDragging = false;
-                svg.style('cursor', 'grab');
+                svg.style('cursor', null); // remove inline; let CSS :hover rule take over
                 d3.select(window).on('mousemove.scatter3d-rotate', null).on('mouseup.scatter3d-rotate', null);
             });
     });

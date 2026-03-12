@@ -86,3 +86,44 @@ body.shift-held .scatter3d-label.is-point-selected {
 .scatter3d-dominated-group {
     pointer-events: none;
 }
+
+/* Points excluded by an axis brush filter */
+.scatter3d-point.is-brush-filtered {
+    opacity: 0.1 !important;
+    fill: #aaa !important;
+}
+
+/* Filter plane overlays */
+.scatter3d-filter-plane {
+    pointer-events: none;
+}
+
+.scatter3d-filter-planes {
+    pointer-events: none;
+}
+
+/* Axis brush overlays */
+.scatter3d-axis-brush {
+    cursor: crosshair;
+}
+
+/* Don't let D3's inline cursor bleed onto the SVG; the brush widget handles its own cursor */
+.scatter3d-axis-brush .overlay {
+    cursor: crosshair !important;
+}
+
+.scatter3d-axis-brush .selection {
+    cursor: move !important;
+    rx: 2;
+}
+
+.scatter3d-axis-brush .handle {
+    fill: #fff;
+    stroke: #555;
+    stroke-width: 1;
+    cursor: ew-resize !important;
+}
+
+.scatter3d-axis-brush-bg {
+    pointer-events: none;
+}
