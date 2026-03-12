@@ -82,6 +82,15 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
     let rotationX = Number(containerNode.dataset.rot3dX ?? -20);
     let rotationZ = Number(containerNode.dataset.rot3dZ ?? 45);
 
+    /* ---- previous domain state (for animated transitions) ---- */
+    const prevXMin = Number(containerNode.dataset.prev3dXMin);
+    const prevXMax = Number(containerNode.dataset.prev3dXMax);
+    const prevYMin = Number(containerNode.dataset.prev3dYMin);
+    const prevYMax = Number(containerNode.dataset.prev3dYMax);
+    const prevZMin = Number(containerNode.dataset.prev3dZMin);
+    const prevZMax = Number(containerNode.dataset.prev3dZMax);
+    const hasPrevDomain = [prevXMin, prevXMax, prevYMin, prevYMax, prevZMin, prevZMax].every(Number.isFinite);
+
     container.selectAll('*').remove();
 
     /* ---- tooltip (shared singleton) ---- */
@@ -126,6 +135,25 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
     const yScale = d3.scaleLinear().domain([yExt[0] - pad(yExt), yExt[1] + pad(yExt)]).range([-1, 1]);
     const zScale = d3.scaleLinear().domain([zExt[0] - pad(zExt), zExt[1] + pad(zExt)]).range([-1, 1]);
 
+    /* ---- start scales (old domains, for animated transitions) ---- */
+    const startXScale = animate && hasPrevDomain
+        ? d3.scaleLinear().domain([prevXMin, prevXMax]).range([-1, 1])
+        : xScale;
+    const startYScale = animate && hasPrevDomain
+        ? d3.scaleLinear().domain([prevYMin, prevYMax]).range([-1, 1])
+        : yScale;
+    const startZScale = animate && hasPrevDomain
+        ? d3.scaleLinear().domain([prevZMin, prevZMax]).range([-1, 1])
+        : zScale;
+
+    /* ---- persist current domains for next render ---- */
+    containerNode.dataset.prev3dXMin = String(xScale.domain()[0]);
+    containerNode.dataset.prev3dXMax = String(xScale.domain()[1]);
+    containerNode.dataset.prev3dYMin = String(yScale.domain()[0]);
+    containerNode.dataset.prev3dYMax = String(yScale.domain()[1]);
+    containerNode.dataset.prev3dZMin = String(zScale.domain()[0]);
+    containerNode.dataset.prev3dZMax = String(zScale.domain()[1]);
+
     /* ---- SVG ---- */
     const svg = container.append('svg')
         .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
@@ -135,7 +163,11 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
     /* ============================================================= */
     /*  Internal draw – called whenever rotation changes              */
     /* ============================================================= */
-    function drawScene() {
+    /* ---- whether this render should animate ---- */
+    const shouldAnimate = animate && hasPrevDomain;
+    const DUR = 420;  // ms – matches 2D scatterplot
+
+    function drawScene(animateThis) {
         svg.selectAll('g.scene').remove();
         const g = svg.append('g').attr('class', 'scene');
 
@@ -143,21 +175,40 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         const proj = (nx, ny, nz) => project(nx, ny, nz, rotationX, rotationZ, centerX, centerY, scale);
 
         /* ---- axes (drawn first, behind points) ---- */
-        drawAxes(g, proj, xKey, yKey, zKey, xScale, yScale, zScale);
+        if (animateThis) {
+            // Crossfade: old tick values fade out, new tick values fade in
+            const oldAxesG = drawAxes(g, proj, xKey, yKey, zKey, startXScale, startYScale, startZScale);
+            oldAxesG.transition().duration(DUR).attr('opacity', 0).remove();
 
-        /* ---- project points ---- */
+            const newAxesG = drawAxes(g, proj, xKey, yKey, zKey, xScale, yScale, zScale);
+            newAxesG.attr('opacity', 0).transition().duration(DUR).attr('opacity', 1);
+        } else {
+            drawAxes(g, proj, xKey, yKey, zKey, xScale, yScale, zScale);
+        }
+
+        /* ---- project points at START positions (old scales for animation) ---- */
+        const usedXScale = animateThis ? startXScale : xScale;
+        const usedYScale = animateThis ? startYScale : yScale;
+        const usedZScale = animateThis ? startZScale : zScale;
+
         const projected = points.map(p => {
-            const nx = xScale(p.xVal);
-            const ny = yScale(p.yVal);
-            const nz = zScale(p.zVal);
+            const nx = usedXScale(p.xVal);
+            const ny = usedYScale(p.yVal);
+            const nz = usedZScale(p.zVal);
             const pr = proj(nx, ny, nz);
-            return { ...p, sx: pr.x, sy: pr.y, depth: pr.depth };
+            // Also compute end positions for animation
+            const endNx = xScale(p.xVal);
+            const endNy = yScale(p.yVal);
+            const endNz = zScale(p.zVal);
+            const endPr = proj(endNx, endNy, endNz);
+            return { ...p, sx: pr.x, sy: pr.y, depth: pr.depth,
+                     endSx: endPr.x, endSy: endPr.y, endDepth: endPr.depth };
         });
         projected.sort((a, b) => a.depth - b.depth);  // painter's order
 
         /* ---- labels (under the circles so circles get events) ---- */
         if (showLabels) {
-            g.selectAll('.scatter3d-label')
+            const labelSel = g.selectAll('.scatter3d-label')
                 .data(projected)
                 .enter()
                 .append('text')
@@ -166,10 +217,17 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
                 .attr('x', d => d.sx + 6)
                 .attr('y', d => d.sy - 6)
                 .text(d => `op${d.rowIndex + 1}`);
+
+            if (animateThis) {
+                labelSel
+                    .transition().duration(DUR)
+                    .attr('x', d => d.endSx + 6)
+                    .attr('y', d => d.endSy - 6);
+            }
         }
 
         /* ---- circles ---- */
-        g.selectAll('.scatter3d-point')
+        const pointSel = g.selectAll('.scatter3d-point')
             .data(projected)
             .enter()
             .append('circle')
@@ -208,6 +266,18 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
                 onHoverEnd();
                 tooltip.classed('visible', false);
             });
+
+        /* ---- animate circles to end positions ---- */
+        if (animateThis) {
+            pointSel
+                .transition().duration(DUR)
+                .attr('cx', d => d.endSx)
+                .attr('cy', d => d.endSy)
+                .attr('opacity', d => {
+                    const t = (d.endDepth + 1.5) / 3;
+                    return 0.55 + t * 0.4;
+                });
+        }
 
         /* ---- hint text ---- */
         g.append('text')
@@ -303,6 +373,8 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
                 .attr('fill', axis.color).attr('font-weight', 'bold')
                 .text(axis.label);
         });
+
+        return axesG;
     }
 
     /* ============================================================= */
@@ -332,7 +404,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
                 lastY = e.clientY;
                 containerNode.dataset.rot3dX = rotationX;
                 containerNode.dataset.rot3dZ = rotationZ;
-                drawScene();
+                drawScene(false);
             })
             .on('mouseup.scatter3d-rotate', () => {
                 isDragging = false;
@@ -357,7 +429,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
     _scatter3dInstances.set(containerSelector, setSelection);
 
     /* ---- initial scene ---- */
-    drawScene();
+    drawScene(shouldAnimate);
 }
 
 /* ------------------------------------------------------------------ */
