@@ -168,6 +168,7 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         showLabels         = false,
         showSurface        = false,
         showDominated      = false,
+        showIdealPoint     = false,
     } = options;
 
     // Convenience re-render closure (used by brush callbacks)
@@ -344,7 +345,14 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         const usedYScale = animateThis ? startYScale : yScale;
         const usedZScale = animateThis ? startZScale : zScale;
 
+        // Determine ideal bounds based on actual data
+        let idealX = -Infinity, idealY = -Infinity, idealZ = -Infinity;
+
         const projected = points.map(p => {
+            if (p.xVal > idealX) idealX = p.xVal;
+            if (p.yVal > idealY) idealY = p.yVal;
+            if (p.zVal > idealZ) idealZ = p.zVal;
+
             const nx = usedXScale(p.xVal);
             const ny = usedYScale(p.yVal);
             const nz = usedZScale(p.zVal);
@@ -468,6 +476,87 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
             .attr('y', containerHeight - 10)
             .attr('text-anchor', 'end')
             .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
+
+        /* ---- Ideal Point ---- */
+        if (showIdealPoint && Number.isFinite(idealX) && Number.isFinite(idealY) && Number.isFinite(idealZ)) {
+            const usedXScale = animateThis ? startXScale : xScale;
+            const usedYScale = animateThis ? startYScale : yScale;
+            const usedZScale = animateThis ? startZScale : zScale;
+
+            const idealProj = proj(usedXScale(idealX), usedYScale(idealY), usedZScale(idealZ));
+            const idealEndProj = proj(xScale(idealX), yScale(idealY), zScale(idealZ));
+
+            const idealG = g.append('g').attr('class', 'scatter3d-ideal-group');
+            
+            const circle = idealG.append('circle')
+                .attr('cx', idealProj.x)
+                .attr('cy', idealProj.y)
+                .attr('r', 6)
+                .attr('fill', '#eab308')
+                .attr('stroke', '#ca8a04')
+                .attr('stroke-width', 2);
+                
+            const label = idealG.append('text')
+                .attr('class', 'scatter3d-ideal-label')
+                .attr('x', idealProj.x + 10)
+                .attr('y', idealProj.y - 10)
+                .attr('font-size', '11px')
+                .attr('font-weight', 'bold')
+                .attr('fill', '#ca8a04')
+                .text('Ideal Point');
+
+            if (animateThis) {
+                circle.transition().duration(DUR)
+                    .attr('cx', idealEndProj.x)
+                    .attr('cy', idealEndProj.y);
+                label.transition().duration(DUR)
+                    .attr('x', idealEndProj.x + 10)
+                    .attr('y', idealEndProj.y - 10);
+            }
+        }
+
+        /* ---- Distance to Ideal Legend ---- */
+        if (showSurface) {
+            const legendG = g.append('g').attr('transform', 'translate(15, 20)');
+            legendG.append('text')
+                .attr('class', 'scatter3d-legend-title')
+                .attr('x', 0).attr('y', 0)
+                .attr('font-size', '12px').attr('fill', '#6b7280').attr('font-weight', '500')
+                .text('Distance to Ideal [1, 1, 1]');
+            
+            const defs = svg.select('defs').empty() ? svg.append('defs') : svg.select('defs');
+            const gradId = 'ao-legend-grad-' + containerSelector.replace(/[^a-zA-Z0-9]/g, '');
+            const grad = defs.selectAll('#' + gradId).data([null]).join('linearGradient')
+                .attr('id', gradId)
+                .attr('x1', '0%').attr('y1', '0%')
+                .attr('x2', '100%').attr('y2', '0%');
+                
+            grad.selectAll('stop').data([
+                { offset: '0%', color: d3.hsl(216, 0.25, 1).toString() },    // Near (aoBaseLightness = 1.0)
+                { offset: '100%', color: d3.hsl(216, 0.25, 0.5).toString() } // Far (1.0 - aoLightnessRange(0.5))
+            ]).join('stop')
+                .attr('offset', d => d.offset)
+                .attr('stop-color', d => d.color);
+                
+            legendG.append('rect')
+                .attr('x', 0).attr('y', 8)
+                .attr('width', 120).attr('height', 8)
+                .attr('rx', 4).attr('ry', 4)
+                .attr('fill', `url(#${gradId})`)
+                .attr('stroke', '#d1d5db')
+                .attr('stroke-width', 0.5);
+                
+            legendG.append('text')
+                .attr('x', 0).attr('y', 28)
+                .attr('font-size', '10px').attr('fill', '#9ca3af')
+                .text('Near (Peak)');
+                
+            legendG.append('text')
+                .attr('x', 120).attr('y', 28)
+                .attr('text-anchor', 'end')
+                .attr('font-size', '10px').attr('fill', '#9ca3af')
+                .text('Far');
+        }
 
         /* ---- re-apply global state ---- */
         applyScatter3dHighlight(getActiveRowIndex());
@@ -668,6 +757,18 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
     function drawDelaunaySurface(g, projected) {
         const surfaceG = g.append('g').attr('class', 'scatter3d-surface-group');
 
+        // Configuration for shading and contouring
+        const styleCfg = {
+            lightDir: [1, 1, 1], // Directional light source
+            strokeFront: { color: '#ffffff', width: 0.5, opacity: 0.85 }, // Highlight
+            strokeBack:  { color: '#1e293b', width: 1.5, opacity: 0.65 }, // Shadow cast
+            fillBase: { h: 216, s: 0.25 }, // Hue and Saturation of the surface
+            aoBaseLightness: 1, // Lightest point (closest to the optimum peak)
+            aoLightnessRange: 1, // How much darker the surface gets as it moves away from optimum
+            // Maximum diagonal distance across the normalized [0, 1] cube from optimum [1, 1, 1] to [0, 0, 0]
+            maxDist: Math.sqrt((1 - (0))**2 + (1 - (0))**2 + (1 - (0))**2)
+        };
+
         const delaunay = d3.Delaunay.from(projected, d => d.endNx, d => d.endNy);
         const tris = delaunay.triangles;
 
@@ -684,18 +785,78 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
         }
         triData.sort((a, b) => a.depth - b.depth);
 
+        // Pre-normalize light direction
+        const lLen = Math.sqrt(styleCfg.lightDir[0] ** 2 + styleCfg.lightDir[1] ** 2 + styleCfg.lightDir[2] ** 2);
+        const lx = styleCfg.lightDir[0] / lLen;
+        const ly = styleCfg.lightDir[1] / lLen;
+        const lz = styleCfg.lightDir[2] / lLen;
+
         triData.forEach(tri => {
-            const d = `M${tri.pts[0].endSx},${tri.pts[0].endSy}`
-                    + `L${tri.pts[1].endSx},${tri.pts[1].endSy}`
-                    + `L${tri.pts[2].endSx},${tri.pts[2].endSy}Z`;
+            const p0 = tri.pts[0];
+            const p1 = tri.pts[1];
+            const p2 = tri.pts[2];
+
+            // 1. Calculate 3D normal
+            const v1x = p1.endNx - p0.endNx;
+            const v1y = p1.endNy - p0.endNy;
+            const v1z = p1.endNz - p0.endNz;
+
+            const v2x = p2.endNx - p0.endNx;
+            const v2y = p2.endNy - p0.endNy;
+            const v2z = p2.endNz - p0.endNz;
+
+            let nx = v1y * v2z - v1z * v2y;
+            let ny = v1z * v2x - v1x * v2z;
+            let nz = v1x * v2y - v1y * v2x;
+
+            const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+            nx /= len;
+            ny /= len;
+            nz /= len;
+
+            // 2. Stroke styles via dot product with light direction
+            let dot = nx * lx + ny * ly + nz * lz;
+
+            // Determine if we are looking at the front or back face using screen-space 2D cross product.
+            // This treats the triangles as having 2 faces logically and naturally inverses the light.
+            const cx1 = p1.endSx - p0.endSx;
+            const cy1 = p1.endSy - p0.endSy;
+            const cx2 = p2.endSx - p0.endSx;
+            const cy2 = p2.endSy - p0.endSy;
+            const isBackFace = (cx1 * cy2 - cy1 * cx2) > 0;
+
+            if (isBackFace) {
+                dot = -dot;
+            }
+
+            const strokeStyle = dot > 0 ? styleCfg.strokeFront : styleCfg.strokeBack;
+
+            // 3. Ambient Occlusion coloring mapping centroid distance (optimal point is at max [1, 1, 1])
+            const cx = (p0.endNx + p1.endNx + p2.endNx) / 3;
+            const cy = (p0.endNy + p1.endNy + p2.endNy) / 3;
+            const cz = (p0.endNz + p1.endNz + p2.endNz) / 3;
+
+            const dist = Math.sqrt((1 - cx) ** 2 + (1 - cy) ** 2 + (1 - cz) ** 2);
+            
+            // Calculate base Ambient Occlusion (AO) based on distance from optimum
+            // Closest to optimum -> dist is 0 -> aoFactor is 0 -> lightness is aoBaseLightness (highest)
+            // Furthest from optimum -> dist is maxDist -> aoFactor is 1 -> lightness decreases by aoLightnessRange
+            const aoFactor = Math.min(dist / styleCfg.maxDist, 1);
+            const lightness = styleCfg.aoBaseLightness - aoFactor * styleCfg.aoLightnessRange;
+
+            const fillColor = d3.hsl(styleCfg.fillBase.h, styleCfg.fillBase.s, lightness).toString();
+
+            const d = `M${p0.endSx},${p0.endSy}`
+                    + `L${p1.endSx},${p1.endSy}`
+                    + `L${p2.endSx},${p2.endSy}Z`;
             surfaceG.append('path')
                 .attr('class', 'scatter3d-surface-tri')
                 .attr('d', d)
-                .attr('fill', '#a0a8b4')
-                .attr('fill-opacity', 0.45)
-                .attr('stroke', '#6b7280')
-                .attr('stroke-opacity', 0.65)
-                .attr('stroke-width', 0.5);
+                .attr('fill', fillColor)
+                .attr('fill-opacity', 0.85)
+                .attr('stroke', strokeStyle.color)
+                .attr('stroke-opacity', strokeStyle.opacity)
+                .attr('stroke-width', strokeStyle.width);
         });
 
         return surfaceG;
@@ -713,6 +874,34 @@ export function renderScatterplot3d(containerSelector, data, xKey, yKey, zKey, o
             { start: [-1,-1,-1], end: [-1,1,-1], label: yKey, color: '#27ae60', scale: ySc, dir: [0,1,0] },
             { start: [-1,-1,-1], end: [-1,-1,1], label: zKey, color: '#3498db', scale: zSc, dir: [0,0,1] },
         ];
+
+        // Draw bounding box / cube edges (thin dashed lines to complete the space)
+        const boxEdges = [
+            // Bottom face (Z = -1) remaining edges
+            { s: [1, -1, -1], e: [1, 1, -1] },
+            { s: [-1, 1, -1], e: [1, 1, -1] },
+            // Top face (Z = 1)
+            { s: [-1, -1, 1], e: [1, -1, 1] },
+            { s: [-1, -1, 1], e: [-1, 1, 1] },
+            { s: [1, -1, 1], e: [1, 1, 1] },
+            { s: [-1, 1, 1], e: [1, 1, 1] },
+            // Vertical edges connecting bottom and top faces
+            { s: [1, -1, -1], e: [1, -1, 1] },
+            { s: [-1, 1, -1], e: [-1, 1, 1] },
+            { s: [1, 1, -1], e: [1, 1, 1] }
+        ];
+
+        boxEdges.forEach(edge => {
+            const p1 = proj(...edge.s);
+            const p2 = proj(...edge.e);
+            axesG.append('line')
+                .attr('class', 'scatter3d-bounding-box-edge')
+                .attr('x1', p1.x).attr('y1', p1.y)
+                .attr('x2', p2.x).attr('y2', p2.y)
+                .attr('stroke', '#d1d5db')
+                .attr('stroke-width', 0.5)
+                .attr('stroke-dasharray', '4,4');
+        });
 
         axes.forEach(axis => {
             const s = proj(...axis.start);

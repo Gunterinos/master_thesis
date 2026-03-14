@@ -37,13 +37,14 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, data, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false }) => {
+            render: ({ containerSelector, data, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false }) => {
                 renderScatterplot3d(containerSelector, data, xAxis, yAxis, zAxis, {
                     ...interactionOptions,
                     animate,
                     showLabels,
                     showSurface,
                     showDominated,
+                    showIdealPoint,
                     disableBrush: interactionOptions.disableBrush,
                 });
             },

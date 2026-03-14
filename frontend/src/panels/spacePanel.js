@@ -16,6 +16,7 @@ export function initializeSpacePanel(config) {
         labelsToggleSelector = null,
         surfaceToggleSelector = null,
         dominatedToggleSelector = null,
+        idealToggleSelector = null,
         columns,
         data,
         defaultChart,
@@ -39,10 +40,12 @@ export function initializeSpacePanel(config) {
     const labelsToggle = labelsToggleSelector ? d3.select(labelsToggleSelector) : null;
     const surfaceToggle = surfaceToggleSelector ? d3.select(surfaceToggleSelector) : null;
     const dominatedToggle = dominatedToggleSelector ? d3.select(dominatedToggleSelector) : null;
+    const idealToggle = idealToggleSelector ? d3.select(idealToggleSelector) : null;
     // Persist showLabels state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
     let showSurface = surfaceToggle ? surfaceToggle.classed("active") : false;
     let showDominated = dominatedToggle ? dominatedToggle.classed("active") : false;
+    let showIdealPoint = idealToggle ? idealToggle.classed("active") : false;
 
     const previousChart = chartSelect.property("value");
     const previousXAxis = xAxisSelect.property("value");
@@ -114,6 +117,9 @@ export function initializeSpacePanel(config) {
         if (dominatedToggle) {
             dominatedToggle.classed("hidden", !needsZ);
         }
+        if (idealToggle) {
+            idealToggle.classed("hidden", !needsZ);
+        }
 
         if (!chartConfig) {
             return;
@@ -130,6 +136,7 @@ export function initializeSpacePanel(config) {
             showLabels,
             showSurface,
             showDominated,
+            showIdealPoint,
         });
 
         onAfterRender();
@@ -155,6 +162,14 @@ export function initializeSpacePanel(config) {
         dominatedToggle.on("click", () => {
             showDominated = !showDominated;
             dominatedToggle.classed("active", showDominated);
+            updatePanel();
+        });
+    }
+
+    if (idealToggle) {
+        idealToggle.on("click", () => {
+            showIdealPoint = !showIdealPoint;
+            idealToggle.classed("active", showIdealPoint);
             updatePanel();
         });
     }

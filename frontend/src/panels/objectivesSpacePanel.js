@@ -17,6 +17,7 @@ export function initializeObjectivesSpacePanel(config) {
         labelsToggleSelector: "#objectives-labels-toggle",
         surfaceToggleSelector: "#objectives-surface-toggle",
         dominatedToggleSelector: "#objectives-dominated-toggle",
+        idealToggleSelector: "#objectives-ideal-toggle",
         columns: objectiveColumns,
         data,
         defaultChart: "scatter",
