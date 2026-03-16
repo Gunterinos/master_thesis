@@ -238,7 +238,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const CENTER = new THREE.Vector3(0.5, 0.5, 0.5);
     let spherical = hasSavedCamera
         ? new THREE.Spherical(savedRadius, savedPhi, savedTheta)
-        : new THREE.Spherical(2.8, Math.PI / 3, Math.PI / 4);
+        : new THREE.Spherical(2.2, Math.PI / 3, Math.PI / 4);
     function updateCamera() {
         camera.position.setFromSpherical(spherical).add(CENTER);
         camera.lookAt(CENTER);
@@ -298,7 +298,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
                 );
                 const dataVal = a.scale.invert(t);
                 const text = Math.abs(dataVal) >= 1000 ? dataVal.toFixed(0) : Math.abs(dataVal) >= 1 ? dataVal.toFixed(2) : dataVal.toFixed(3);
-                const sprite = makeTextSprite(text, { color: a.color, fontSize: 12 });
+                const sprite = makeTextSprite(text, { color: a.color, fontSize: 18 });
                 const off = new THREE.Vector3(
                     a.to[0] === 1 ? 0 : -0.06,
                     a.to[1] === 1 ? 0 : 0,
@@ -328,7 +328,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             if (i > 0) {
                 const dataVal = a.scale.invert(t);
                 const text = Math.abs(dataVal) >= 1000 ? dataVal.toFixed(0) : Math.abs(dataVal) >= 1 ? dataVal.toFixed(2) : dataVal.toFixed(3);
-                const sprite = makeTextSprite(text, { color: a.color, fontSize: 12 });
+                const sprite = makeTextSprite(text, { color: a.color, fontSize: 20 });
                 // Offset label slightly away from axis
                 const off = new THREE.Vector3(
                     a.to[0] === 1 ? 0 : -0.06,
@@ -353,7 +353,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             a.to[1] === 1 ? 0 : 0,
             a.to[2] === 1 ? 0 : -0.1,
         );
-        const nameSprite = makeTextSprite(a.label, { color: a.color, fontSize: 12, bold: true });
+        const nameSprite = makeTextSprite(a.label, { color: a.color, fontSize: 18, bold: true });
         nameSprite.position.copy(mid).add(off);
         scene.add(nameSprite);
         axisLabelSprites.push(nameSprite);
@@ -468,9 +468,11 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
                 const t = scale(dataVal);
                 const planeGeom = new THREE.PlaneGeometry(1, 1);
                 const planeMat = new THREE.MeshBasicMaterial({
-                    color, transparent: true, opacity: 0.12, side: THREE.DoubleSide,
+                    color, transparent: true, opacity: 0.22, side: THREE.DoubleSide,
+                    depthWrite: false,  // must NOT write depth — points behind the plane must still show
                 });
                 const mesh = new THREE.Mesh(planeGeom, planeMat);
+                mesh.renderOrder = 1;  // render after opaque geometry
                 // Orient plane perpendicular to the axis
                 if (normal[0] === 1) {
                     mesh.rotation.y = Math.PI / 2;
@@ -482,6 +484,19 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
                     mesh.position.set(0.5, 0.5, t);
                 }
                 filterPlaneGroup.add(mesh);
+
+                // Dashed border around the plane (matches SVG stroke-dasharray)
+                const edgesGeom = new THREE.EdgesGeometry(planeGeom);
+                const edgeMat = new THREE.LineDashedMaterial({
+                    color, transparent: true, opacity: 0.8,
+                    dashSize: 0.06, gapSize: 0.04,
+                    depthWrite: false,
+                });
+                const edges = new THREE.LineSegments(edgesGeom, edgeMat);
+                edges.computeLineDistances();
+                edges.rotation.copy(mesh.rotation);
+                edges.position.copy(mesh.position);
+                filterPlaneGroup.add(edges);
             });
         });
     }
@@ -698,7 +713,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const labelSprites = [];
     if (showLabels) {
         points.forEach(p => {
-            const sprite = makeTextSprite(`op${p.rowIndex + 1}`, { color: 0x5f6673, fontSize: 8 });
+            const sprite = makeTextSprite(`op${p.rowIndex + 1}`, { color: 0x5f6673, fontSize: 11 });
             sprite.position.set(p.nx + 0.025, p.ny + 0.025, p.nz + 0.025);
             scene.add(sprite);
             labelSprites.push(sprite);
@@ -791,14 +806,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
 
-    // Scroll to zoom
-    canvas.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        spherical.radius = Math.max(1, Math.min(8, spherical.radius + e.deltaY * 0.002));
-        updateCamera();
-        renderFrame();
-    }, { passive: false });
-
     // Resize observer — keep renderer and camera in sync with container
     const resizeObserver = new ResizeObserver(() => {
         const r = containerNode.getBoundingClientRect();
@@ -838,13 +845,15 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
         pointMeshes.forEach((m, i) => {
             const p    = m.userData;
-            const row  = data[p.rowIndex];
             const ring = ringMeshes[i];
             const lbl  = labelSprites[i] || null;
 
-            /* -- brush filter: wins over everything (like !important in SVG CSS) -- */
-            const isBrushFiltered = hasBrush && row && active.some(([axis, f]) => {
-                const val = Number(row[axis]);
+            /* -- brush filter: wins over everything (like !important in SVG CSS) --
+               Use p.xVal/yVal/zVal directly — all filter axes are always xKey/yKey/zKey,
+               so we never need to look up data[p.rowIndex] which can be wrong when
+               __rowIndex doesn't match the array position in data. */
+            const isBrushFiltered = hasBrush && active.some(([axis, f]) => {
+                const val = axis === xKey ? p.xVal : axis === yKey ? p.yVal : p.zVal;
                 return val < f.min || val > f.max;
             });
 
@@ -1087,15 +1096,22 @@ function createRingTexture(size = 64, strokeColor = '#1d1d1f', lineWidth = 2.5) 
 /*  Text sprite helper (creates a canvas-textured sprite)              */
 /* ================================================================== */
 function makeTextSprite(text, { color = 0x000000, fontSize = 28, bold = false } = {}) {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    // Measure layout size at 1× to determine world-space scale
+    const measureCanvas = document.createElement('canvas');
+    const measureCtx = measureCanvas.getContext('2d');
     const font = `${bold ? 'bold ' : ''}${fontSize}px sans-serif`;
-    ctx.font = font;
-    const metrics = ctx.measureText(text);
-    const w = Math.ceil(metrics.width) + 8;
-    const h = fontSize + 8;
-    canvas.width = w;
-    canvas.height = h;
+    measureCtx.font = font;
+    const metrics = measureCtx.measureText(text);
+    const lw = Math.ceil(metrics.width) + 8;  // logical width
+    const lh = fontSize + 8;                   // logical height
+
+    // Render at 3× for crisp HiDPI-quality text
+    const SCALE = 3;
+    const canvas = document.createElement('canvas');
+    canvas.width = lw * SCALE;
+    canvas.height = lh * SCALE;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(SCALE, SCALE);
     ctx.font = font;
     // White outline for readability
     ctx.strokeStyle = '#ffffff';
@@ -1107,10 +1123,13 @@ function makeTextSprite(text, { color = 0x000000, fontSize = 28, bold = false } 
     ctx.fillText(text, 4, fontSize);
 
     const tex = new THREE.CanvasTexture(canvas);
-    tex.minFilter = THREE.LinearFilter;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
+    tex.anisotropy = 4;
     const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
     const sprite = new THREE.Sprite(mat);
-    sprite.scale.set(w / 350, h / 350, 1);
+    // World scale stays the same as 1× layout size
+    sprite.scale.set(lw / 350, lh / 350, 1);
     return sprite;
 }
 
