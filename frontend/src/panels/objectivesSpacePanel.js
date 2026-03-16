@@ -21,7 +21,7 @@ export function initializeObjectivesSpacePanel(config) {
         columns: objectiveColumns,
         data,
         defaultChart: "scatter",
-        chartKeys: ["scatter", "scatter3d", "pcp"],
+        chartKeys: ["scatter", "scatter3d", "scatter3dGL", "pcp"],
         chartRegistry,
         renderOptions,
         onAfterRender,

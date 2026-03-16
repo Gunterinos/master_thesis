@@ -76,7 +76,7 @@ export function initializeSpacePanel(config) {
     chartSelect.classed("hidden", !hasChartChoice);
     chartLabel.classed("hidden", !hasChartChoice);
 
-    const scatterEnabled = charts.some((chart) => chart.key === "scatter" || chart.key === "scatter3d");
+    const scatterEnabled = charts.some((chart) => chart.key === "scatter" || chart.key === "scatter3d" || chart.key === "scatter3dGL");
     if (scatterEnabled) {
         populateAxisSelect(xAxisSelect, numericColumns);
         populateAxisSelect(yAxisSelect, numericColumns);

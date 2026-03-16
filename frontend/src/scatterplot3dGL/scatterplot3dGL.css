@@ -1,0 +1,34 @@
+.scatter3dgl-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.scatter3dgl-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+.scatter3dgl-canvas:active {
+    cursor: grabbing;
+}
+
+.scatter3dgl-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.scatter3dgl-hint {
+    font-size: 0.68rem;
+    fill: #a0a8b4;
+    pointer-events: none;
+    user-select: none;
+}
