@@ -242,6 +242,10 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     function updateCamera() {
         camera.position.setFromSpherical(spherical).add(CENTER);
         camera.lookAt(CENTER);
+        // Persist immediately so the next re-render restores the exact position
+        containerNode.dataset.gl3dRadius = String(spherical.radius);
+        containerNode.dataset.gl3dPhi    = String(spherical.phi);
+        containerNode.dataset.gl3dTheta  = String(spherical.theta);
     }
     updateCamera();
 
@@ -667,38 +671,25 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             .filter(([k]) => !filterState.hiddenFilters.has(k));
         const hasBrush = active.length > 0;
 
-        // Visual dimming on the sprites
-        pointMeshes.forEach((m, i) => {
-            const p = m.userData;
-            const row = data[p.rowIndex];
-            if (!row) return;
-            const filtered = hasBrush && active.some(([axis, f]) => {
-                const val = Number(row[axis]);
-                return val < f.min || val > f.max;
-            });
-            m.material.color.set(filtered ? 0xaaaaaa : 0x34c759);
-            m.material.opacity = filtered ? 0.15 : 1;
-            // Hide ring when point is brush-filtered
-            ringMeshes[i].material.opacity = filtered ? 0 : ringMeshes[i].material.opacity;
-        });
-
         const hasOnlyHidden = Object.keys(filterState.axisFilters).length > 0 && !hasBrush;
-        if (hasOnlyHidden) return;
+        if (!hasOnlyHidden) {
+            const wasActive = filterState.hadActiveBrushFilters || false;
+            filterState.hadActiveBrushFilters = hasBrush;
 
-        const wasActive = filterState.hadActiveBrushFilters || false;
-        filterState.hadActiveBrushFilters = hasBrush;
-
-        if (hasBrush) {
-            const passing = data
-                .filter(row => active.every(([axis, f]) => {
-                    const v = Number(row[axis]);
-                    return v >= f.min && v <= f.max;
-                }))
-                .map((row, i) => row.__rowIndex ?? i);
-            onBrushFilterChange(passing);
-        } else if (wasActive) {
-            onBrushFilterChange(null);
+            if (hasBrush) {
+                const passing = data
+                    .filter(row => active.every(([axis, f]) => {
+                        const v = Number(row[axis]);
+                        return v >= f.min && v <= f.max;
+                    }))
+                    .map((row, i) => row.__rowIndex ?? i);
+                onBrushFilterChange(passing);
+            } else if (wasActive) {
+                onBrushFilterChange(null);
+            }
         }
+
+        refreshPointVisuals();
     }
 
     /* ================================================================ */
@@ -823,61 +814,110 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     /* ================================================================ */
     /*  Highlight & selection helpers (called by pub-sub)               */
     /* ================================================================ */
-    function applyHighlight(rowIndex) {
+
+    // Track hover and selection as plain state — visual updates go through
+    // refreshPointVisuals() which composites all states at once, mirroring
+    // the way the SVG version composes CSS classes.
+    let _hoveredRowIndex = null;
+    let _lastSelectionSet = null;
+
+    /**
+     * Single source of truth for point visuals.  Reads hover, selection and
+     * brush-filter state simultaneously and computes the final appearance for
+     * every point, so the three states never clobber each other.
+     */
+    function refreshPointVisuals() {
+        const hovered   = _hoveredRowIndex;
+        const selected  = _lastSelectionSet;
+        const active    = Object.entries(filterState.axisFilters)
+            .filter(([k]) => !filterState.hiddenFilters.has(k));
+        const hasBrush      = active.length > 0;
+        const hasSelection  = selected !== null && selected.size > 0;
+        const hasHover      = hovered !== null;
+        const shiftHeld     = document.body.classList.contains('shift-held');
+
         pointMeshes.forEach((m, i) => {
-            const isTarget = rowIndex !== null && m.userData.rowIndex === rowIndex;
-            const isDim = rowIndex !== null && m.userData.rowIndex !== rowIndex;
-            const s = isTarget ? POINT_SIZE * 1.8 : isDim ? POINT_SIZE * 0.7 : POINT_SIZE;
-            m.scale.set(s, s, 1);
-            m.material.opacity = isDim ? 0.35 : 1;
-            // Keep ring the same size as the point
+            const p    = m.userData;
+            const row  = data[p.rowIndex];
             const ring = ringMeshes[i];
-            const rs = isTarget ? RING_SIZE * 1.8 : isDim ? RING_SIZE * 0.7 : RING_SIZE;
-            ring.scale.set(rs, rs, ring.scale.z);
+            const lbl  = labelSprites[i] || null;
+
+            /* -- brush filter: wins over everything (like !important in SVG CSS) -- */
+            const isBrushFiltered = hasBrush && row && active.some(([axis, f]) => {
+                const val = Number(row[axis]);
+                return val < f.min || val > f.max;
+            });
+
+            if (isBrushFiltered) {
+                m.scale.set(POINT_SIZE, POINT_SIZE, 1);
+                m.material.color.set(0xaaaaaa);
+                m.material.opacity = 0.15;
+                ring.scale.set(RING_SIZE, RING_SIZE, ring.scale.z);
+                ring.material.opacity = 0;
+                if (lbl) lbl.material.opacity = 0.15;
+                return;
+            }
+
+            /* -- base colour -- */
+            m.material.color.set(0x34c759);
+
+            /* -- hover: controls scale and contributes to opacity -- */
+            const isHoverTarget = hasHover && p.rowIndex === hovered;
+            const isHoverDim    = hasHover && !isHoverTarget;
+            const pointScale = isHoverTarget ? POINT_SIZE * 1.8
+                             : isHoverDim    ? POINT_SIZE * 0.7
+                             : POINT_SIZE;
+            m.scale.set(pointScale, pointScale, 1);
+            ring.scale.set(pointScale / POINT_SIZE * RING_SIZE, pointScale / POINT_SIZE * RING_SIZE, ring.scale.z);
+
+            /* -- selection + hover compose together for opacity -- */
+            const isSelected     = hasSelection && selected.has(p.rowIndex);
+            const isSelectionDim = hasSelection && !isSelected;
+
+            let opacity     = 1;
+            let labelOpacity = 1;
+            let ringOpacity  = 0;
+
+            if (hasSelection && !hasBrush) {
+                if (shiftHeld) {
+                    // Shift mode: show ring on selected, full opacity for all
+                    ringOpacity  = isSelected ? 1 : 0;
+                    opacity      = 1;
+                    labelOpacity = 1;
+                } else {
+                    // Normal selection: dim non-selected
+                    opacity      = isSelectionDim ? 0.15 : 1;
+                    labelOpacity = isSelectionDim ? 0.15 : 1;
+                }
+            }
+
+            // Hover dim takes the minimum with whatever selection has set
+            if (isHoverDim) {
+                opacity      = Math.min(opacity, 0.35);
+                labelOpacity = Math.min(labelOpacity, 0.15);
+            }
+
+            m.material.opacity = opacity;
+            ring.material.opacity = ringOpacity;
+            if (lbl) lbl.material.opacity = labelOpacity;
         });
+
         renderFrame();
     }
 
-    let _lastSelectionSet = null;
+    function applyHighlight(rowIndex) {
+        _hoveredRowIndex = rowIndex;
+        refreshPointVisuals();
+    }
 
     function setSelection(rowIndexSet) {
         _lastSelectionSet = rowIndexSet;
-        const has = rowIndexSet !== null && rowIndexSet.size > 0;
-        const shiftHeld = document.body.classList.contains('shift-held');
-        const hasBrushFilters = Object.keys(filterState.axisFilters).length > 0;
-
-        pointMeshes.forEach((m, i) => {
-            const idx = m.userData.rowIndex;
-            const selected = has && rowIndexSet.has(idx);
-            const ring = ringMeshes[i];
-
-            // Colour: always green for data points
-            m.material.color.set(0x34c759);
-
-            if (has && !hasBrushFilters) {
-                if (shiftHeld) {
-                    // Shift held: non-selected normal, selected get black ring
-                    m.material.opacity = 1;
-                    ring.material.opacity = selected ? 1 : 0;
-                } else {
-                    // No shift: non-selected are dimmed, selected are normal
-                    m.material.opacity = selected ? 1 : 0.15;
-                    ring.material.opacity = 0;
-                }
-            } else {
-                // No selection active (or brush filters override)
-                ring.material.opacity = 0;
-                if (!hasBrushFilters) m.material.opacity = 1;
-            }
-        });
-        renderFrame();
+        refreshPointVisuals();
     }
 
-    // Re-apply selection visuals when shift key state changes
+    // Re-apply visuals when shift key state changes
     function onShiftChange() {
-        if (_lastSelectionSet !== null && _lastSelectionSet.size > 0) {
-            setSelection(_lastSelectionSet);
-        }
+        refreshPointVisuals();
     }
     const shiftObserver = new MutationObserver(onShiftChange);
     shiftObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
@@ -892,9 +932,10 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     // Initial draws
     rebuildFilterPlanes();
     rebuildBrushHighlights();
-    updateFilteredPoints();
-    applyHighlight(getActiveRowIndex());
-    setSelection(getEffectiveSelection());
+    // Seed state so refreshPointVisuals() composites correctly on first paint
+    _hoveredRowIndex  = getActiveRowIndex();
+    _lastSelectionSet = getEffectiveSelection();
+    updateFilteredPoints();  // handles callback + calls refreshPointVisuals()
     renderFrame();
 
     /* ---- animate transition if needed ---- */
@@ -965,9 +1006,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     };
 
     function refreshVisuals() {
-        updateFilteredPoints();
-        setSelection(_lastSelectionSet);
-        renderFrame();
+        updateFilteredPoints();  // handles onBrushFilterChange callback
+        // refreshPointVisuals() is already called at the end of updateFilteredPoints
     }
 
     _instances.set(containerSelector, { setSelection, applyHighlight, dispose, refreshVisuals });
