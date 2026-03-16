@@ -161,12 +161,12 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     container.selectAll('*').remove();
 
     /* ---- sizing ---- */
-    const W = Math.max(400, containerNode.clientWidth || 400);
-    const H = Math.max(300, containerNode.clientHeight || 300);
+    const rect = containerNode.getBoundingClientRect();
+    const W = Math.max(400, rect.width || containerNode.clientWidth || 400);
+    const H = Math.max(300, rect.height || containerNode.clientHeight || 300);
 
     /* ---- wrapper div ---- */
-    const wrapper = container.append('div').attr('class', 'scatter3dgl-wrapper')
-        .style('width', W + 'px').style('height', H + 'px');
+    const wrapper = container.append('div').attr('class', 'scatter3dgl-wrapper');
 
     /* ---- data points ---- */
     const points = data
@@ -294,7 +294,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
                 );
                 const dataVal = a.scale.invert(t);
                 const text = Math.abs(dataVal) >= 1000 ? dataVal.toFixed(0) : Math.abs(dataVal) >= 1 ? dataVal.toFixed(2) : dataVal.toFixed(3);
-                const sprite = makeTextSprite(text, { color: a.color, fontSize: 28 });
+                const sprite = makeTextSprite(text, { color: a.color, fontSize: 12 });
                 const off = new THREE.Vector3(
                     a.to[0] === 1 ? 0 : -0.06,
                     a.to[1] === 1 ? 0 : 0,
@@ -324,7 +324,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             if (i > 0) {
                 const dataVal = a.scale.invert(t);
                 const text = Math.abs(dataVal) >= 1000 ? dataVal.toFixed(0) : Math.abs(dataVal) >= 1 ? dataVal.toFixed(2) : dataVal.toFixed(3);
-                const sprite = makeTextSprite(text, { color: a.color, fontSize: 28 });
+                const sprite = makeTextSprite(text, { color: a.color, fontSize: 12 });
                 // Offset label slightly away from axis
                 const off = new THREE.Vector3(
                     a.to[0] === 1 ? 0 : -0.06,
@@ -349,7 +349,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             a.to[1] === 1 ? 0 : 0,
             a.to[2] === 1 ? 0 : -0.1,
         );
-        const nameSprite = makeTextSprite(a.label, { color: a.color, fontSize: 34, bold: true });
+        const nameSprite = makeTextSprite(a.label, { color: a.color, fontSize: 12, bold: true });
         nameSprite.position.copy(mid).add(off);
         scene.add(nameSprite);
         axisLabelSprites.push(nameSprite);
@@ -435,7 +435,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             idealMesh.position.set(xScale(ix), yScale(iy), zScale(iz));
             scene.add(idealMesh);
 
-            idealLabelSprite = makeTextSprite('Ideal Point', { color: 0xca8a04, fontSize: 30, bold: true });
+            idealLabelSprite = makeTextSprite('Ideal Point', { color: 0xca8a04, fontSize: 12, bold: true });
             idealLabelSprite.position.set(xScale(ix) + 0.04, yScale(iy) + 0.04, zScale(iz) + 0.04);
             scene.add(idealLabelSprite);
         }
@@ -482,26 +482,29 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         });
     }
 
-    /* ---- SVG overlay (for labels & legend only) ---- */
-    const svgOverlay = wrapper.append('svg')
-        .attr('class', 'scatter3dgl-overlay')
-        .attr('viewBox', `0 0 ${W} ${H}`)
-        .attr('preserveAspectRatio', 'none');
-
     // Tooltip
     const tooltip = d3.select('body').selectAll('.scatter-tooltip').data([null]).join('div').attr('class', 'scatter-tooltip');
 
-    // Hint text
-    svgOverlay.append('text')
-        .attr('class', 'scatter3dgl-hint')
-        .attr('x', W - 10).attr('y', H - 10)
-        .attr('text-anchor', 'end')
-        .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
+    // Hint text (HTML div, no SVG)
+    wrapper.append('div').attr('class', 'scatter3dgl-hint');
+    wrapper.select('.scatter3dgl-hint').text('Drag to rotate · Shift+click to select · Double-click filter to remove');
 
-    /* ---- project 3D → 2D screen coords helper ---- */
+    // Legend div (shown when showSurface is true)
+    const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
+    if (showSurface) {
+        legendDiv.html(
+            '<span class="scatter3dgl-legend-title">Distance to Ideal [1, 1, 1]</span>' +
+            '<div class="scatter3dgl-legend-bar"></div>' +
+            '<div class="scatter3dgl-legend-labels"><span>Near (Peak)</span><span>Far</span></div>'
+        );
+    }
+
+    /* ---- project 3D → 2D screen coords helper (uses live canvas size) ---- */
     function toScreen(vec3) {
+        const cW = canvas.clientWidth;
+        const cH = canvas.clientHeight;
         const v = vec3.clone().project(camera);
-        return { x: (v.x * 0.5 + 0.5) * W, y: (-v.y * 0.5 + 0.5) * H };
+        return { x: (v.x * 0.5 + 0.5) * cW, y: (-v.y * 0.5 + 0.5) * cH };
     }
 
     /* ================================================================ */
@@ -699,43 +702,16 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     }
 
     /* ================================================================ */
-    /*  SVG labels overlay                                              */
+    /*  Point label sprites (Three.js, always face camera)              */
     /* ================================================================ */
-    function drawLabelsOverlay() {
-        svgOverlay.selectAll('.scatter3dgl-label').remove();
-        if (!showLabels) return;
+    const labelSprites = [];
+    if (showLabels) {
         points.forEach(p => {
-            const s = toScreen(new THREE.Vector3(p.nx, p.ny, p.nz));
-            svgOverlay.append('text')
-                .attr('class', 'scatter3dgl-label')
-                .attr('x', s.x + 6).attr('y', s.y - 6)
-                .attr('font-size', '0.68rem')
-                .attr('fill', '#5f6673')
-                .attr('pointer-events', 'none')
-                .text(`op${p.rowIndex + 1}`);
+            const sprite = makeTextSprite(`op${p.rowIndex + 1}`, { color: 0x5f6673, fontSize: 8 });
+            sprite.position.set(p.nx + 0.025, p.ny + 0.025, p.nz + 0.025);
+            scene.add(sprite);
+            labelSprites.push(sprite);
         });
-    }
-
-    /* ================================================================ */
-    /*  Distance-to-Ideal legend (SVG overlay)                          */
-    /* ================================================================ */
-    function drawLegendOverlay() {
-        svgOverlay.selectAll('.scatter3dgl-legend').remove();
-        if (!showSurface) return;
-        const lg = svgOverlay.append('g').attr('class', 'scatter3dgl-legend').attr('transform', 'translate(15,20)');
-        lg.append('text').attr('font-size', '12px').attr('fill', '#6b7280').attr('font-weight', '500').text('Distance to Ideal [1, 1, 1]');
-        const defs = svgOverlay.select('defs').empty() ? svgOverlay.append('defs') : svgOverlay.select('defs');
-        const gradId = 'gl-legend-grad';
-        const grad = defs.selectAll('#' + gradId).data([null]).join('linearGradient').attr('id', gradId)
-            .attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '0%');
-        grad.selectAll('stop').data([
-            { offset: '0%', color: d3.hsl(216, 0.25, 1).toString() },
-            { offset: '100%', color: d3.hsl(216, 0.25, 0.5).toString() },
-        ]).join('stop').attr('offset', d => d.offset).attr('stop-color', d => d.color);
-        lg.append('rect').attr('x', 0).attr('y', 8).attr('width', 120).attr('height', 8).attr('rx', 4).attr('ry', 4)
-            .attr('fill', `url(#${gradId})`).attr('stroke', '#d1d5db').attr('stroke-width', 0.5);
-        lg.append('text').attr('x', 0).attr('y', 28).attr('font-size', '10px').attr('fill', '#9ca3af').text('Near (Peak)');
-        lg.append('text').attr('x', 120).attr('y', 28).attr('text-anchor', 'end').attr('font-size', '10px').attr('fill', '#9ca3af').text('Far');
     }
 
     /* ================================================================ */
@@ -813,7 +789,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         lastX = e.clientX;
         lastY = e.clientY;
         updateCamera();
-        drawLabelsOverlay();
         renderFrame();
     }
     function onUp() {
@@ -830,9 +805,20 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         e.preventDefault();
         spherical.radius = Math.max(1, Math.min(8, spherical.radius + e.deltaY * 0.002));
         updateCamera();
-        drawLabelsOverlay();
         renderFrame();
     }, { passive: false });
+
+    // Resize observer — keep renderer and camera in sync with container
+    const resizeObserver = new ResizeObserver(() => {
+        const r = containerNode.getBoundingClientRect();
+        const nW = Math.max(400, r.width || 400);
+        const nH = Math.max(300, r.height || 300);
+        renderer.setSize(nW, nH);
+        camera.aspect = nW / nH;
+        camera.updateProjectionMatrix();
+        renderFrame();
+    });
+    resizeObserver.observe(containerNode);
 
     /* ================================================================ */
     /*  Highlight & selection helpers (called by pub-sub)               */
@@ -906,8 +892,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     // Initial draws
     rebuildFilterPlanes();
     rebuildBrushHighlights();
-    drawLabelsOverlay();
-    drawLegendOverlay();
     updateFilteredPoints();
     applyHighlight(getActiveRowIndex());
     setSelection(getEffectiveSelection());
@@ -930,6 +914,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
                 const z = p.startNz + (p.nz - p.startNz) * t;
                 pointMeshes[i].position.set(x, y, z);
                 ringMeshes[i].position.set(x, y, z);
+                if (labelSprites[i]) labelSprites[i].position.set(x + 0.025, y + 0.025, z + 0.025);
             });
 
             // Crossfade axis labels: old fade out, new fade in
@@ -946,7 +931,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
                     s.material.map?.dispose();
                     s.material.dispose();
                 });
-                drawLabelsOverlay();
             }
         }
         animId = requestAnimationFrame(animStep);
@@ -959,6 +943,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         containerNode.dataset.gl3dPhi    = String(spherical.phi);
         containerNode.dataset.gl3dTheta  = String(spherical.theta);
         shiftObserver.disconnect();
+        resizeObserver.disconnect();
         canvas.removeEventListener('pointermove', onPointerMove);
         canvas.removeEventListener('click', onPointerClick);
         canvas.removeEventListener('pointerdown', onDown);
