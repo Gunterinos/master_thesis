@@ -80,23 +80,40 @@ function buildSurfaceMesh(points) {
     const positions = [];
     const colors = [];
 
-    const maxDist = Math.sqrt(3); // diagonal of unit cube from [0,0,0] to [1,1,1]
+    const surfaceStyle = {
+        fillHue: 216 / 360,
+        fillSaturation: 0.42,
+        lightnessNear: 0.92,
+        lightnessFar: 0.28,
+        edgeColor: 0x1e293b,
+        edgeOpacity: 0.34,
+    };
 
+    // First pass: collect centroid distances so we can stretch the gradient
+    // over the actual data range rather than the theoretical max diagonal.
+    const triDists = [];
+    for (let i = 0; i < tris.length; i += 3) {
+        const p0 = points[tris[i]], p1 = points[tris[i + 1]], p2 = points[tris[i + 2]];
+        const cx = (p0.nx + p1.nx + p2.nx) / 3;
+        const cy = (p0.ny + p1.ny + p2.ny) / 3;
+        const cz = (p0.nz + p1.nz + p2.nz) / 3;
+        triDists.push(Math.sqrt((1 - cx) ** 2 + (1 - cy) ** 2 + (1 - cz) ** 2));
+    }
+    const distMin = Math.min(...triDists);
+    const distMax = Math.max(...triDists);
+    const distRange = distMax - distMin || 1;
+
+    // Second pass: build geometry with gradient stretched over the actual range
     for (let i = 0; i < tris.length; i += 3) {
         const p0 = points[tris[i]], p1 = points[tris[i + 1]], p2 = points[tris[i + 2]];
         // Push positions
         positions.push(p0.nx, p0.ny, p0.nz, p1.nx, p1.ny, p1.nz, p2.nx, p2.ny, p2.nz);
 
-        // AO-style colouring based on centroid distance to ideal [1,1,1]
-        const cx = (p0.nx + p1.nx + p2.nx) / 3;
-        const cy = (p0.ny + p1.ny + p2.ny) / 3;
-        const cz = (p0.nz + p1.nz + p2.nz) / 3;
-        const dist = Math.sqrt((1 - cx) ** 2 + (1 - cy) ** 2 + (1 - cz) ** 2);
-        const ao = Math.min(dist / maxDist, 1);
-        const lightness = 1.0 - ao * 0.5;
-        // HSL(216, 25%, lightness) → approximate in RGB
+        // Stretch gradient: triangle nearest to ideal → lightnessNear, farthest → lightnessFar
+        const ao = (triDists[i / 3] - distMin) / distRange;
+        const lightness = surfaceStyle.lightnessNear - ao * (surfaceStyle.lightnessNear - surfaceStyle.lightnessFar);
         const c = new THREE.Color();
-        c.setHSL(216 / 360, 0.25, lightness);
+        c.setHSL(surfaceStyle.fillHue, surfaceStyle.fillSaturation, lightness);
         // Same colour for all 3 verts of this tri (flat shading)
         for (let v = 0; v < 3; v++) colors.push(c.r, c.g, c.b);
     }
@@ -110,9 +127,30 @@ function buildSurfaceMesh(points) {
         vertexColors: true,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.88,
+        depthWrite: false,  // don't occlude data points that sit behind the surface
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
     });
-    return new THREE.Mesh(geom, mat);
+    const mesh = new THREE.Mesh(geom, mat);
+    mesh.renderOrder = 0;
+
+    const contourGeom = new THREE.WireframeGeometry(geom);
+    const contourMat = new THREE.LineBasicMaterial({
+        color: surfaceStyle.edgeColor,
+        transparent: true,
+        opacity: surfaceStyle.edgeOpacity,
+        depthTest: true,
+        depthWrite: false,
+    });
+    const contours = new THREE.LineSegments(contourGeom, contourMat);
+    contours.renderOrder = 2;
+
+    const surfaceGroup = new THREE.Group();
+    surfaceGroup.add(mesh);
+    surfaceGroup.add(contours);
+    return surfaceGroup;
 }
 
 /* ================================================================== */
@@ -514,7 +552,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         legendDiv.html(
             '<span class="scatter3dgl-legend-title">Distance to Ideal [1, 1, 1]</span>' +
             '<div class="scatter3dgl-legend-bar"></div>' +
-            '<div class="scatter3dgl-legend-labels"><span>Near (Peak)</span><span>Far</span></div>'
+            '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>'
         );
     }
 
