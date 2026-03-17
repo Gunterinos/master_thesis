@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import * as d3 from 'd3';
 
 const surfaceStyle = {
-    fillHue: 216 / 360,
+    fillHue: 0.6,
     fillSaturation: 0.42,
     lightnessNear: 0.92,
     lightnessFar: 0.28,
