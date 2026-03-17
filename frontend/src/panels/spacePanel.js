@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { getNumericColumns } from '../tables/tables.js';
 import { populateAxisSelect } from '../scatterplot/scatterplot.js';
-import { populateAxisSelect3d } from '../scatterplot3d/scatterplot3d.js';
+import { populateAxisSelect3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 
 export function initializeSpacePanel(config) {
     const {
@@ -76,7 +76,7 @@ export function initializeSpacePanel(config) {
     chartSelect.classed("hidden", !hasChartChoice);
     chartLabel.classed("hidden", !hasChartChoice);
 
-    const scatterEnabled = charts.some((chart) => chart.key === "scatter" || chart.key === "scatter3d" || chart.key === "scatter3dGL");
+    const scatterEnabled = charts.some((chart) => chart.key === "scatter" || chart.key === "scatter3dGL");
     if (scatterEnabled) {
         populateAxisSelect(xAxisSelect, numericColumns);
         populateAxisSelect(yAxisSelect, numericColumns);
@@ -89,7 +89,7 @@ export function initializeSpacePanel(config) {
         yAxisSelect.property("value", selectedYAxis);
 
         if (zAxisSelect) {
-            populateAxisSelect3d(zAxisSelect, numericColumns);
+            populateAxisSelect3dGL(zAxisSelect, numericColumns);
             const defaultZAxis = numericColumns[2] || numericColumns[0];
             const selectedZAxis = numericColumns.includes(previousZAxis) ? previousZAxis : defaultZAxis;
             zAxisSelect.property("value", selectedZAxis);
