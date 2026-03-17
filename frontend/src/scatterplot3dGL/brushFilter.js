@@ -1,47 +1,11 @@
-/**
- * brushFilter.js
- *
- * Axis-brush filter system for the 3D GL scatterplot.
- *
- * Users drag along any of the three axis spines to define a min/max range
- * filter.  The filter is drawn as:
- *   • Semi-transparent coloured plane slices in 3D space (Three.js meshes)
- *   • A thick highlight segment + endpoint handle sprites on the axis spine
- *
- * Interaction model:
- *   • Pointerdown near an axis spine starts a brush drag (capture phase,
- *     before the orbit handler sees it).
- *   • Pointermove updates the range live; pointermove/pointerup commit it.
- *   • A drag shorter than 0.5 % of the axis → treated as a click → removes
- *     the filter for that axis.
- *   • Double-clicking on a brushed axis also removes its filter.
- *
- * Exports:
- *   buildBrushFilter(ctx) – wires up all event listeners and returns
- *     { rebuildFilterPlanes, rebuildBrushHighlights, teardown }
- *
- * ctx shape:
- *   { canvas, scene, camera, filterState, axisScaleMeta, filterPlaneGroup,
- *     brushHighlightGroup, disableBrush, renderFrame,
- *     updateFilteredPoints, makeCircleSprite }
- */
+// Axis-brush filter system for the 3D GL scatterplot. Users drag along axis
+// spines to define range filters, drawn as plane slices and highlight segments.
+// Double-click or a negligible drag removes a filter.
 
 import * as THREE from 'three';
 import { makeCircleSprite } from './textureHelpers.js';
 
-/**
- * @param {object} ctx
- * @param {HTMLCanvasElement}  ctx.canvas
- * @param {THREE.Scene}        ctx.scene
- * @param {THREE.Camera}       ctx.camera
- * @param {object}             ctx.filterState       – from filterState.js
- * @param {Array}              ctx.axisScaleMeta     – [{key, scale, from, to, color, colorHex}]
- * @param {THREE.Group}        ctx.filterPlaneGroup
- * @param {THREE.Group}        ctx.brushHighlightGroup
- * @param {boolean}            ctx.disableBrush
- * @param {Function}           ctx.renderFrame
- * @param {Function}           ctx.updateFilteredPoints
- */
+// Wires up brush drag, filter plane and highlight listeners; returns { rebuildFilterPlanes, rebuildBrushHighlights, teardown }.
 export function buildBrushFilter(ctx) {
     const {
         canvas, scene, camera, filterState,
@@ -49,15 +13,13 @@ export function buildBrushFilter(ctx) {
         disableBrush, renderFrame, updateFilteredPoints,
     } = ctx;
 
-    /* ---- project 3D → canvas 2D ---- */
     function toScreenV2(v3) {
         const cW = canvas.clientWidth, cH = canvas.clientHeight;
         const v = v3.clone().project(camera);
         return new THREE.Vector2((v.x * 0.5 + 0.5) * cW, (-v.y * 0.5 + 0.5) * cH);
     }
 
-    /* ---- hit-test: find closest axis spine to a 2D screen point ---- */
-    const AXIS_HIT_DIST = 18; // px
+    const AXIS_HIT_DIST = 18;
     function hitTestAxis(sx, sy) {
         const sp = new THREE.Vector2(sx, sy);
         let best = null, bestDist = AXIS_HIT_DIST;
@@ -76,7 +38,6 @@ export function buildBrushFilter(ctx) {
         return best;
     }
 
-    /* ---- rebuild filter plane meshes ---- */
     function rebuildFilterPlanes() {
         while (filterPlaneGroup.children.length) {
             const c = filterPlaneGroup.children[0];
@@ -116,7 +77,6 @@ export function buildBrushFilter(ctx) {
         });
     }
 
-    /* ---- rebuild brush highlight segments on each axis ---- */
     function rebuildBrushHighlights() {
         while (brushHighlightGroup.children.length) {
             const c = brushHighlightGroup.children[0];
@@ -142,7 +102,6 @@ export function buildBrushFilter(ctx) {
         });
     }
 
-    /* ---- brush drag state ---- */
     let brushDrag = null;
 
     function onBrushDown(e) {

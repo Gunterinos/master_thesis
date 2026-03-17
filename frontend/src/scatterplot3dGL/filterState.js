@@ -1,21 +1,11 @@
-/**
- * filterState.js
- *
- * Manages per-instance brush filter state for the 3D GL scatterplot.
- * Each chart instance (identified by its container selector string) keeps
- * its own filter bag:
- *   - axisFilters  : { [axisKey]: { min, max } }  – active range filters
- *   - hiddenFilters: Set<axisKey>                  – filters suppressed during zoom
- *   - hadActiveBrushFilters: boolean               – tracks transition from active→idle
- *
- * Responds to the 'zoom-enter', 'zoom-exit', and 'filters-clear' pub-sub
- * events to synchronise filter visibility across the application.
- */
+// Per-instance brush filter state (axisFilters, hiddenFilters) for each 3D GL scatterplot.
+// Responds to zoom-enter, zoom-exit and filters-clear pub-sub events.
 
 import { subscribe } from '../state/appState.js';
 
 const _filterStates = new Map();
 
+// Returns (or creates) the filter bag for a given container selector.
 export function getFilterState(sel) {
     if (!_filterStates.has(sel)) {
         _filterStates.set(sel, { axisFilters: {}, hiddenFilters: new Set(), hadActiveBrushFilters: false });
@@ -23,12 +13,13 @@ export function getFilterState(sel) {
     return _filterStates.get(sel);
 }
 
-// Called by globalState when zoom events fire (instances registered there)
+// Hides all active axis filters and refreshes every instance.
 export function onZoomEnter(instances) {
     _filterStates.forEach(s => Object.keys(s.axisFilters).forEach(k => s.hiddenFilters.add(k)));
     instances.forEach(inst => inst.refreshVisuals());
 }
 
+// Restores hidden axis filters and refreshes every instance.
 export function onZoomExit(instances) {
     _filterStates.forEach(s => s.hiddenFilters.clear());
     instances.forEach(inst => inst.refreshVisuals());

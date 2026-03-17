@@ -1,33 +1,6 @@
-/**
- * scatterplot3dGL.js
- *
- * Entry point for the WebGL-based 3D scatterplot.  Orchestrates the
- * sub-modules and exposes the two public API functions consumed by the rest
- * of the application:
- *
- *   renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey, options)
- *     – Builds (or re-builds) a complete Three.js scatterplot inside the
- *       given container.  Handles animated axis transitions, data-point
- *       sprites, optional Pareto surface / dominated cloud / ideal point,
- *       orbit-drag controls, axis-brush filters and pub-sub wiring.
- *
- *   populateAxisSelect3dGL(select, columns)
- *     – Populates a <select> element with the available data columns.
- *
- *   setScatter3dGLSelection(rowIndexSet)
- *     – Re-exported from globalState so callers have a single import target.
- *
- * Sub-modules:
- *   filterState      – per-instance brush filter bags
- *   globalState      – cross-instance hover/selection broadcasting
- *   paretoHelpers    – Pareto front + dominated cloud generation
- *   surfaceMesh      – Delaunay mesh for the optional surface overlay
- *   textureHelpers   – canvas-texture + sprite factories
- *   sceneSetup       – Three.js scene, camera, axes, tick marks
- *   brushFilter      – axis-brush drag interaction + filter planes
- *   orbitControls    – drag-to-rotate + resize observer + raycasting
- *   pointVisuals     – composite hover/selection/brush visual state
- */
+// Entry point for the WebGL 3D scatterplot. Orchestrates scene setup, data sprites,
+// optional overlays (surface, dominated cloud, ideal point), axis-brush filters,
+// orbit controls and animated transitions across the sub-modules.
 
 import * as THREE from 'three';
 import * as d3 from 'd3';
@@ -45,6 +18,7 @@ import { buildPointVisuals } from './pointVisuals.js';
 
 export { setScatter3dGLSelection };
 
+// Builds or re-builds a complete Three.js 3D scatterplot inside the given container with all interactive features.
 export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey, options = {}) {
     const {
         onHoverStart        = () => {},
@@ -65,7 +39,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const containerNode = container.node();
     if (!containerNode) return;
 
-    /* ---- previous domain state (for animated transitions) ---- */
     const prevXMin = Number(containerNode.dataset.prevGl3dXMin);
     const prevXMax = Number(containerNode.dataset.prevGl3dXMax);
     const prevYMin = Number(containerNode.dataset.prevGl3dYMin);
@@ -77,14 +50,12 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     if (_instances.has(containerSelector)) _instances.get(containerSelector).dispose();
     container.selectAll('*').remove();
 
-    /* ---- sizing ---- */
     const rect = containerNode.getBoundingClientRect();
     const W = Math.max(400, rect.width || containerNode.clientWidth || 400);
     const H = Math.max(300, rect.height || containerNode.clientHeight || 300);
 
     const wrapper = container.append('div').attr('class', 'scatter3dgl-wrapper');
 
-    /* ---- data prep ---- */
     const points = data
         .map((row, i) => ({
             xVal: Number(row[xKey]), yVal: Number(row[yKey]), zVal: Number(row[zKey]),
@@ -98,7 +69,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         return;
     }
 
-    /* ---- scales: data → normalised 0…1 cube ---- */
     const ext = k => d3.extent(points, p => p[k]);
     const pad = e => (e[1] - e[0] || 1) * 0.05;
     const xExt = ext('xVal'), yExt = ext('yVal'), zExt = ext('zVal');
@@ -107,9 +77,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const zScale = d3.scaleLinear().domain([zExt[0] - pad(zExt), zExt[1] + pad(zExt)]).range([0, 1]);
     points.forEach(p => { p.nx = xScale(p.xVal); p.ny = yScale(p.yVal); p.nz = zScale(p.zVal); });
 
-    /* ---- animation scales (old domains) ---- */
     const shouldAnimate = animate && hasPrevDomain;
-    const ANIM_DUR = 420; // ms
+    const ANIM_DUR = 420;
     const startXScale = shouldAnimate ? d3.scaleLinear().domain([prevXMin, prevXMax]).range([0, 1]) : xScale;
     const startYScale = shouldAnimate ? d3.scaleLinear().domain([prevYMin, prevYMax]).range([0, 1]) : yScale;
     const startZScale = shouldAnimate ? d3.scaleLinear().domain([prevZMin, prevZMax]).range([0, 1]) : zScale;
@@ -121,7 +90,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         });
     }
 
-    /* ---- persist current domains for next render ---- */
     containerNode.dataset.prevGl3dXMin = String(xScale.domain()[0]);
     containerNode.dataset.prevGl3dXMax = String(xScale.domain()[1]);
     containerNode.dataset.prevGl3dYMin = String(yScale.domain()[0]);
@@ -129,7 +97,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     containerNode.dataset.prevGl3dZMin = String(zScale.domain()[0]);
     containerNode.dataset.prevGl3dZMax = String(zScale.domain()[1]);
 
-    /* ---- scene setup (axes, camera, bounding box, tick labels) ---- */
     const { renderer, canvas, scene, camera, spherical, updateCamera, axisLabelSprites, oldAxisLabelSprites } =
         buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale,
             { startXScale, startYScale, startZScale, shouldAnimate });
@@ -137,7 +104,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
     function renderFrame() { renderer.render(scene, camera); }
 
-    /* ---- data point sprites ---- */
     const POINT_SIZE     = 0.035;
     const RING_SIZE      = POINT_SIZE * 1.1;
     const pointMeshes    = [], ringMeshes = [];
@@ -169,7 +135,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         ringMeshes.push(ring);
     });
 
-    /* ---- optional overlays ---- */
     if (showSurface && points.length >= 3) scene.add(buildSurfaceMesh(points));
 
     if (showDominated && points.length > 0) {
@@ -205,7 +170,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         }
     }
 
-    /* ---- point labels ---- */
     const labelSprites = [];
     if (showLabels) {
         points.forEach(p => {
@@ -216,7 +180,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         });
     }
 
-    /* ---- UI chrome ---- */
     wrapper.append('div').attr('class', 'scatter3dgl-hint')
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
@@ -228,20 +191,17 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         );
     }
 
-    /* ---- axis scale metadata (shared by brush and orbit modules) ---- */
     const axisScaleMeta = [
         { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: '#e74c3c', colorHex: 0xe74c3c },
         { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: '#27ae60', colorHex: 0x27ae60 },
         { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: '#3498db', colorHex: 0x3498db },
     ];
 
-    /* ---- point visuals module ---- */
     const pvModule = buildPointVisuals({
         pointMeshes, ringMeshes, labelSprites, filterState,
         xKey, yKey, zKey, POINT_SIZE, RING_SIZE, renderFrame,
     });
 
-    /* ---- updateFilteredPoints: fires brush callback + refreshes visuals ---- */
     function updateFilteredPoints() {
         const active   = Object.entries(filterState.axisFilters).filter(([k]) => !filterState.hiddenFilters.has(k));
         const hasBrush = active.length > 0;
@@ -261,7 +221,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         pvModule.refreshPointVisuals();
     }
 
-    /* ---- brush filter module ---- */
     const filterPlaneGroup    = new THREE.Group();
     const brushHighlightGroup = new THREE.Group();
     scene.add(filterPlaneGroup);
@@ -273,14 +232,12 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         disableBrush, renderFrame, updateFilteredPoints,
     });
 
-    /* ---- orbit controls + hover raycasting + resize module ---- */
     const orbitModule = buildOrbitControls({
         canvas, camera, spherical, updateCamera, renderer, containerNode,
         pointMeshes, xKey, yKey, zKey,
         renderFrame, onHoverStart, onHoverEnd, onShiftClick,
     });
 
-    /* ---- initial paint ---- */
     brushModule.rebuildFilterPlanes();
     brushModule.rebuildBrushHighlights();
     pvModule.applyHighlight(getActiveRowIndex());
@@ -288,12 +245,11 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     updateFilteredPoints();
     renderFrame();
 
-    /* ---- animated axis transition ---- */
     if (shouldAnimate) {
         const t0 = performance.now();
         function animStep(now) {
             const progress = Math.min((now - t0) / ANIM_DUR, 1);
-            const t = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            const t = 1 - Math.pow(1 - progress, 3);
             points.forEach((p, i) => {
                 const x = p.startNx + (p.nx - p.startNx) * t;
                 const y = p.startNy + (p.ny - p.startNy) * t;
@@ -314,7 +270,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         requestAnimationFrame(animStep);
     }
 
-    /* ---- register instance ---- */
     const dispose = () => {
         containerNode.dataset.gl3dRadius = String(spherical.radius);
         containerNode.dataset.gl3dPhi    = String(spherical.phi);
@@ -340,9 +295,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         refreshVisuals: updateFilteredPoints,
     });
 }
-/* ================================================================== */
-/*  Axis-select populator (same signature as SVG version)              */
-/* ================================================================== */
+
+// Populates a <select> element with the given column names as options.
 export function populateAxisSelect3dGL(select, columns) {
     select.selectAll('*').remove();
     select.selectAll('option')

@@ -1,43 +1,15 @@
-/**
- * sceneSetup.js
- *
- * Initialises the Three.js scene, WebGL renderer, perspective camera and all
- * static scene objects for the 3D GL scatterplot:
- *
- *   • WebGLRenderer + canvas element (transparent background)
- *   • PerspectiveCamera with spherical-coordinate orbit state
- *   • Dashed bounding-box wireframe cube (unit 0…1 space)
- *   • Axis spine lines (X red, Y green, Z blue)
- *   • Axis tick marks (circle sprites + text labels)
- *   • Optional old-axis label sprites for cross-fade transitions
- *   • Ambient light for flat (no directional shading) appearance
- *
- * Returns an object with references to the live scene objects, the
- * updateCamera() helper, and the lists of axis label sprites used by the
- * animation system.
- */
+// Initialises the Three.js scene: renderer, camera, bounding box, axis spines,
+// tick marks, labels and ambient light for the 3D GL scatterplot.
 
 import * as THREE from 'three';
 import { makeTextSprite, makeCircleSprite } from './textureHelpers.js';
 
 const TICK_COUNT = 3;
 
-/**
- * @param {Element}  containerNode
- * @param {number}   W  canvas width
- * @param {number}   H  canvas height
- * @param {string}   xKey
- * @param {string}   yKey
- * @param {string}   zKey
- * @param {d3.ScaleLinear} xScale
- * @param {d3.ScaleLinear} yScale
- * @param {d3.ScaleLinear} zScale
- * @param {{ startXScale, startYScale, startZScale, shouldAnimate }} animOpts
- */
+// Creates the full Three.js scene with renderer, camera, axes and tick labels, returning all live references.
 export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale, animOpts) {
     const { startXScale, startYScale, startZScale, shouldAnimate } = animOpts;
 
-    /* ---- renderer ---- */
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(W, H);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -45,11 +17,9 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     const canvas = renderer.domElement;
     canvas.classList.add('scatter3dgl-canvas');
 
-    /* ---- scene ---- */
     const scene = new THREE.Scene();
     scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
-    /* ---- camera ---- */
     const savedRadius = Number(containerNode.dataset.gl3dRadius);
     const savedPhi    = Number(containerNode.dataset.gl3dPhi);
     const savedTheta  = Number(containerNode.dataset.gl3dTheta);
@@ -70,7 +40,6 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     }
     updateCamera();
 
-    /* ---- bounding box ---- */
     const boxGeom = new THREE.BoxGeometry(1, 1, 1);
     const boxEdges = new THREE.EdgesGeometry(boxGeom);
     const boxLine = new THREE.LineSegments(boxEdges, new THREE.LineDashedMaterial({
@@ -80,7 +49,6 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     boxLine.position.set(0.5, 0.5, 0.5);
     scene.add(boxLine);
 
-    /* ---- axis definitions ---- */
     const AXIS_CFG = [
         { color: 0xe74c3c, from: [0,0,0], to: [1,0,0], label: xKey, scale: xScale },
         { color: 0x27ae60, from: [0,0,0], to: [0,1,0], label: yKey, scale: yScale },
@@ -95,7 +63,6 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
         scene.add(new THREE.Line(geom, mat));
     });
 
-    /* ---- old axis labels (fade out during animated transitions) ---- */
     const oldAxisLabelSprites = [];
     if (shouldAnimate) {
         const OLD_CFG = [
@@ -122,7 +89,6 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
         });
     }
 
-    /* ---- new axis tick marks and labels ---- */
     const axisLabelSprites = [];
     AXIS_CFG.forEach(a => {
         for (let i = 0; i <= TICK_COUNT; i++) {
@@ -147,7 +113,6 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
                 axisLabelSprites.push(sprite);
             }
         }
-        // Axis name at midpoint
         const mid = new THREE.Vector3(
             (a.from[0] + a.to[0]) / 2,
             (a.from[1] + a.to[1]) / 2,

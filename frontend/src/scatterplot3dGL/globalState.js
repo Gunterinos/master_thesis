@@ -1,22 +1,5 @@
-/**
- * globalState.js
- *
- * Maintains the global registry of all active 3D GL scatterplot instances
- * and wires up the cross-instance hover and selection pub-sub events.
- *
- * Each instance registers itself as:
- *   { setSelection, applyHighlight, dispose, refreshVisuals }
- *
- * Exports:
- *   _instances              – Map<containerSelector, instanceAPI>
- *   setScatter3dGLSelection – broadcast a selection set to every instance
- *
- * Responds to:
- *   'hover-change'     → highlight the hovered row in all instances
- *   'selection-change' → pass the new selection set to all instances
- *   'zoom-enter'       → hide brush filters and redraw (via filterState)
- *   'zoom-exit'        → restore brush filters and redraw (via filterState)
- */
+// Global registry of active 3D GL scatterplot instances.
+// Wires hover, selection, zoom-enter and zoom-exit pub-sub events across all instances.
 
 import { subscribe } from '../state/appState.js';
 import { onZoomEnter, onZoomExit } from './filterState.js';
@@ -28,6 +11,7 @@ function globalHighlight(rowIndex) {
 }
 subscribe('hover-change', globalHighlight);
 
+// Broadcasts a selection set to every active 3D GL scatterplot instance.
 export function setScatter3dGLSelection(rowIndexSet) {
     _instances.forEach(inst => inst.setSelection(rowIndexSet));
 }

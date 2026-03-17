@@ -1,32 +1,11 @@
-/**
- * textureHelpers.js
- *
- * Canvas-based texture and sprite factories for the 3D GL scatterplot.
- * All textures are lazily cached so repeated calls for the same parameters
- * reuse the same Three.js CanvasTexture object.
- *
- * Exports:
- *   createCircleTexture(size, fillColor, alpha, strokeColor)
- *     – solid filled circle, optionally stroked; used for data points,
- *       tick marks, dominated cloud, and the ideal-point marker.
- *
- *   createRingTexture(size, strokeColor, lineWidth)
- *     – outline-only ring; used as a selection overlay on shift-clicked points.
- *
- *   makeCircleSprite(color, size)
- *     – convenience wrapper: returns a THREE.Sprite from createCircleTexture.
- *
- *   makeTextSprite(text, { color, fontSize, bold })
- *     – renders a text label to a canvas and wraps it in a THREE.Sprite.
- *       Rendered at 3× for crisp HiDPI quality.  Sprites use depthTest:false
- *       so axis labels always render on top.
- */
+// Cached canvas-based texture and sprite factories (circles, rings, text labels)
+// for the 3D GL scatterplot. All textures are lazily cached by parameter key.
 
 import * as THREE from 'three';
 
-/* ---- circle texture ---- */
 const _circleTexCache = new Map();
 
+// Creates and caches a filled-circle CanvasTexture with optional stroke.
 export function createCircleTexture(size = 64, fillColor = '#ffffff', alpha = 1.0, strokeColor = null) {
     const key = `${size}_${fillColor}_${alpha}_${strokeColor}`;
     if (_circleTexCache.has(key)) return _circleTexCache.get(key);
@@ -55,9 +34,9 @@ export function createCircleTexture(size = 64, fillColor = '#ffffff', alpha = 1.
     return tex;
 }
 
-/* ---- ring (outline-only) texture ---- */
 const _ringTexCache = new Map();
 
+// Creates and caches an outline-only ring CanvasTexture used for selection overlays.
 export function createRingTexture(size = 64, strokeColor = '#1d1d1f', lineWidth = 2.5) {
     const key = `ring_${size}_${strokeColor}_${lineWidth}`;
     if (_ringTexCache.has(key)) return _ringTexCache.get(key);
@@ -81,7 +60,7 @@ export function createRingTexture(size = 64, strokeColor = '#1d1d1f', lineWidth 
     return tex;
 }
 
-/* ---- circle sprite convenience wrapper ---- */
+// Returns a THREE.Sprite with a cached circle texture at the given colour and size.
 export function makeCircleSprite(color, size = 0.02) {
     const tex = createCircleTexture(32, '#ffffff', 1.0);
     const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true, depthWrite: false, color });
@@ -90,7 +69,7 @@ export function makeCircleSprite(color, size = 0.02) {
     return sprite;
 }
 
-/* ---- text sprite ---- */
+// Renders text to a 3× HiDPI canvas and returns it as a camera-facing THREE.Sprite.
 export function makeTextSprite(text, { color = 0x000000, fontSize = 28, bold = false } = {}) {
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
@@ -100,7 +79,6 @@ export function makeTextSprite(text, { color = 0x000000, fontSize = 28, bold = f
     const lw = Math.ceil(metrics.width) + 8;
     const lh = fontSize + 8;
 
-    // Render at 3× for crisp HiDPI quality
     const SCALE = 3;
     const canvas = document.createElement('canvas');
     canvas.width = lw * SCALE;
@@ -108,7 +86,6 @@ export function makeTextSprite(text, { color = 0x000000, fontSize = 28, bold = f
     const ctx = canvas.getContext('2d');
     ctx.scale(SCALE, SCALE);
     ctx.font = font;
-    // White outline for readability against any background
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 4;
     ctx.strokeText(text, 4, fontSize);

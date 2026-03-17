@@ -1,49 +1,10 @@
-/**
- * orbitControls.js
- *
- * Pointer-based orbit (drag-to-rotate) and resize handling for the 3D GL
- * scatterplot canvas.
- *
- * Orbit model:
- *   • Left-button drag on the canvas rotates the camera around the scene
- *     centre (0.5, 0.5, 0.5) using spherical coordinates (theta/phi).
- *   • Shift+drag is not captured (shift is reserved for point selection).
- *   • The brushFilter module registers in capture phase so brush drags on
- *     axis spines take priority and the orbit ignores those frames.
- *
- * Raycasting for hover & click:
- *   • pointermove → raycast against pointMeshes, fire onHoverStart /
- *     onHoverEnd and update the floating tooltip.
- *   • click with shiftKey → raycast and fire onShiftClick for multi-select.
- *
- * ResizeObserver:
- *   • Watches the container node and keeps the renderer and camera projection
- *     in sync whenever the panel changes size.
- *
- * Exports:
- *   buildOrbitControls(ctx) – wires up all listeners; returns { teardown }
- */
+// Orbit drag-to-rotate, hover/click raycasting and resize handling for the
+// 3D GL scatterplot canvas. Shift+drag is reserved for selection.
 
 import * as THREE from 'three';
 import * as d3 from 'd3';
 
-/**
- * @param {object} ctx
- * @param {HTMLCanvasElement}  ctx.canvas
- * @param {THREE.Camera}       ctx.camera
- * @param {THREE.Spherical}    ctx.spherical
- * @param {Function}           ctx.updateCamera     – persists spherical → camera
- * @param {THREE.WebGLRenderer} ctx.renderer
- * @param {Element}            ctx.containerNode
- * @param {Array<THREE.Sprite>} ctx.pointMeshes
- * @param {string}             ctx.xKey
- * @param {string}             ctx.yKey
- * @param {string}             ctx.zKey
- * @param {Function}           ctx.renderFrame
- * @param {Function}           ctx.onHoverStart
- * @param {Function}           ctx.onHoverEnd
- * @param {Function}           ctx.onShiftClick
- */
+// Wires up orbit rotation, hover raycasting, shift-click selection and resize observer; returns { teardown }.
 export function buildOrbitControls(ctx) {
     const {
         canvas, camera, spherical, updateCamera, renderer, containerNode,
@@ -57,7 +18,6 @@ export function buildOrbitControls(ctx) {
         .join('div')
         .attr('class', 'scatter-tooltip');
 
-    /* ---- raycasting ---- */
     const raycaster = new THREE.Raycaster();
     const mouse     = new THREE.Vector2();
     let hoveredMesh = null;
@@ -103,7 +63,6 @@ export function buildOrbitControls(ctx) {
         }
     }
 
-    /* ---- orbit drag ---- */
     let isDragging = false, lastX = 0, lastY = 0;
 
     function onDown(e) {
@@ -128,7 +87,6 @@ export function buildOrbitControls(ctx) {
         canvas.style.cursor = 'grab';
     }
 
-    /* ---- resize handler ---- */
     const resizeObserver = new ResizeObserver(() => {
         const r  = containerNode.getBoundingClientRect();
         const nW = Math.max(400, r.width  || 400);

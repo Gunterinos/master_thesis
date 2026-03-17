@@ -1,23 +1,7 @@
-/**
- * paretoHelpers.js
- *
- * Pareto-front calculation and dominated-cloud generation utilities used by
- * the 3D GL scatterplot's optional overlay features
- * (showSurface / showDominated / showIdealPoint options).
- *
- * computeParetoFront – given an array of points with xVal/yVal/zVal,
- *   returns the non-dominated subset (all three objectives maximised).
- *
- * generateDominatedCloud – given the Pareto front and axis domains, generates
- *   a deterministic pseudo-random point cloud that lies inside the dominated
- *   region to convey where dominated solutions sit.
- */
+// Pareto-front calculation and deterministic dominated-cloud generation
+// for the 3D GL scatterplot overlay features.
 
-/**
- * Returns the non-dominated (Pareto-optimal) subset of pts.
- * A point p is dominated if there exists another point q where
- * q is <= p on every objective and strictly < on at least one.
- */
+// Returns the non-dominated (Pareto-optimal) subset of the given points.
 export function computeParetoFront(pts) {
     return pts.filter(p => !pts.some(q =>
         q !== p &&
@@ -26,17 +10,7 @@ export function computeParetoFront(pts) {
     ));
 }
 
-/**
- * Generates a fixed-size cloud of ghost points that fall
- * inside the dominated region below the Pareto front.
- * Uses a seeded LCG so the cloud is stable across re-renders.
- *
- * @param {Array}  front  – Pareto-front points array
- * @param {[number,number]} xDom – [min, max] for x axis
- * @param {[number,number]} yDom – [min, max] for y axis
- * @param {[number,number]} zDom – [min, max] for z axis
- * @param {number} count  – number of cloud points to generate (default 280)
- */
+// Generates a seeded pseudo-random cloud of points inside the dominated region below the Pareto front.
 export function generateDominatedCloud(front, xDom, yDom, zDom, count = 280) {
     if (!front.length) return [];
     const xR = (xDom[1] - xDom[0]) || 1;
