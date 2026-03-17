@@ -1,5 +1,6 @@
 import { renderTable } from '../tables/tables.js';
 import { renderScatterplot } from '../scatterplot/scatterplot.js';
+import { renderScatterplot3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { renderBarChart } from '../barChart/barChart.js';
 import { renderParallelCoords } from '../parallelCoords/parallelCoords.js';
 
@@ -27,6 +28,23 @@ export function createChartRegistry(interactionOptions) {
                     ...interactionOptions,
                     animate,
                     showLabels,
+                });
+            },
+        },
+        scatter3dGL: {
+            key: "scatter3dGL",
+            label: "3D Scatterplot",
+            needsAxes: true,
+            needsZAxis: true,
+            canRender: ({ numericColumns }) => numericColumns.length >= 3,
+            render: ({ containerSelector, data, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false }) => {
+                renderScatterplot3dGL(containerSelector, data, xAxis, yAxis, zAxis, {
+                    ...interactionOptions,
+                    animate,
+                    showLabels,
+                    showSurface,
+                    showDominated,
+                    showIdealPoint,
                 });
             },
         },
