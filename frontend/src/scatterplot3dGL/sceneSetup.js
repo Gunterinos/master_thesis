@@ -4,7 +4,8 @@
 import * as THREE from 'three';
 import { makeTextSprite, makeCircleSprite } from './textureHelpers.js';
 
-const TICK_COUNT = 3;
+// tick count per axis
+const TICK_COUNT = 4;
 
 // Creates the full Three.js scene with renderer, camera, axes and tick labels, returning all live references.
 export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale, animOpts) {
@@ -118,7 +119,7 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
             (a.from[1] + a.to[1]) / 2,
             (a.from[2] + a.to[2]) / 2,
         );
-        const off = new THREE.Vector3(a.to[0] === 1 ? 0 : -0.1, a.to[1] === 1 ? 0 : 0, a.to[2] === 1 ? 0 : -0.1);
+        const off = new THREE.Vector3(a.to[0] === 1 ? 0 : -0.2, a.to[1] === 1 ? 0 : 0, a.to[2] === 1 ? 0 : -0.2);
         const nameSprite = makeTextSprite(a.label, { color: a.color, fontSize: 18, bold: true });
         nameSprite.position.copy(mid).add(off);
         scene.add(nameSprite);
