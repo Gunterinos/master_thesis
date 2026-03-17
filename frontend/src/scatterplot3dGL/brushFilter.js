@@ -8,7 +8,7 @@ import { makeCircleSprite } from './textureHelpers.js';
 // Wires up brush drag, filter plane and highlight listeners; returns { rebuildFilterPlanes, rebuildBrushHighlights, teardown }.
 export function buildBrushFilter(ctx) {
     const {
-        canvas, scene, camera, filterState,
+        canvas, camera, filterState,
         axisScaleMeta, filterPlaneGroup, brushHighlightGroup,
         disableBrush, renderFrame, updateFilteredPoints,
     } = ctx;
@@ -19,10 +19,9 @@ export function buildBrushFilter(ctx) {
         return new THREE.Vector2((v.x * 0.5 + 0.5) * cW, (-v.y * 0.5 + 0.5) * cH);
     }
 
-    const AXIS_HIT_DIST = 18;
     function hitTestAxis(sx, sy) {
         const sp = new THREE.Vector2(sx, sy);
-        let best = null, bestDist = AXIS_HIT_DIST;
+        let best = null, bestDist = 18;
         axisScaleMeta.forEach(axis => {
             if (filterState.hiddenFilters.has(axis.key)) return;
             const a = toScreenV2(axis.from), b = toScreenV2(axis.to);
