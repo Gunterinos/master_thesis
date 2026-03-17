@@ -31,7 +31,7 @@ export function buildPointVisuals(ctx) {
 
             if (isBrushFiltered) {
                 m.scale.set(POINT_SIZE, POINT_SIZE, 1);
-                m.material.color.set(0xaaaaaa);
+                m.material.color.set('#aaaaaa');
                 m.material.opacity = 0.15;
                 ring.scale.set(RING_SIZE, RING_SIZE, ring.scale.z);
                 ring.material.opacity = 0;
@@ -39,7 +39,7 @@ export function buildPointVisuals(ctx) {
                 return;
             }
 
-            m.material.color.set(0x34c759);
+            m.material.color.set('#34c759');
 
             const isHoverTarget = hasHover && p.rowIndex === hovered;
             const isHoverDim    = hasHover && !isHoverTarget;

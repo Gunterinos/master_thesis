@@ -13,12 +13,12 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(W, H);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor('#000000', 0);
     const canvas = renderer.domElement;
     canvas.classList.add('scatter3dgl-canvas');
 
     const scene = new THREE.Scene();
-    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+    scene.add(new THREE.AmbientLight('#ffffff', 1.0));
 
     const savedRadius = Number(containerNode.dataset.gl3dRadius);
     const savedPhi    = Number(containerNode.dataset.gl3dPhi);
@@ -43,16 +43,16 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     const boxGeom = new THREE.BoxGeometry(1, 1, 1);
     const boxEdges = new THREE.EdgesGeometry(boxGeom);
     const boxLine = new THREE.LineSegments(boxEdges, new THREE.LineDashedMaterial({
-        color: 0xd1d5db, dashSize: 0.02, gapSize: 0.02,
+        color: '#d1d5db', dashSize: 0.02, gapSize: 0.02,
     }));
     boxLine.computeLineDistances();
     boxLine.position.set(0.5, 0.5, 0.5);
     scene.add(boxLine);
 
     const AXIS_CFG = [
-        { color: 0xe74c3c, from: [0,0,0], to: [1,0,0], label: xKey, scale: xScale },
-        { color: 0x27ae60, from: [0,0,0], to: [0,1,0], label: yKey, scale: yScale },
-        { color: 0x3498db, from: [0,0,0], to: [0,0,1], label: zKey, scale: zScale },
+        { color: '#e74c3c', from: [0,0,0], to: [1,0,0], label: xKey, scale: xScale },
+        { color: '#27ae60', from: [0,0,0], to: [0,1,0], label: yKey, scale: yScale },
+        { color: '#3498db', from: [0,0,0], to: [0,0,1], label: zKey, scale: zScale },
     ];
 
     AXIS_CFG.forEach(a => {
@@ -66,9 +66,9 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     const oldAxisLabelSprites = [];
     if (shouldAnimate) {
         const OLD_CFG = [
-            { color: 0xe74c3c, from: [0,0,0], to: [1,0,0], label: xKey, scale: startXScale },
-            { color: 0x27ae60, from: [0,0,0], to: [0,1,0], label: yKey, scale: startYScale },
-            { color: 0x3498db, from: [0,0,0], to: [0,0,1], label: zKey, scale: startZScale },
+            { color: '#e74c3c', from: [0,0,0], to: [1,0,0], label: xKey, scale: startXScale },
+            { color: '#27ae60', from: [0,0,0], to: [0,1,0], label: yKey, scale: startYScale },
+            { color: '#3498db', from: [0,0,0], to: [0,0,1], label: zKey, scale: startZScale },
         ];
         OLD_CFG.forEach(a => {
             for (let i = 1; i <= TICK_COUNT; i++) {

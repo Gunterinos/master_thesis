@@ -9,7 +9,7 @@ const surfaceStyle = {
     fillSaturation: 0.42,
     lightnessNear: 0.92,
     lightnessFar: 0.28,
-    edgeColor: 0x1e293b,
+    edgeColor: '#1e293b',
     edgeOpacity: 0.34,
 };
 

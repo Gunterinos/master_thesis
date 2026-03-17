@@ -70,7 +70,7 @@ export function makeCircleSprite(color, size = 0.02) {
 }
 
 // Renders text to a 3× HiDPI canvas and returns it as a camera-facing THREE.Sprite.
-export function makeTextSprite(text, { color = 0x000000, fontSize = 28, bold = false } = {}) {
+export function makeTextSprite(text, { color = '#000000', fontSize = 28, bold = false } = {}) {
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
     const font = `${bold ? 'bold ' : ''}${fontSize}px sans-serif`;

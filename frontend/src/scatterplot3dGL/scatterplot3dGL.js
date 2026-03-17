@@ -116,7 +116,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         const sz = shouldAnimate ? p.startNz : p.nz;
         const mat = new THREE.SpriteMaterial({
             map: pointCircleTex, transparent: true, opacity: 1.0,
-            depthTest: true, depthWrite: false, color: 0x34c759,
+            depthTest: true, depthWrite: false, color: '#34c759',
         });
         const sprite = new THREE.Sprite(mat);
         sprite.scale.set(POINT_SIZE, POINT_SIZE, 1);
@@ -144,7 +144,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         cloud.forEach(c => {
             const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
                 map: domTex, transparent: true, opacity: 0.35,
-                depthTest: true, depthWrite: false, color: 0x8a9ab0,
+                depthTest: true, depthWrite: false, color: '#8a9ab0',
             }));
             sprite.scale.set(0.014, 0.014, 1);
             sprite.position.set(xScale(c.xVal), yScale(c.yVal), zScale(c.zVal));
@@ -164,7 +164,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             idealMesh.scale.set(0.05, 0.05, 1);
             idealMesh.position.set(xScale(ix), yScale(iy), zScale(iz));
             scene.add(idealMesh);
-            const idealLabel = makeTextSprite('Ideal Point', { color: 0xca8a04, fontSize: 12, bold: true });
+            const idealLabel = makeTextSprite('Ideal Point', { color: '#ca8a04', fontSize: 12, bold: true });
             idealLabel.position.set(xScale(ix) + 0.04, yScale(iy) + 0.04, zScale(iz) + 0.04);
             scene.add(idealLabel);
         }
@@ -173,7 +173,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const labelSprites = [];
     if (showLabels) {
         points.forEach(p => {
-            const sprite = makeTextSprite(`op${p.rowIndex + 1}`, { color: 0x5f6673, fontSize: 11 });
+            const sprite = makeTextSprite(`op${p.rowIndex + 1}`, { color: '#5f6673', fontSize: 11 });
             sprite.position.set(p.nx + 0.025, p.ny + 0.025, p.nz + 0.025);
             scene.add(sprite);
             labelSprites.push(sprite);
@@ -192,9 +192,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     }
 
     const axisScaleMeta = [
-        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: '#e74c3c', colorHex: 0xe74c3c },
-        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: '#27ae60', colorHex: 0x27ae60 },
-        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: '#3498db', colorHex: 0x3498db },
+        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: '#e74c3c' },
+        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: '#27ae60' },
+        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: '#3498db' },
     ];
 
     const pvModule = buildPointVisuals({

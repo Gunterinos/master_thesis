@@ -45,7 +45,7 @@ export function buildBrushFilter(ctx) {
             c.geometry?.dispose();
             c.material?.dispose();
         }
-        axisScaleMeta.forEach(({ key, scale, colorHex: color, from, to }) => {
+        axisScaleMeta.forEach(({ key, scale, color, from, to }) => {
             const f = filterState.axisFilters[key];
             if (!f || filterState.hiddenFilters.has(key)) return;
             const normal = to.clone().sub(from);
@@ -84,7 +84,7 @@ export function buildBrushFilter(ctx) {
             c.geometry?.dispose();
             c.material?.dispose();
         }
-        axisScaleMeta.forEach(({ key, scale, colorHex, from, to }) => {
+        axisScaleMeta.forEach(({ key, scale, color, from, to }) => {
             const f = filterState.axisFilters[key];
             if (!f || filterState.hiddenFilters.has(key)) return;
             const tMin = scale(f.min), tMax = scale(f.max);
@@ -92,10 +92,10 @@ export function buildBrushFilter(ctx) {
             const p0   = from.clone().add(dir.clone().multiplyScalar(tMin));
             const p1   = from.clone().add(dir.clone().multiplyScalar(tMax));
             const geom = new THREE.BufferGeometry().setFromPoints([p0, p1]);
-            const mat  = new THREE.LineBasicMaterial({ color: colorHex, linewidth: 3, transparent: true, opacity: 0.8 });
+            const mat  = new THREE.LineBasicMaterial({ color, linewidth: 3, transparent: true, opacity: 0.8 });
             brushHighlightGroup.add(new THREE.Line(geom, mat));
             [p0, p1].forEach(pt => {
-                const s = makeCircleSprite(colorHex, 0.06);
+                const s = makeCircleSprite(color, 0.06);
                 s.position.copy(pt);
                 brushHighlightGroup.add(s);
             });
