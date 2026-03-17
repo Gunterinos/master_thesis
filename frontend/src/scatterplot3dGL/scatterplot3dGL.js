@@ -597,7 +597,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             brushHighlightGroup.add(new THREE.Line(geom, mat));
             // Small spheres at ends (handles)
             [p0, p1].forEach(pt => {
-                const s = makeCircleSprite(colorHex, 0.025);
+                const s = makeCircleSprite(colorHex, 0.06);
                 s.position.copy(pt);
                 brushHighlightGroup.add(s);
             });
