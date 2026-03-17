@@ -78,7 +78,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     points.forEach(p => { p.nx = xScale(p.xVal); p.ny = yScale(p.yVal); p.nz = zScale(p.zVal); });
 
     const shouldAnimate = animate && hasPrevDomain;
-    const ANIM_DUR = 420;
     const startXScale = shouldAnimate ? d3.scaleLinear().domain([prevXMin, prevXMax]).range([0, 1]) : xScale;
     const startYScale = shouldAnimate ? d3.scaleLinear().domain([prevYMin, prevYMax]).range([0, 1]) : yScale;
     const startZScale = shouldAnimate ? d3.scaleLinear().domain([prevZMin, prevZMax]).range([0, 1]) : zScale;
@@ -248,7 +247,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     if (shouldAnimate) {
         const t0 = performance.now();
         function animStep(now) {
-            const progress = Math.min((now - t0) / ANIM_DUR, 1);
+            const progress = Math.min((now - t0) / 420, 1);
             const t = 1 - Math.pow(1 - progress, 3);
             points.forEach((p, i) => {
                 const x = p.startNx + (p.nx - p.startNx) * t;
