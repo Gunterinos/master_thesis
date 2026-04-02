@@ -55,6 +55,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         onBrushFilterChange = () => {},
         disableBrush = false,
         animate = false,
+        objectiveDirections = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -190,15 +191,19 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // ── Y scales ─────────────────────────────────────────────────
+    // For 'min' objectives the range is inverted ([0, height]) so the
+    // smallest (best) value appears at the top, matching 'max' axes visually.
     const prevYDomains = { ...state.prevYDomains };
     const yScales = {};
     activeAxes.forEach((axis) => {
         const ext = d3.extent(data, (row) => +row[axis]);
         const pad = (ext[1] - ext[0] || 1) * 0.05;
+        const dir = objectiveDirections[axis];
+        const range = dir === 'min' ? [0, height] : [height, 0];
         yScales[axis] = d3
             .scaleLinear()
             .domain([ext[0] - pad, ext[1] + pad])
-            .range([height, 0]);
+            .range(range);
         state.prevYDomains[axis] = yScales[axis].domain();
     });
 
@@ -208,8 +213,10 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     if (animate && hasPrevY) {
         activeAxes.forEach((axis) => {
             const prevDom = prevYDomains[axis];
+            const dir = objectiveDirections[axis];
+            const range = dir === 'min' ? [0, height] : [height, 0];
             startYScales[axis] = prevDom
-                ? d3.scaleLinear().domain(prevDom).range([height, 0])
+                ? d3.scaleLinear().domain(prevDom).range(range)
                 : yScales[axis];
         });
     }
@@ -332,13 +339,18 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
             .attr("y2", height);
     });
 
-    // Axis title label (above the axis)
+    // Axis title label (above the axis) with direction indicator for objectives
     axisGs
         .append("text")
         .attr("class", "pcp-axis-label")
         .attr("text-anchor", "middle")
         .attr("y", -14)
-        .text((axis) => axis);
+        .text((axis) => {
+            const dir = objectiveDirections[axis];
+            if (dir === 'max') return `${axis} ↑`;
+            if (dir === 'min') return `${axis} ↓`;
+            return axis;
+        });
 
     // Drag handle — covers only the label area at the top
     axisGs

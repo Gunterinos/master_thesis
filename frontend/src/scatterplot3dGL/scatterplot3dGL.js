@@ -32,7 +32,12 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         showSurface         = false,
         showDominated       = false,
         showIdealPoint      = false,
+        objectiveDirections = {},
     } = options;
+
+    const xDir = objectiveDirections[xKey] ?? 'min';
+    const yDir = objectiveDirections[yKey] ?? 'min';
+    const zDir = objectiveDirections[zKey] ?? 'min';
 
     const filterState   = getFilterState(containerSelector);
     const container     = d3.select(containerSelector);
@@ -134,11 +139,11 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         ringMeshes.push(ring);
     });
 
-    if (showSurface && points.length >= 3) scene.add(buildSurfaceMesh(points));
+    if (showSurface && points.length >= 3) scene.add(buildSurfaceMesh(points, xDir, yDir, zDir));
 
     if (showDominated && points.length > 0) {
-        const front  = computeParetoFront(points);
-        const cloud  = generateDominatedCloud(front, xScale.domain(), yScale.domain(), zScale.domain());
+        const front  = computeParetoFront(points, xDir, yDir, zDir);
+        const cloud  = generateDominatedCloud(front, xScale.domain(), yScale.domain(), zScale.domain(), xDir, yDir, zDir);
         const domTex = createCircleTexture(32, '#ffffff', 1.0);
         cloud.forEach(c => {
             const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -152,9 +157,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     }
 
     if (showIdealPoint) {
-        const ix = d3.max(points, p => p.xVal);
-        const iy = d3.max(points, p => p.yVal);
-        const iz = d3.max(points, p => p.zVal);
+        const ix = xDir === 'max' ? d3.max(points, p => p.xVal) : d3.min(points, p => p.xVal);
+        const iy = yDir === 'max' ? d3.max(points, p => p.yVal) : d3.min(points, p => p.yVal);
+        const iz = zDir === 'max' ? d3.max(points, p => p.zVal) : d3.min(points, p => p.zVal);
         if (Number.isFinite(ix) && Number.isFinite(iy) && Number.isFinite(iz)) {
             const idealMesh = new THREE.Sprite(new THREE.SpriteMaterial({
                 map: createCircleTexture(64, '#eab308', 1.0, '#ca8a04'),
@@ -183,8 +188,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
     if (showSurface) {
+        const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
         legendDiv.html(
-            '<span class="scatter3dgl-legend-title">Distance to Ideal [1, 1, 1]</span>' +
+            `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
             '<div class="scatter3dgl-legend-bar"></div>' +
             '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>'
         );

@@ -7,6 +7,7 @@ import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelecti
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
 
 let fullData = [];
+let objectiveDirections = {};
 let chartRegistry = null;
 
 function getCurrentData() {
@@ -22,6 +23,7 @@ function renderAllPanels(options = {}) {
 
     initializeObjectivesSpacePanel({
         data: dataToRender,
+        objectiveDirections,
         chartRegistry,
         renderOptions: { animate },
     });
@@ -73,13 +75,14 @@ function clearSelectionFilter() {
 }
 
 d3.json("/api/portfolio-data")
-    .then((rawData) => {
+    .then(({ rows: rawData, directions }) => {
         if (!rawData || rawData.length === 0) {
             d3.select("#objectives-container").append("p").text("No data available.");
             d3.select("#decision-container").append("p").text("No data available.");
             return;
         }
 
+        objectiveDirections = directions;
         fullData = rawData.map((row, index) => ({
             ...row,
             __rowIndex: index,

@@ -37,9 +37,10 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, data, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false }) => {
+            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false }) => {
                 renderScatterplot3dGL(containerSelector, data, xAxis, yAxis, zAxis, {
                     ...interactionOptions,
+                    objectiveDirections,
                     animate,
                     showLabels,
                     showSurface,
@@ -65,9 +66,10 @@ export function createChartRegistry(interactionOptions) {
             label: "Parallel Coordinates",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, columns, data, animate = false }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false }) => {
                 renderParallelCoords(containerSelector, columns, data, {
                     ...interactionOptions,
+                    objectiveDirections,
                     animate,
                 });
             },

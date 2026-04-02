@@ -1,7 +1,7 @@
 import { initializeSpacePanel } from './spacePanel.js';
 
 export function initializeObjectivesSpacePanel(config) {
-    const { data, chartRegistry, renderOptions = {}, onAfterRender } = config;
+    const { data, objectiveDirections = {}, chartRegistry, renderOptions = {}, onAfterRender } = config;
     const allColumns = Object.keys(data[0]);
     const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));
 
@@ -20,6 +20,7 @@ export function initializeObjectivesSpacePanel(config) {
         idealToggleSelector: "#objectives-ideal-toggle",
         columns: objectiveColumns,
         data,
+        objectiveDirections,
         defaultChart: "scatter",
         chartKeys: ["scatter", "scatter3dGL", "pcp"],
         chartRegistry,
