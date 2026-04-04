@@ -206,8 +206,6 @@ body.shift-held .pcp-line.is-line-selected {
     stroke-width: 1.5;
 }
 
-/* Hover-linked states must come last so they win the cascade over
-   is-line-selected, is-brush-filtered, and is-selection-dim. */
 .pcp-line.is-linked-highlight {
     stroke: #ff9500;
     stroke-opacity: 1;
