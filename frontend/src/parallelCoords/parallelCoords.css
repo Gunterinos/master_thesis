@@ -19,16 +19,6 @@
     stroke-width: 2;
 }
 
-.pcp-line.is-linked-highlight {
-    stroke: #ff9500;
-    stroke-opacity: 1;
-    stroke-width: 2.5;
-}
-
-.pcp-line.is-linked-dim {
-    stroke-opacity: 0.08;
-}
-
 .pcp-line.is-selection-dim {
     stroke-opacity: 0.8;
 }
@@ -214,5 +204,15 @@ body.shift-held .pcp-line.is-line-selected {
 .pcp-line.is-brush-filtered {
     stroke-opacity: 0.8;
     stroke-width: 1.5;
+}
+
+.pcp-line.is-linked-highlight {
+    stroke: #ff9500;
+    stroke-opacity: 1;
+    stroke-width: 2.5;
+}
+
+.pcp-line.is-linked-dim {
+    stroke-opacity: 0.08;
 }
 

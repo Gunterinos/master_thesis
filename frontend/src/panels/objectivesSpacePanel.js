@@ -15,6 +15,7 @@ export function initializeObjectivesSpacePanel(config) {
         yLabelSelector: 'label[for="objectives-y-axis"]',
         zLabelSelector: 'label[for="objectives-z-axis"]',
         labelsToggleSelector: "#objectives-labels-toggle",
+        pcaToggleSelector: "#objectives-pca-toggle",
         surfaceToggleSelector: "#objectives-surface-toggle",
         dominatedToggleSelector: "#objectives-dominated-toggle",
         idealToggleSelector: "#objectives-ideal-toggle",

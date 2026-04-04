@@ -35,7 +35,13 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         onShiftClick = () => {},
         animate = false,
         showLabels = false,
+        pcaLabels = null,
     } = options;
+
+    const xAxisLabel = pcaLabels?.x ?? xKey;
+    const yAxisLabel = pcaLabels?.y ?? yKey;
+    const xTooltipLabel = pcaLabels ? 'PC1' : xKey;
+    const yTooltipLabel = pcaLabels ? 'PC2' : yKey;
     const container = d3.select(containerSelector);
     const containerNode = container.node();
     if (!containerNode) {
@@ -148,7 +154,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .attr("x", width / 2)
         .attr("y", height + margin.bottom - 8)
         .attr("text-anchor", "middle")
-        .text(xKey);
+        .text(xAxisLabel);
 
     svg
         .append("text")
@@ -156,7 +162,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .attr("x", -height / 2)
         .attr("y", -40)
         .attr("text-anchor", "middle")
-        .text(yKey);
+        .text(yAxisLabel);
 
     if (showLabels) {
         const labelGroup = svg.append("g").attr("class", "scatter-point-labels");
@@ -204,7 +210,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             tooltip
                 .classed("visible", true)
                 .html(
-                    `Point: ${point.rowIndex + 1}<br>${xKey}: ${Number(point.rawX).toFixed(3)}<br>${yKey}: ${Number(point.rawY).toFixed(3)}`,
+                    `Point: ${point.rowIndex + 1}<br>${xTooltipLabel}: ${Number(point.rawX).toFixed(3)}<br>${yTooltipLabel}: ${Number(point.rawY).toFixed(3)}`,
                 )
                 .style("left", `${event.pageX + 12}px`)
                 .style("top", `${event.pageY - 36}px`);
