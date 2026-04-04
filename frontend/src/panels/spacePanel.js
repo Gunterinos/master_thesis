@@ -2,6 +2,9 @@ import * as d3 from 'd3';
 import { getNumericColumns } from '../tables/tables.js';
 import { populateAxisSelect } from '../scatterplot/scatterplot.js';
 import { populateAxisSelect3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
+import { setRadvizSpread } from '../radviz/radviz.js';
+
+const _observers = new Map(); // containerSelector → ResizeObserver
 
 export function initializeSpacePanel(config) {
     const {
@@ -18,6 +21,7 @@ export function initializeSpacePanel(config) {
         dominatedToggleSelector = null,
         idealToggleSelector = null,
         pcaToggleSelector = null,
+        spreadSliderSelector = null,
         columns,
         data,
         objectiveDirections = {},
@@ -44,6 +48,8 @@ export function initializeSpacePanel(config) {
     const dominatedToggle = dominatedToggleSelector ? d3.select(dominatedToggleSelector) : null;
     const idealToggle = idealToggleSelector ? d3.select(idealToggleSelector) : null;
     const pcaToggle = pcaToggleSelector ? d3.select(pcaToggleSelector) : null;
+    const spreadSlider = spreadSliderSelector ? d3.select(spreadSliderSelector) : null;
+    const spreadLabel = spreadSliderSelector ? d3.select(`label[for="${spreadSliderSelector.replace('#', '')}"]`) : null;
     // Persist toggle state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
     let showPCA = pcaToggle ? pcaToggle.classed("active") : false;
@@ -128,10 +134,18 @@ export function initializeSpacePanel(config) {
         if (idealToggle) {
             idealToggle.classed("hidden", !needsZ);
         }
+        if (spreadSlider) {
+            const isRadviz = chartType === 'radviz';
+            spreadSlider.classed("hidden", !isRadviz);
+            if (spreadLabel) spreadLabel.classed("hidden", !isRadviz);
+        }
 
         if (!chartConfig) {
             return;
         }
+
+        const panelEl = d3.select(containerSelector).node()?.closest('.table-panel');
+        if (panelEl) panelEl.classList.toggle('is-chart-fullscreen', chartConfig?.isFullScreen === true);
 
         const renderWith = (renderData, pcaLabels = null) => {
             chartConfig.render({
@@ -207,10 +221,35 @@ export function initializeSpacePanel(config) {
         });
     }
 
+    if (spreadSlider) {
+        spreadSlider.on("input", function () {
+            setRadvizSpread(containerSelector, +this.value / 100);
+        });
+    }
+
     chartSelect.on("change", updatePanel);
     xAxisSelect.on("change", updatePanel);
     yAxisSelect.on("change", updatePanel);
     if (zAxisSelect) zAxisSelect.on("change", updatePanel);
+
+    // Re-render when the panel changes size (window resize, fullscreen toggle, etc.)
+    if (_observers.has(containerSelector)) {
+        _observers.get(containerSelector).disconnect();
+    }
+    const panelNode = d3.select(containerSelector).node()?.closest('.table-panel');
+    if (panelNode) {
+        const rect = panelNode.getBoundingClientRect();
+        let lastW = rect.width, lastH = rect.height;
+        const observer = new ResizeObserver((entries) => {
+            const { width: w, height: h } = entries[0].contentRect;
+            if (Math.abs(w - lastW) > 1 || Math.abs(h - lastH) > 1) {
+                lastW = w; lastH = h;
+                updatePanel();
+            }
+        });
+        observer.observe(panelNode);
+        _observers.set(containerSelector, observer);
+    }
 
     updatePanel();
 }
