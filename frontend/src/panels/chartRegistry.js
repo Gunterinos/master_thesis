@@ -23,11 +23,12 @@ export function createChartRegistry(interactionOptions) {
             label: "2D Scatterplot",
             needsAxes: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false }) => {
+            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null }) => {
                 renderScatterplot(containerSelector, data, xAxis, yAxis, {
                     ...interactionOptions,
                     animate,
                     showLabels,
+                    pcaLabels,
                 });
             },
         },

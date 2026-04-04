@@ -17,6 +17,7 @@ export function initializeSpacePanel(config) {
         surfaceToggleSelector = null,
         dominatedToggleSelector = null,
         idealToggleSelector = null,
+        pcaToggleSelector = null,
         columns,
         data,
         objectiveDirections = {},
@@ -42,8 +43,10 @@ export function initializeSpacePanel(config) {
     const surfaceToggle = surfaceToggleSelector ? d3.select(surfaceToggleSelector) : null;
     const dominatedToggle = dominatedToggleSelector ? d3.select(dominatedToggleSelector) : null;
     const idealToggle = idealToggleSelector ? d3.select(idealToggleSelector) : null;
-    // Persist showLabels state across re-renders via button's active class
+    const pcaToggle = pcaToggleSelector ? d3.select(pcaToggleSelector) : null;
+    // Persist toggle state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
+    let showPCA = pcaToggle ? pcaToggle.classed("active") : false;
     let showSurface = surfaceToggle ? surfaceToggle.classed("active") : false;
     let showDominated = dominatedToggle ? dominatedToggle.classed("active") : false;
     let showIdealPoint = idealToggle ? idealToggle.classed("active") : false;
@@ -102,15 +105,19 @@ export function initializeSpacePanel(config) {
         const chartConfig = chartRegistry[chartType];
         const isScatter = chartConfig?.needsAxes === true;
         const needsZ = chartConfig?.needsZAxis === true;
+        const isPCA = showPCA && isScatter && !needsZ;
 
-        xAxisSelect.classed("hidden", !isScatter);
-        yAxisSelect.classed("hidden", !isScatter);
-        xLabel.classed("hidden", !isScatter);
-        yLabel.classed("hidden", !isScatter);
+        xAxisSelect.classed("hidden", !isScatter || isPCA);
+        yAxisSelect.classed("hidden", !isScatter || isPCA);
+        xLabel.classed("hidden", !isScatter || isPCA);
+        yLabel.classed("hidden", !isScatter || isPCA);
         if (zAxisSelect) zAxisSelect.classed("hidden", !needsZ);
         if (zLabel)      zLabel.classed("hidden", !needsZ);
         if (labelsToggle) {
             labelsToggle.classed("hidden", !isScatter);
+        }
+        if (pcaToggle) {
+            pcaToggle.classed("hidden", !isScatter || needsZ);
         }
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);
@@ -126,22 +133,38 @@ export function initializeSpacePanel(config) {
             return;
         }
 
-        chartConfig.render({
-            containerSelector,
-            columns,
-            data,
-            objectiveDirections,
-            xAxis: xAxisSelect.property("value"),
-            yAxis: yAxisSelect.property("value"),
-            zAxis: zAxisSelect ? zAxisSelect.property("value") : undefined,
-            animate: renderOptions.animate === true,
-            showLabels,
-            showSurface,
-            showDominated,
-            showIdealPoint,
-        });
+        const renderWith = (renderData, pcaLabels = null) => {
+            chartConfig.render({
+                containerSelector,
+                columns,
+                data: renderData,
+                objectiveDirections,
+                xAxis: pcaLabels ? '__pc1' : xAxisSelect.property("value"),
+                yAxis: pcaLabels ? '__pc2' : yAxisSelect.property("value"),
+                zAxis: zAxisSelect ? zAxisSelect.property("value") : undefined,
+                animate: renderOptions.animate === true,
+                showLabels,
+                showSurface,
+                showDominated,
+                showIdealPoint,
+                pcaLabels,
+            });
+            onAfterRender();
+        };
 
-        onAfterRender();
+        if (isPCA) {
+            fetch('/api/pca', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rows: data, columns: numericColumns }),
+            })
+                .then(r => r.json())
+                .then(({ rows, pc1Label, pc2Label }) => {
+                    renderWith(rows, { x: pc1Label, y: pc2Label });
+                });
+        } else {
+            renderWith(data);
+        }
     };
 
     if (labelsToggle) {
@@ -172,6 +195,14 @@ export function initializeSpacePanel(config) {
         idealToggle.on("click", () => {
             showIdealPoint = !showIdealPoint;
             idealToggle.classed("active", showIdealPoint);
+            updatePanel();
+        });
+    }
+
+    if (pcaToggle) {
+        pcaToggle.on("click", () => {
+            showPCA = !showPCA;
+            pcaToggle.classed("active", showPCA);
             updatePanel();
         });
     }
