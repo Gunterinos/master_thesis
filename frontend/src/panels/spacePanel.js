@@ -144,8 +144,8 @@ export function initializeSpacePanel(config) {
             return;
         }
 
-        const panelEl = d3.select(containerSelector).node()?.closest('.table-panel');
-        if (panelEl) panelEl.classList.toggle('is-chart-fullscreen', chartConfig?.isFullScreen === true);
+        const panelElem = d3.select(containerSelector).node()?.closest('.table-panel');
+        if (panelElem) panelElem.classList.toggle('is-chart-fullscreen', chartConfig?.isFullScreen === true);
 
         const renderWith = (renderData, pcaLabels = null) => {
             chartConfig.render({
