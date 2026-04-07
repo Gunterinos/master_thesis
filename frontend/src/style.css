@@ -183,3 +183,11 @@ body.shift-held .is-selection-dim {
 .panel-content::-webkit-scrollbar-track {
     background: transparent;
 }
+
+.table-panel.is-chart-fullscreen {
+    flex: 1 1 100%;
+}
+
+.layout:has(.table-panel.is-chart-fullscreen) .table-panel:not(.is-chart-fullscreen) {
+    display: none;
+}

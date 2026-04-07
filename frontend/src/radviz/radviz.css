@@ -1,0 +1,116 @@
+.radviz-boundary {
+    fill: none;
+    stroke: #e0e4ec;
+    stroke-width: 1.5;
+    transition: opacity 0.2s ease;
+}
+
+.radviz-anchor {
+    fill: #5f6673;
+    transition: opacity 0.2s ease;
+}
+
+.radviz-anchor-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    fill: #1d1d1f;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.2s ease;
+}
+
+.radviz-slice {
+    transition: opacity 0.15s ease;
+}
+
+.radviz-lasso-layer {
+    fill: transparent;
+    cursor: crosshair;
+}
+
+.radviz-lasso-path {
+    fill: rgba(79, 140, 255, 0.16);
+    stroke: #4f8cff;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+}
+
+.radviz-hint {
+    font-size: 0.68rem;
+    fill: #a0a8b4;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Glyph groups */
+.radviz-point {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.radviz-selection-ring {
+    fill: none;
+    stroke: none;
+}
+
+/* Expanded donut text */
+.radviz-obj-label {
+    font-size: 0.62rem;
+    fill: #1d1d1f;
+    font-weight: 500;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Hover effect on individual slices of the expanded donut */
+.radviz-point--expanded .radviz-slice:hover {
+    filter: brightness(1.18);
+    cursor: pointer;
+}
+
+/* Legend */
+.radviz-legend-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    fill: #5f6673;
+    pointer-events: none;
+    user-select: none;
+}
+
+.radviz-legend-label {
+    font-size: 0.72rem;
+    fill: #5f6673;
+    dominant-baseline: middle;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── Expanded mode — dim everything except the open glyph ── */
+.radviz-expanded .radviz-boundary,
+.radviz-expanded .radviz-anchor,
+.radviz-expanded .radviz-anchor-label {
+    opacity: 0.25;
+}
+
+.radviz-expanded .radviz-point:not(.radviz-point--expanded) {
+    opacity: 0.12;
+}
+
+/* ── Selection and hover states — declared last to win the cascade ── */
+.radviz-point.is-selection-dim {
+    opacity: 0.15;
+}
+
+.radviz-point.is-point-selected .radviz-selection-ring {
+    stroke: #1d1d1f;
+    stroke-width: 2;
+}
+
+.radviz-point.is-linked-highlight {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
+}
+
+.radviz-point.is-linked-dim {
+    opacity: 0.2;
+}

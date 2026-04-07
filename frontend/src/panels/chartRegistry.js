@@ -3,6 +3,7 @@ import { renderScatterplot } from '../scatterplot/scatterplot.js';
 import { renderScatterplot3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { renderBarChart } from '../barChart/barChart.js';
 import { renderParallelCoords } from '../parallelCoords/parallelCoords.js';
+import { renderRadviz } from '../radviz/radviz.js';
 
 export function createChartRegistry(interactionOptions) {
     return {
@@ -71,6 +72,19 @@ export function createChartRegistry(interactionOptions) {
                 renderParallelCoords(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
+                    animate,
+                });
+            },
+        },
+        radviz: {
+            key: "radviz",
+            label: "RadViz",
+            needsAxes: false,
+            isFullScreen: true,
+            canRender: ({ numericColumns }) => numericColumns.length >= 3,
+            render: ({ containerSelector, columns, data, animate = false }) => {
+                renderRadviz(containerSelector, data, columns, {
+                    ...interactionOptions,
                     animate,
                 });
             },
