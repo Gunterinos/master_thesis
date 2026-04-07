@@ -37,3 +37,20 @@
     fill: #4c566a;
     font-size: 0.75rem;
 }
+
+.bar-benchmark-outline {
+    fill: none;
+    stroke: #ff9500;
+    stroke-width: 3;
+    stroke-dasharray: 5 3;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.bar-benchmark-outline.is-linked-dim {
+    opacity: 0.2;
+}
+
+.bar-benchmark-outline.is-selection-dim {
+    opacity: 0.15;
+}

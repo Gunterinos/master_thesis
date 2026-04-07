@@ -114,3 +114,10 @@
 .radviz-point.is-linked-dim {
     opacity: 0.2;
 }
+
+.radviz-benchmark-ring {
+    fill: none;
+    stroke: #ffaa32;
+    stroke-width: 3;
+    pointer-events: none;
+}

@@ -88,3 +88,8 @@ body.shift-held .scatter-point-label.is-point-selected {
     pointer-events: none;
     user-select: none;
 }
+
+.scatter-point.is-benchmark {
+    stroke: #CC7000;
+    stroke-width: 1.5;
+}

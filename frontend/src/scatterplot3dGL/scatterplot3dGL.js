@@ -66,6 +66,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             xVal: Number(row[xKey]), yVal: Number(row[yKey]), zVal: Number(row[zKey]),
             rawX: row[xKey], rawY: row[yKey], rawZ: row[zKey],
             rowIndex: row.__rowIndex ?? i,
+            isBenchmark: row.__isBenchmark === true,
         }))
         .filter(p => Number.isFinite(p.xVal) && Number.isFinite(p.yVal) && Number.isFinite(p.zVal));
 
@@ -118,12 +119,15 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         const sx = shouldAnimate ? p.startNx : p.nx;
         const sy = shouldAnimate ? p.startNy : p.ny;
         const sz = shouldAnimate ? p.startNz : p.nz;
+        p.baseSize     = p.isBenchmark ? POINT_SIZE * 1.4 : POINT_SIZE;
+        p.baseRingSize = p.baseSize * (RING_SIZE / POINT_SIZE);
         const mat = new THREE.SpriteMaterial({
             map: pointCircleTex, transparent: true, opacity: 1.0,
-            depthTest: true, depthWrite: false, color: '#34c759',
+            depthTest: true, depthWrite: false,
+            color: p.isBenchmark ? '#FF9500' : '#34c759',
         });
         const sprite = new THREE.Sprite(mat);
-        sprite.scale.set(POINT_SIZE, POINT_SIZE, 1);
+        sprite.scale.set(p.baseSize, p.baseSize, 1);
         sprite.position.set(sx, sy, sz);
         sprite.userData = p;
         scene.add(sprite);
@@ -133,13 +137,13 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             map: ringTex, transparent: true, opacity: 0,
             depthTest: true, depthWrite: false,
         }));
-        ring.scale.set(RING_SIZE, RING_SIZE, 2);
+        ring.scale.set(p.baseRingSize, p.baseRingSize, 2);
         ring.position.set(sx, sy, sz);
         scene.add(ring);
         ringMeshes.push(ring);
     });
 
-    if (showSurface && points.length >= 3) scene.add(buildSurfaceMesh(points, xDir, yDir, zDir));
+    if (showSurface && points.length >= 3) scene.add(buildSurfaceMesh(points.filter(p => !p.isBenchmark), xDir, yDir, zDir));
 
     if (showDominated && points.length > 0) {
         const front  = computeParetoFront(points, xDir, yDir, zDir);
@@ -177,7 +181,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const labelSprites = [];
     if (showLabels) {
         points.forEach(p => {
-            const sprite = makeTextSprite(`op${p.rowIndex + 1}`, { color: '#5f6673', fontSize: 11 });
+            const sprite = makeTextSprite(p.isBenchmark ? 'Benchmark' : `op${p.rowIndex}`, { color: p.isBenchmark ? '#CC7000' : '#5f6673', fontSize: 11 });
             sprite.position.set(p.nx + 0.025, p.ny + 0.025, p.nz + 0.025);
             scene.add(sprite);
             labelSprites.push(sprite);

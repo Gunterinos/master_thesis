@@ -35,7 +35,7 @@ export function buildOrbitControls(ctx) {
                 const p = m.userData;
                 onHoverStart(p.rowIndex);
                 tooltip.classed('visible', true)
-                    .html(`Point: ${p.rowIndex + 1}<br>${xKey}: ${Number(p.rawX).toFixed(3)}<br>${yKey}: ${Number(p.rawY).toFixed(3)}<br>${zKey}: ${Number(p.rawZ).toFixed(3)}`)
+                    .html(`${p.isBenchmark ? 'Benchmark' : `Point: ${p.rowIndex}`}<br>${xKey}: ${Number(p.rawX).toFixed(3)}<br>${yKey}: ${Number(p.rawY).toFixed(3)}<br>${zKey}: ${Number(p.rawZ).toFixed(3)}`)
                     .style('left', `${event.pageX + 12}px`)
                     .style('top',  `${event.pageY - 36}px`);
             } else {

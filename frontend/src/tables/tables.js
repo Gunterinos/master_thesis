@@ -33,6 +33,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
 
     const formatCell = (value, cellIndex) => {
         if (cellIndex === 0) {
+            if (typeof value === 'string') return value;
             return String(Math.trunc(Number(value)));
         }
         const numericValue = Number(value);
@@ -73,13 +74,14 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             .data(data, (row) => row.__rowIndex)
             .enter()
             .append("tr")
+            .attr("class", (row) => row.__isBenchmark ? "is-benchmark" : null)
             .attr("data-row-index", (row) => row.__rowIndex);
 
         attachRowEvents(rows);
 
         rows
             .selectAll("td")
-            .data((row) => [row.__rowIndex + 1, ...columns.map((column) => row[column])])
+            .data((row) => [row.__isBenchmark ? 'Benchmark' : row.__rowIndex, ...columns.map((column) => row[column])])
             .enter()
             .append("td")
             .text(formatCell);
@@ -100,13 +102,14 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     const rowEnter = rowSel
         .enter()
         .append("tr")
+        .attr("class", (row) => row.__isBenchmark ? "is-benchmark" : null)
         .attr("data-row-index", (row) => row.__rowIndex);
 
     attachRowEvents(rowEnter);
 
     rowEnter
         .selectAll("td")
-        .data((row) => [row.__rowIndex + 1, ...columns.map((column) => row[column])])
+        .data((row) => [row.__isBenchmark ? 'Benchmark' : row.__rowIndex, ...columns.map((column) => row[column])])
         .enter()
         .append("td")
         .text(formatCell);
@@ -115,7 +118,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     rowSel.each(function (row) {
         d3.select(this)
             .selectAll("td")
-            .data([row.__rowIndex + 1, ...columns.map((column) => row[column])])
+            .data([row.__isBenchmark ? 'Benchmark' : row.__rowIndex, ...columns.map((column) => row[column])])
             .text(formatCell);
     });
 

@@ -7,9 +7,10 @@ function applyScatterHighlight(rowIndex) {
         .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
         .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; })
         .attr('r', function () {
-            // here we establish the size of the radius of the points
-            if (rowIndex === null) return 4;
-            return Number(this.dataset.rowIndex) === rowIndex ? 7 : 3;
+            const isBenchmark = this.dataset.isBenchmark === 'true';
+            const baseR = isBenchmark ? 5.5 : 4;
+            if (rowIndex === null) return baseR;
+            return Number(this.dataset.rowIndex) === rowIndex ? 7 : (isBenchmark ? 4 : 3);
         });
 
     d3.selectAll('.scatter-point-label[data-row-index]')
@@ -77,6 +78,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             rawX: row[xKey],
             rawY: row[yKey],
             rowIndex: row.__rowIndex ?? index,
+            isBenchmark: row.__isBenchmark === true,
         }))
         .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
 
@@ -175,7 +177,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             .attr("data-row-index", (point) => point.rowIndex)
             .attr("x", (point) => (animate ? startXScale(point.x) : xScale(point.x)) + 6)
             .attr("y", (point) => (animate ? startYScale(point.y) : yScale(point.y)) - 6)
-            .text((point) => `op${point.rowIndex + 1}`);
+            .text((point) => point.isBenchmark ? "Benchmark" : `op${point.rowIndex}`);
 
         if (animate) {
             labelSelection
@@ -186,18 +188,24 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         }
     }
 
-    const pointSelection = svg
-        .append("g")
-        .selectAll("circle")
-        .data(points)
+    const pointGroup = svg.append("g");
+
+    // Render regular points first, benchmark on top
+    const regularPoints = points.filter((p) => !p.isBenchmark);
+    const benchmarkPoints = points.filter((p) => p.isBenchmark);
+
+    const pointSelection = pointGroup
+        .selectAll("circle.scatter-point")
+        .data([...regularPoints, ...benchmarkPoints])
         .enter()
         .append("circle")
-        .attr("class", "scatter-point")
+        .attr("class", (point) => point.isBenchmark ? "scatter-point is-benchmark" : "scatter-point")
         .attr("data-row-index", (point) => point.rowIndex)
+        .attr("data-is-benchmark", (point) => point.isBenchmark)
         .attr("cx", (point) => startXScale(point.x))
         .attr("cy", (point) => startYScale(point.y))
-        .attr("r", 4)
-        .attr("fill", "#34c759")
+        .attr("r", (point) => point.isBenchmark ? 5.5 : 4)
+        .attr("fill", (point) => point.isBenchmark ? "#FF9500" : "#34c759")
         .attr("opacity", 0.9)
         .on("click", (event, point) => {
             if (event.shiftKey) {
@@ -210,7 +218,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             tooltip
                 .classed("visible", true)
                 .html(
-                    `Point: ${point.rowIndex + 1}<br>${xTooltipLabel}: ${Number(point.rawX).toFixed(3)}<br>${yTooltipLabel}: ${Number(point.rawY).toFixed(3)}`,
+                    `${point.isBenchmark ? "Benchmark" : `Point: ${point.rowIndex}`}<br>${xTooltipLabel}: ${Number(point.rawX).toFixed(3)}<br>${yTooltipLabel}: ${Number(point.rawY).toFixed(3)}`,
                 )
                 .style("left", `${event.pageX + 12}px`)
                 .style("top", `${event.pageY - 36}px`);

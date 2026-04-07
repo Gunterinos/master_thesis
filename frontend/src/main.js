@@ -86,6 +86,7 @@ d3.json("/api/portfolio-data")
         fullData = rawData.map((row, index) => ({
             ...row,
             __rowIndex: index,
+            __isBenchmark: index === 0,
         }));
 
         const interactionOptions = {
