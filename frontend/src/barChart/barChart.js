@@ -43,7 +43,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const legendRowHeight = 20;
     const legendItemsPerRow = Math.max(1, Math.floor(estimatedWidth / legendItemWidth));
     const legendRows = Math.ceil(columns.length / legendItemsPerRow);
-    const legendHeight = legendRows * legendRowHeight + 8;
+    const legendHeight = legendRows * legendRowHeight + legendRowHeight + 8; // +1 row for benchmark
 
     const margin = {
         top: baseMargin.top,
@@ -218,6 +218,21 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr("x", 18)
             .attr("y", 11)
             .text((column) => column);
+
+        // Benchmark legend entry
+        const bmEntry = legendGroup.append("g")
+            .attr("transform", `translate(0, ${legendRows * legendRowHeight + 4})`);
+        bmEntry.append("rect")
+            .attr("x", 0).attr("y", 1)
+            .attr("width", 12).attr("height", 12)
+            .attr("rx", 2)
+            .attr("fill", "none")
+            .attr("stroke", "#B80058")
+            .attr("stroke-dasharray", "3 2")
+            .attr("stroke-width", 2);
+        bmEntry.append("text")
+            .attr("x", 18).attr("y", 11)
+            .text("Benchmark");
 
         const barsRoot = svg.append("g").attr("class", "bars-root");
 

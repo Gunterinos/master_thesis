@@ -145,8 +145,9 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
 
     if (decisionColumns.length > 0) {
         const itemH = 22;
+        const totalItems = decisionColumns.length + 1; // +1 for benchmark
         const legendX = availW + 12;
-        const legendY = cy - (decisionColumns.length * itemH) / 2;
+        const legendY = cy - (totalItems * itemH) / 2;
 
         const legendG = svg.append('g')
             .attr('class', 'radviz-legend')
@@ -168,6 +169,18 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
                 .attr('x', 18).attr('y', 10)
                 .text(col);
         });
+
+        // Benchmark entry — circle ring swatch
+        const bmRow = legendG.append('g').attr('transform', `translate(0, ${decisionColumns.length * itemH + 6})`);
+        bmRow.append('circle')
+            .attr('cx', 6).attr('cy', 6).attr('r', 6)
+            .attr('fill', 'none')
+            .attr('stroke', '#B80058')
+            .attr('stroke-width', 2);
+        bmRow.append('text')
+            .attr('class', 'radviz-legend-label')
+            .attr('x', 18).attr('y', 10)
+            .text('Benchmark');
     }
 
     // ── Lasso ────────────────────────────────────────────────────────────
