@@ -216,3 +216,18 @@ body.shift-held .pcp-line.is-line-selected {
     stroke-opacity: 0.08;
 }
 
+.pcp-line.is-benchmark {
+    stroke: #FF9500;
+    stroke-width: 2.5;
+    stroke-opacity: 1;
+    stroke-dasharray: 6 4;
+}
+
+.pcp-line.is-benchmark.is-linked-dim {
+    stroke-opacity: 0.2;
+}
+
+.pcp-line.is-benchmark.is-brush-filtered {
+    stroke-opacity: 0.2;
+}
+

@@ -60,6 +60,9 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
         });
 
         glyphG.append('circle').attr('class', 'radviz-selection-ring').attr('r', DONUT_OUTER + 3);
+        if (point.row.__isBenchmark) {
+            glyphG.append('circle').attr('class', 'radviz-benchmark-ring').attr('r', DONUT_OUTER + 7);
+        }
     } else {
         glyphG.classed('radviz-point--expanded', false);
 
@@ -74,5 +77,8 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
         });
 
         glyphG.append('circle').attr('class', 'radviz-selection-ring').attr('r', MINI_R + 3);
+        if (point.row.__isBenchmark) {
+            glyphG.append('circle').attr('class', 'radviz-benchmark-ring').attr('r', MINI_R + 1);
+        }
     }
 }

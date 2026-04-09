@@ -31,3 +31,9 @@ tbody tr.is-linked-highlight td {
 tbody tr.is-linked-dim {
     opacity: 0.35;
 }
+
+tbody tr.is-benchmark td:first-child {
+    color: #FF9500;
+    font-weight: 700;
+    border-left: 3px solid #FF9500;
+}

@@ -3,13 +3,13 @@ import './barChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 
 function applyBarChartHighlight(rowIndex) {
-    d3.selectAll('.bar-chart-segment[data-row-index]')
+    d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]')
         .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
         .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
 }
 
 function applyBarChartSelection(rowIndexSet) {
-    d3.selectAll('.bar-chart-segment[data-row-index]').classed('is-selection-dim', function () {
+    d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]').classed('is-selection-dim', function () {
         return rowIndexSet !== null && !rowIndexSet.has(Number(this.dataset.rowIndex));
     });
 }
@@ -81,6 +81,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const rows = data
         .map((row, index) => {
             const rowIndex = row.__rowIndex ?? index;
+            const isBenchmark = row.__isBenchmark === true;
             const values = columns
                 .map((column) => ({
                     key: column,
@@ -104,12 +105,14 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     share,
                     y0: start,
                     y1: cumulative,
+                    isBenchmark,
                 };
             });
 
             return {
                 rowIndex,
-                pointLabel: String(rowIndex + 1),
+                isBenchmark,
+                pointLabel: isBenchmark ? 'BM' : String(rowIndex),
                 segments,
             };
         })
@@ -222,7 +225,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .data(rows, (row) => row.rowIndex)
             .enter()
             .append("g")
-            .attr("class", "bar-chart-bar")
+            .attr("class", (row) => row.isBenchmark ? "bar-chart-bar is-benchmark" : "bar-chart-bar")
             .attr("data-row-index", (row) => row.rowIndex)
             .attr("transform", (row) => `translate(${xScale(row.pointLabel)}, 0)`);
 
@@ -253,7 +256,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     .join("<br>");
                 tooltip
                     .classed("visible", true)
-                    .html(`Point: ${segment.pointLabel}<br>${compositionDetails}`);
+                    .html(`${segment.isBenchmark ? 'Benchmark' : `Point: ${segment.pointLabel}`}<br>${compositionDetails}`);
                 positionTooltip(event);
             })
             .on("mousemove", (event) => {
@@ -264,12 +267,32 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 tooltip.classed("visible", false);
             });
 
+        // Outline rect for the benchmark column
+        barGroup.filter((row) => row.isBenchmark)
+            .append("rect")
+            .attr("class", "bar-benchmark-outline")
+            .attr("data-row-index", (row) => row.rowIndex)
+            .attr("x", 0)
+            .attr("width", xScale.bandwidth())
+            .attr("y", yScale(0))
+            .attr("height", 0);
+
         if (animate) {
             barGroup
-                .selectAll("rect")
+                .selectAll("rect.bar-chart-segment")
                 .transition(transition)
                 .attr("y", (segment) => yScale(segment.y1))
                 .attr("height", (segment) => yScale(segment.y0) - yScale(segment.y1));
+            barGroup
+                .selectAll("rect.bar-benchmark-outline")
+                .transition(transition)
+                .attr("y", yScale(1))
+                .attr("height", yScale(0) - yScale(1));
+        } else {
+            barGroup
+                .selectAll("rect.bar-benchmark-outline")
+                .attr("y", yScale(1))
+                .attr("height", yScale(0) - yScale(1));
         }
 
         return;
@@ -287,10 +310,10 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
         .selectAll("g.bar-chart-bar")
         .data(rows, (row) => row.rowIndex);
 
-    // EXIT: shrink segments to zero, then remove
+    // EXIT: shrink segments and outline to zero, then remove
     barGroupSel
         .exit()
-        .selectAll("rect.bar-chart-segment")
+        .selectAll("rect.bar-chart-segment, rect.bar-benchmark-outline")
         .transition(transition)
         .attr("y", yScale(0))
         .attr("height", 0);
@@ -301,7 +324,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const barGroupEnter = barGroupSel
         .enter()
         .append("g")
-        .attr("class", "bar-chart-bar")
+        .attr("class", (row) => row.isBenchmark ? "bar-chart-bar is-benchmark" : "bar-chart-bar")
         .attr("data-row-index", (row) => row.rowIndex)
         .attr("transform", (row) => `translate(${xScale(row.pointLabel)}, 0)`);
 
@@ -351,7 +374,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     .join("<br>");
                 tooltip
                     .classed("visible", true)
-                    .html(`Point: ${segment.pointLabel}<br>${compositionDetails}`);
+                    .html(`${segment.isBenchmark ? 'Benchmark' : `Point: ${segment.pointLabel}`}<br>${compositionDetails}`);
                 positionTooltip(event);
             })
             .on("mousemove", (event) => {
@@ -369,6 +392,24 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr("y", (segment) => yScale(segment.y1))
             .attr("height", (segment) => yScale(segment.y0) - yScale(segment.y1))
             .attr("width", xScale.bandwidth());
+
+        // Keep benchmark outline rect in sync
+        if (row.isBenchmark) {
+            let outline = g.select("rect.bar-benchmark-outline");
+            if (outline.empty()) {
+                outline = g.append("rect")
+                    .attr("class", "bar-benchmark-outline")
+                    .attr("data-row-index", row.rowIndex)
+                    .attr("x", 0)
+                    .attr("y", yScale(0))
+                    .attr("height", 0);
+            }
+            outline
+                .attr("width", xScale.bandwidth())
+                .transition(transition)
+                .attr("y", yScale(1))
+                .attr("height", yScale(0) - yScale(1));
+        }
     });
 
     // Subscribers don't fire on re-render, so reapply state manually.

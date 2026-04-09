@@ -225,7 +225,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         .data(points)
         .enter()
         .append('g')
-        .attr('class', 'radviz-point')
+        .attr('class', (p) => p.row.__isBenchmark ? 'radviz-point is-benchmark' : 'radviz-point')
         .attr('data-row-index', (p) => p.rowIndex)
         .attr('transform', (p) => {
             if (animate && storedPrev.has(p.rowIndex)) {
@@ -245,6 +245,9 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             .ease(d3.easeCubicInOut)
             .attr('transform', (p) => getTransform(p, spread, R, eqMap, maxGlyphR));
     }
+
+    // Keep benchmark glyph on top
+    glyphGroups.filter((p) => p.row.__isBenchmark).raise();
 
     // ── Expanded-mode dimming ────────────────────────────────────────────
 
@@ -268,7 +271,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             onHoverStart(p.rowIndex);
             const objLines = columns.map(col => `${col}: ${(+p.row[col]).toFixed(2)}`).join('<br>');
             tooltip.classed('visible', true)
-                .html(`<b>Point ${p.rowIndex + 1}</b><br>${objLines}`)
+                .html(`<b>${p.row.__isBenchmark ? 'Benchmark' : `Point ${p.rowIndex}`}</b><br>${objLines}`)
                 .style('left', `${event.pageX + 12}px`)
                 .style('top', `${event.pageY - 36}px`);
         })

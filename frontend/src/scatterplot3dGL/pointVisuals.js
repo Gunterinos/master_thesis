@@ -39,15 +39,17 @@ export function buildPointVisuals(ctx) {
                 return;
             }
 
-            m.material.color.set('#34c759');
+            m.material.color.set(p.isBenchmark ? '#FF9500' : '#34c759');
 
+            const BASE      = p.baseSize     ?? POINT_SIZE;
+            const BASE_RING = p.baseRingSize ?? RING_SIZE;
             const isHoverTarget = hasHover && p.rowIndex === hovered;
             const isHoverDim    = hasHover && !isHoverTarget;
-            const pointScale    = isHoverTarget ? POINT_SIZE * 1.8
-                                : isHoverDim    ? POINT_SIZE * 0.7
-                                : POINT_SIZE;
+            const pointScale    = isHoverTarget ? BASE * 1.8
+                                : isHoverDim    ? BASE * 0.7
+                                : BASE;
             m.scale.set(pointScale, pointScale, 1);
-            ring.scale.set(pointScale / POINT_SIZE * RING_SIZE, pointScale / POINT_SIZE * RING_SIZE, ring.scale.z);
+            ring.scale.set(pointScale / BASE * BASE_RING, pointScale / BASE * BASE_RING, ring.scale.z);
 
             const isSelected     = hasSelection && selected.has(p.rowIndex);
             const isSelectionDim = hasSelection && !isSelected;

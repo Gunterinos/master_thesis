@@ -236,7 +236,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .data(data)
         .enter()
         .append("path")
-        .attr("class", "pcp-line")
+        .attr("class", (row) => row.__isBenchmark ? "pcp-line is-benchmark" : "pcp-line")
         .attr("data-row-index", (row, i) => row.__rowIndex ?? i)
         .on("click", function (event) {
             if (event.shiftKey) {
@@ -305,6 +305,9 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     } else {
         linePaths.attr("d", (row) => buildPath(activeAxes, currentPositions, yScales, row));
     }
+
+    // Keep benchmark line on top of all other lines
+    linesGroup.selectAll("path.pcp-line.is-benchmark").raise();
 
     // ── Axis groups ───────────────────────────────────────────────
     const axisGs = g
