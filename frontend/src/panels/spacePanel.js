@@ -49,7 +49,6 @@ export function initializeSpacePanel(config) {
     const idealToggle = idealToggleSelector ? d3.select(idealToggleSelector) : null;
     const pcaToggle = pcaToggleSelector ? d3.select(pcaToggleSelector) : null;
     const spreadSlider = spreadSliderSelector ? d3.select(spreadSliderSelector) : null;
-    const spreadLabel = spreadSliderSelector ? d3.select(`label[for="${spreadSliderSelector.replace('#', '')}"]`) : null;
     // Persist toggle state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
     let showPCA = pcaToggle ? pcaToggle.classed("active") : false;
@@ -137,7 +136,6 @@ export function initializeSpacePanel(config) {
         if (spreadSlider) {
             const isRadviz = chartType === 'radviz';
             spreadSlider.classed("hidden", !isRadviz);
-            if (spreadLabel) spreadLabel.classed("hidden", !isRadviz);
         }
 
         if (!chartConfig) {
@@ -222,8 +220,10 @@ export function initializeSpacePanel(config) {
     }
 
     if (spreadSlider) {
-        spreadSlider.on("input", function () {
-            setRadvizSpread(containerSelector, +this.value / 100);
+        spreadSlider.on("click", function () {
+            const isActive = spreadSlider.classed("active");
+            spreadSlider.classed("active", !isActive);
+            setRadvizSpread(containerSelector, isActive ? 0 : 1);
         });
     }
 

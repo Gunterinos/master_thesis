@@ -38,7 +38,7 @@ export function setRadvizSpread(containerSelector, s) {
     if (!state) return;
     const { R, eqMap, maxGlyphR } = state;
     d3.select(containerSelector).selectAll('g.radviz-point[data-row-index]')
-        .transition().duration(80).ease(d3.easeCubicInOut)
+        .transition().duration(600).ease(d3.easeCubicInOut)
         .attr('transform', (p) => getTransform(p, s, R, eqMap, maxGlyphR));
 }
 
