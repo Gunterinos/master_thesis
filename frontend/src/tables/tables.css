@@ -13,10 +13,37 @@ td {
     font-size: 0.86rem;
 }
 
+thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
 th {
     background: #f6f8fb;
     color: #525866;
     font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+th:hover {
+    background: #edf1f7;
+}
+
+th[data-col-color] {
+    border-bottom: 3px solid var(--col-color);
+}
+
+.sort-indicator {
+    margin-left: 4px;
+    opacity: 0.3;
+    font-size: 0.72rem;
+}
+
+th.sort-active .sort-indicator {
+    opacity: 1;
 }
 
 tbody tr {

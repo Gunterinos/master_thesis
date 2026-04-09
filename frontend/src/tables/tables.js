@@ -24,9 +24,34 @@ subscribe('hover-change', applyTableHighlight);
 subscribe('selection-change', applyTableSelection);
 
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false, columnColors = {} } = options;
     const container = d3.select(containerSelector);
+    const containerNode = container.node();
     const tableColumns = ["Point", ...columns];
+
+    // Sort state stored on the container DOM node to survive re-renders.
+    if (!containerNode._sortState) {
+        containerNode._sortState = { col: null, dir: 1 };
+    }
+    const sortState = containerNode._sortState;
+
+    function getColValue(row, col) {
+        if (col === 'Point') return row.__isBenchmark ? 'Benchmark' : row.__rowIndex;
+        return row[col];
+    }
+
+    function getSortedData(rawData) {
+        if (!sortState.col) return rawData;
+        return [...rawData].sort((a, b) => {
+            if (a.__isBenchmark && !b.__isBenchmark) return -1;
+            if (!a.__isBenchmark && b.__isBenchmark) return 1;
+            const av = getColValue(a, sortState.col);
+            const bv = getColValue(b, sortState.col);
+            const an = Number(av), bn = Number(bv);
+            if (Number.isFinite(an) && Number.isFinite(bn)) return sortState.dir * (an - bn);
+            return sortState.dir * String(av).localeCompare(String(bv));
+        });
+    }
 
     const existingTable = container.select("table");
     const isUpdate = animate && !existingTable.empty();
@@ -53,7 +78,45 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             });
     };
 
-    // Full redraw (first render or non-animated call) 
+    function buildHeaders(thead) {
+        const headerRow = thead.append("tr");
+        headerRow
+            .selectAll("th")
+            .data(tableColumns)
+            .enter()
+            .append("th")
+            .each(function (col) {
+                const th = d3.select(this);
+                const color = columnColors[col];
+                if (color) {
+                    th.attr('data-col-color', color)
+                      .style('--col-color', color);
+                }
+                if (col === sortState.col) th.classed('sort-active', true);
+            })
+            .html((col) => {
+                const indicator = col === sortState.col
+                    ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
+                    : `<span class="sort-indicator">↕</span>`;
+                return `${col}${indicator}`;
+            })
+            .on("click", (event, col) => {
+                if (sortState.col === col) {
+                    sortState.dir *= -1;
+                } else {
+                    sortState.col = col;
+                    sortState.dir = 1;
+                }
+                // Full redraw to apply sort
+                container.selectAll("*").remove();
+                containerNode._sortState = sortState;
+                renderTable(containerSelector, columns, data, options);
+                applyTableHighlight(getActiveRowIndex());
+                applyTableSelection(getEffectiveSelection());
+            });
+    }
+
+    // Full redraw (first render or non-animated call)
     if (!isUpdate) {
         container.selectAll("*").remove();
 
@@ -61,17 +124,12 @@ export function renderTable(containerSelector, columns, data, options = {}) {
         const thead = table.append("thead");
         const tbody = table.append("tbody");
 
-        thead
-            .append("tr")
-            .selectAll("th")
-            .data(tableColumns)
-            .enter()
-            .append("th")
-            .text((column) => column);
+        buildHeaders(thead);
 
+        const sortedData = getSortedData(data);
         const rows = tbody
             .selectAll("tr")
-            .data(data, (row) => row.__rowIndex)
+            .data(sortedData, (row) => row.__rowIndex)
             .enter()
             .append("tr")
             .attr("class", (row) => row.__isBenchmark ? "is-benchmark" : null)
@@ -89,11 +147,12 @@ export function renderTable(containerSelector, columns, data, options = {}) {
         return;
     }
 
-    // Incremental update
+    // Incremental update — re-sort and update rows.
     const tbody = existingTable.select("tbody");
+    const sortedData = getSortedData(data);
     const rowSel = tbody
         .selectAll("tr")
-        .data(data, (row) => row.__rowIndex);
+        .data(sortedData, (row) => row.__rowIndex);
 
     // EXIT: remove rows no longer in the dataset
     rowSel.exit().remove();
