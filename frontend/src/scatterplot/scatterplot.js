@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import './scatterplot.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+import { POINT_COLOR_REGULAR, POINT_COLOR_BENCHMARK } from '../colors.js';
 
 function applyScatterHighlight(rowIndex) {
     d3.selectAll('circle[data-row-index]')
@@ -205,7 +206,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .attr("cx", (point) => startXScale(point.x))
         .attr("cy", (point) => startYScale(point.y))
         .attr("r", (point) => point.isBenchmark ? 5.5 : 4)
-        .attr("fill", (point) => point.isBenchmark ? "#FF9500" : "#34c759")
+        .attr("fill", (point) => point.isBenchmark ? POINT_COLOR_BENCHMARK : POINT_COLOR_REGULAR)
         .attr("opacity", 0.9)
         .on("click", (event, point) => {
             if (event.shiftKey) {

@@ -2,12 +2,14 @@
     width: 100%;
     height: calc(100% - 42px) !important;
     display: block;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* ── Lines ──────────────────────────────────────────── */
 .pcp-line {
     fill: none;
-    stroke: #34c759;
+    stroke: #008CF9;
     stroke-width: 2.5;
     stroke-opacity: 0.55;
     cursor: pointer;
@@ -24,7 +26,7 @@
 }
 
 .pcp-line.is-line-selected {
-    stroke: #34c759;
+    stroke: #008CF9;
     stroke-opacity: 0.9;
     stroke-width: 2.5;
 }
@@ -34,7 +36,7 @@ body.shift-held .pcp-line.is-selection-dim {
 }
 
 body.shift-held .pcp-line.is-line-selected {
-    stroke: #ff9500;
+    stroke: #B80058;
     stroke-opacity: 1;
     stroke-width: 2.5;
 }
@@ -53,6 +55,8 @@ body.shift-held .pcp-line.is-line-selected {
 .pcp-axis .tick text {
     fill: #5f6673;
     font-size: 0.7rem;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .pcp-axis-label {
@@ -207,7 +211,7 @@ body.shift-held .pcp-line.is-line-selected {
 }
 
 .pcp-line.is-linked-highlight {
-    stroke: #ff9500;
+    stroke: #B80058;
     stroke-opacity: 1;
     stroke-width: 2.5;
 }
@@ -217,7 +221,7 @@ body.shift-held .pcp-line.is-line-selected {
 }
 
 .pcp-line.is-benchmark {
-    stroke: #FF9500;
+    stroke: #B80058;
     stroke-width: 2.5;
     stroke-opacity: 1;
     stroke-dasharray: 6 4;

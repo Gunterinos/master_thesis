@@ -47,7 +47,7 @@
     width: 120px;
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(to right, hsl(216, 42%, 92%), hsl(216, 42%, 28%));
+    background: linear-gradient(to right, #FDE725, #ADA857, #67827A, #34577F, #00204C);
     border: 0.5px solid #d1d5db;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     margin-bottom: 2px;
@@ -59,4 +59,21 @@
     width: 120px;
     font-size: 10px;
     color: #9ca3af;
+}
+
+.scatter3dgl-legend-benchmark {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.scatter3dgl-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
 }

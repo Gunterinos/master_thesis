@@ -51,9 +51,9 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     scene.add(boxLine);
 
     const AXIS_CFG = [
-        { color: '#e74c3c', from: [0,0,0], to: [1,0,0], label: xKey, scale: xScale },
-        { color: '#27ae60', from: [0,0,0], to: [0,1,0], label: yKey, scale: yScale },
-        { color: '#3498db', from: [0,0,0], to: [0,0,1], label: zKey, scale: zScale },
+        { color: '#1d1d1f', from: [0,0,0], to: [1,0,0], label: xKey, scale: xScale },
+        { color: '#1d1d1f', from: [0,0,0], to: [0,1,0], label: yKey, scale: yScale },
+        { color: '#1d1d1f', from: [0,0,0], to: [0,0,1], label: zKey, scale: zScale },
     ];
 
     AXIS_CFG.forEach(a => {
@@ -67,9 +67,9 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     const oldAxisLabelSprites = [];
     if (shouldAnimate) {
         const OLD_CFG = [
-            { color: '#e74c3c', from: [0,0,0], to: [1,0,0], label: xKey, scale: startXScale },
-            { color: '#27ae60', from: [0,0,0], to: [0,1,0], label: yKey, scale: startYScale },
-            { color: '#3498db', from: [0,0,0], to: [0,0,1], label: zKey, scale: startZScale },
+            { color: '#1d1d1f', from: [0,0,0], to: [1,0,0], label: xKey, scale: startXScale },
+            { color: '#1d1d1f', from: [0,0,0], to: [0,1,0], label: yKey, scale: startYScale },
+            { color: '#1d1d1f', from: [0,0,0], to: [0,0,1], label: zKey, scale: startZScale },
         ];
         OLD_CFG.forEach(a => {
             for (let i = 1; i <= TICK_COUNT; i++) {

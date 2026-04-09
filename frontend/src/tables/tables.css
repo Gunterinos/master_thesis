@@ -33,7 +33,7 @@ tbody tr.is-linked-dim {
 }
 
 tbody tr.is-benchmark td:first-child {
-    color: #FF9500;
+    color: #B80058;
     font-weight: 700;
-    border-left: 3px solid #FF9500;
+    border-left: 3px solid #B80058;
 }

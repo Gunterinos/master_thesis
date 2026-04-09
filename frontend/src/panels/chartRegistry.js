@@ -4,6 +4,7 @@ import { renderScatterplot3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { renderBarChart } from '../barChart/barChart.js';
 import { renderParallelCoords } from '../parallelCoords/parallelCoords.js';
 import { renderRadviz } from '../radviz/radviz.js';
+import { getColumnColor } from '../colors.js';
 
 export function createChartRegistry(interactionOptions) {
     return {
@@ -13,9 +14,13 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: false,
             canRender: () => true,
             render: ({ containerSelector, columns, data, animate = false }) => {
+                const columnColors = Object.fromEntries(
+                    columns.map((col, i) => [col, getColumnColor(i)])
+                );
                 renderTable(containerSelector, columns, data, {
                     ...interactionOptions,
                     animate,
+                    columnColors,
                 });
             },
         },

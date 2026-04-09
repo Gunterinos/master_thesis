@@ -1,6 +1,8 @@
 // Composites brush-filter, hover and selection state into final point sprite
 // visuals (colour, opacity, scale). Brush filter has highest priority.
 
+import { POINT_COLOR_BENCHMARK, POINT_COLOR_REGULAR, POINT_COLOR_FILTERED } from '../colors.js';
+
 // Builds the point-visual compositing system; returns { applyHighlight, setSelection, refreshPointVisuals, teardown }.
 export function buildPointVisuals(ctx) {
     const { pointMeshes, ringMeshes, labelSprites, filterState,
@@ -31,7 +33,7 @@ export function buildPointVisuals(ctx) {
 
             if (isBrushFiltered) {
                 m.scale.set(POINT_SIZE, POINT_SIZE, 1);
-                m.material.color.set('#aaaaaa');
+                m.material.color.set(POINT_COLOR_FILTERED);
                 m.material.opacity = 0.15;
                 ring.scale.set(RING_SIZE, RING_SIZE, ring.scale.z);
                 ring.material.opacity = 0;
@@ -39,7 +41,7 @@ export function buildPointVisuals(ctx) {
                 return;
             }
 
-            m.material.color.set(p.isBenchmark ? '#FF9500' : '#34c759');
+            m.material.color.set(p.isBenchmark ? POINT_COLOR_BENCHMARK : (p.surfaceColor ?? POINT_COLOR_REGULAR));
 
             const BASE      = p.baseSize     ?? POINT_SIZE;
             const BASE_RING = p.baseRingSize ?? RING_SIZE;

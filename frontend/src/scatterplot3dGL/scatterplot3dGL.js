@@ -15,6 +15,7 @@ import { buildScene } from './sceneSetup.js';
 import { buildBrushFilter } from './brushFilter.js';
 import { buildOrbitControls } from './orbitControls.js';
 import { buildPointVisuals } from './pointVisuals.js';
+import { POINT_COLOR_BENCHMARK, interpolateSurfaceColor } from '../colors.js';
 
 export { setScatter3dGLSelection };
 
@@ -83,6 +84,21 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const zScale = d3.scaleLinear().domain([zExt[0] - pad(zExt), zExt[1] + pad(zExt)]).range([0, 1]);
     points.forEach(p => { p.nx = xScale(p.xVal); p.ny = yScale(p.yVal); p.nz = zScale(p.zVal); });
 
+    // Compute distance-to-ideal colour for each point (same gradient as the Pareto surface).
+    const xIdeal = xDir === 'max' ? 1 : 0;
+    const yIdeal = yDir === 'max' ? 1 : 0;
+    const zIdeal = zDir === 'max' ? 1 : 0;
+    points.forEach(p => {
+        p.distToIdeal = Math.sqrt((xIdeal - p.nx) ** 2 + (yIdeal - p.ny) ** 2 + (zIdeal - p.nz) ** 2);
+    });
+    const dMin = Math.min(...points.map(p => p.distToIdeal));
+    const dMax = Math.max(...points.map(p => p.distToIdeal));
+    const dRange = dMax - dMin || 1;
+    points.forEach(p => {
+        const ao = (p.distToIdeal - dMin) / dRange;
+        p.surfaceColor = interpolateSurfaceColor(ao).hex;
+    });
+
     const shouldAnimate = animate && hasPrevDomain;
     const startXScale = shouldAnimate ? d3.scaleLinear().domain([prevXMin, prevXMax]).range([0, 1]) : xScale;
     const startYScale = shouldAnimate ? d3.scaleLinear().domain([prevYMin, prevYMax]).range([0, 1]) : yScale;
@@ -124,7 +140,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         const mat = new THREE.SpriteMaterial({
             map: pointCircleTex, transparent: true, opacity: 1.0,
             depthTest: true, depthWrite: false,
-            color: p.isBenchmark ? '#FF9500' : '#34c759',
+            color: p.isBenchmark ? POINT_COLOR_BENCHMARK : p.surfaceColor,
         });
         const sprite = new THREE.Sprite(mat);
         sprite.scale.set(p.baseSize, p.baseSize, 1);
@@ -181,7 +197,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const labelSprites = [];
     if (showLabels) {
         points.forEach(p => {
-            const sprite = makeTextSprite(p.isBenchmark ? 'Benchmark' : `op${p.rowIndex}`, { color: p.isBenchmark ? '#CC7000' : '#5f6673', fontSize: 11 });
+            const sprite = makeTextSprite(p.isBenchmark ? 'Benchmark' : `op${p.rowIndex}`, { color: p.isBenchmark ? POINT_COLOR_BENCHMARK : '#5f6673', fontSize: 11 });
             sprite.position.set(p.nx + 0.025, p.ny + 0.025, p.nz + 0.025);
             scene.add(sprite);
             labelSprites.push(sprite);
@@ -191,19 +207,20 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     wrapper.append('div').attr('class', 'scatter3dgl-hint')
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
-    if (showSurface) {
-        const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
-        legendDiv.html(
-            `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
-            '<div class="scatter3dgl-legend-bar"></div>' +
-            '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>'
-        );
-    }
+    const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
+    legendDiv.html(
+        `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
+        '<div class="scatter3dgl-legend-bar"></div>' +
+        '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>' +
+        `<div class="scatter3dgl-legend-benchmark">` +
+        `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
+        `<span>Benchmark</span></div>`
+    );
 
     const axisScaleMeta = [
-        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: '#e74c3c' },
-        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: '#27ae60' },
-        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: '#3498db' },
+        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: '#1d1d1f' },
+        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: '#1d1d1f' },
+        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: '#1d1d1f' },
     ];
 
     const pvModule = buildPointVisuals({

@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import './barChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+import { CB_PALETTE } from '../colors.js';
 
 function applyBarChartHighlight(rowIndex) {
     d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]')
@@ -137,7 +138,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
 
     const yScale = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(columns);
+    const colorScale = d3.scaleOrdinal(CB_PALETTE).domain(columns);
 
     const xAxis = d3.axisBottom(xScale);
     if (rows.length > 20) {
