@@ -142,9 +142,6 @@ export function initializeSpacePanel(config) {
             return;
         }
 
-        const panelElem = d3.select(containerSelector).node()?.closest('.table-panel');
-        if (panelElem) panelElem.classList.toggle('is-chart-fullscreen', chartConfig?.isFullScreen === true);
-
         const renderWith = (renderData, pcaLabels = null) => {
             chartConfig.render({
                 containerSelector,
@@ -232,7 +229,7 @@ export function initializeSpacePanel(config) {
     yAxisSelect.on("change", updatePanel);
     if (zAxisSelect) zAxisSelect.on("change", updatePanel);
 
-    // Re-render when the panel changes size (window resize, fullscreen toggle, etc.)
+    // Re-render when the panel changes size (window resize, etc.)
     if (_observers.has(containerSelector)) {
         _observers.get(containerSelector).disconnect();
     }

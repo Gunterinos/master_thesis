@@ -85,7 +85,6 @@ export function createChartRegistry(interactionOptions) {
             key: "radviz",
             label: "RadViz",
             needsAxes: false,
-            isFullScreen: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
             render: ({ containerSelector, columns, data, animate = false }) => {
                 renderRadviz(containerSelector, data, columns, {
