@@ -43,7 +43,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const legendRowHeight = 20;
     const legendItemsPerRow = Math.max(1, Math.floor(estimatedWidth / legendItemWidth));
     const legendRows = Math.ceil(columns.length / legendItemsPerRow);
-    const legendHeight = legendRows * legendRowHeight + legendRowHeight + 8; // +1 row for benchmark
+    const legendHeight = legendRows * legendRowHeight + legendRowHeight + 8;
 
     const margin = {
         top: baseMargin.top,

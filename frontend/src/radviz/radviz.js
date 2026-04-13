@@ -146,7 +146,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
 
     if (decisionColumns.length > 0) {
         const itemH = 22;
-        const totalItems = decisionColumns.length + 1; // +1 for benchmark
+        const totalItems = decisionColumns.length + 1;
         const legendX = availW + 12;
         const legendY = cy - (totalItems * itemH) / 2;
 
@@ -171,7 +171,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
                 .text(col);
         });
 
-        // Benchmark entry — circle ring swatch
+        // Benchmark entry
         const bmRow = legendG.append('g').attr('transform', `translate(0, ${decisionColumns.length * itemH + 6})`);
         bmRow.append('circle')
             .attr('cx', 6).attr('cy', 6).attr('r', 6)
