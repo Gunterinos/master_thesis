@@ -178,6 +178,13 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         return;
     }
 
+    // ── Tooltip ───────────────────────────────────────────────────
+    const tooltip = d3.select("body")
+        .selectAll(".scatter-tooltip")
+        .data([null])
+        .join("div")
+        .attr("class", "scatter-tooltip");
+
     // ── SVG ──────────────────────────────────────────────────────
     const svgHeight = containerHeight - HEADER_H;
     const svgEl = container
@@ -244,10 +251,24 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
                 onShiftClick(+(this.dataset.rowIndex));
             }
         })
-        .on("mouseenter", function () {
-            onHoverStart(+(this.dataset.rowIndex));
+        .on("mouseenter", function (event) {
+            const rowIndex = +(this.dataset.rowIndex);
+            onHoverStart(rowIndex);
+            const row = this.__dataRow;
+            if (row) {
+                const lines = activeAxes.map((col) => `${col}: ${(+row[col]).toFixed(3)}`).join("<br>");
+                tooltip.classed("visible", true)
+                    .html(`${row.__isBenchmark ? "Benchmark" : `Point: ${rowIndex}`}<br>${lines}`)
+                    .style("left", `${event.pageX + 12}px`)
+                    .style("top", `${event.pageY - 36}px`);
+            }
         })
-        .on("mouseleave", () => onHoverEnd());
+        .on("mousemove", (event) => {
+            tooltip.style("left", `${event.pageX + 12}px`).style("top", `${event.pageY - 36}px`);
+        })
+        .on("mouseleave", () => { onHoverEnd(); tooltip.classed("visible", false); });
+
+    linePaths.each(function (row) { this.__dataRow = row; });
 
     // ── Brush filter helper ───────────────────────────────────────────────
     // Dims lines outside any active (non-hidden) axis brush filter and notifies
@@ -429,8 +450,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
             }
 
             // Redraw lines using live positions & live order
-            linesGroup
-                .selectAll("path.pcp-line")
+            linesGroup.selectAll("path.pcp-line")
                 .attr("d", (row) => buildPath(liveOrder, livePositions, yScales, row));
         })
         .on("end", function (event, axis) {

@@ -155,6 +155,13 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         return;
     }
 
+    // ── Tooltip ───────────────────────────────────────────────────────────────
+    const tooltip = d3.select('body')
+        .selectAll('.scatter-tooltip')
+        .data([null])
+        .join('div')
+        .attr('class', 'scatter-tooltip');
+
     // ── SVG ──────────────────────────────────────────────────────────────────
     const svgEl = container
         .append('svg')
@@ -266,9 +273,25 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                 onShiftClick(+(this.dataset.rowIndex));
             }
         })
-        // Step 3: hover
-        .on('mouseenter', function () { onHoverStart(+(this.dataset.rowIndex)); })
-        .on('mouseleave', () => onHoverEnd());
+        // Step 3: hover + tooltip
+        .on('mouseenter', function (event) {
+            const rowIndex = +(this.dataset.rowIndex);
+            onHoverStart(rowIndex);
+            const row = this.__dataRow;
+            if (row) {
+                const lines = activeAxes.map((col) => `${col}: ${(+row[col]).toFixed(3)}`).join('<br>');
+                tooltip.classed('visible', true)
+                    .html(`${row.__isBenchmark ? 'Benchmark' : `Point: ${rowIndex}`}<br>${lines}`)
+                    .style('left', `${event.pageX + 12}px`)
+                    .style('top', `${event.pageY - 36}px`);
+            }
+        })
+        .on('mousemove', (event) => {
+            tooltip.style('left', `${event.pageX + 12}px`).style('top', `${event.pageY - 36}px`);
+        })
+        .on('mouseleave', () => { onHoverEnd(); tooltip.classed('visible', false); });
+
+    pathsG.selectAll('path.radar-path').each(function (row) { this.__dataRow = row; });
 
     // Step 6: keep benchmark polygon on top of all others
     pathsG.selectAll('path.radar-path.is-benchmark').raise();

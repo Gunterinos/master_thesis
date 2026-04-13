@@ -28,6 +28,7 @@
 
 /* ── Polygons ────────────────────────────────────────────── */
 .radar-path {
+    pointer-events: visibleStroke;
     fill-opacity: 0;
     stroke: var(--color-point-regular);
     stroke-width: 1.5;

@@ -82,18 +82,6 @@ export function createChartRegistry(interactionOptions) {
                 });
             },
         },
-        radviz: {
-            key: "radviz",
-            label: "RadViz",
-            needsAxes: false,
-            canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, animate = false }) => {
-                renderRadviz(containerSelector, data, columns, {
-                    ...interactionOptions,
-                    animate,
-                });
-            },
-        },
         radar: {
             key: "radar",
             label: "Radar Chart",
@@ -103,6 +91,18 @@ export function createChartRegistry(interactionOptions) {
                 renderRadarChart(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
+                    animate,
+                });
+            },
+        },
+        radviz: {
+            key: "radviz",
+            label: "RadViz",
+            needsAxes: false,
+            canRender: ({ numericColumns }) => numericColumns.length >= 3,
+            render: ({ containerSelector, columns, data, animate = false }) => {
+                renderRadviz(containerSelector, data, columns, {
+                    ...interactionOptions,
                     animate,
                 });
             },

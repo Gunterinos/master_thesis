@@ -24,7 +24,7 @@ export function initializeObjectivesSpacePanel(config) {
         data,
         objectiveDirections,
         defaultChart: "scatter",
-        chartKeys: ["scatter", "scatter3dGL", "pcp", "radviz", "radar"],
+        chartKeys: ["scatter", "scatter3dGL", "pcp", "radar", "radviz" ],
         chartRegistry,
         renderOptions,
         onAfterRender,
