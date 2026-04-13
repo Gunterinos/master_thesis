@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import './barChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+import { CB_PALETTE, POINT_COLOR_BENCHMARK } from '../colors.js';
 
 function applyBarChartHighlight(rowIndex) {
     d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]')
@@ -42,7 +43,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const legendRowHeight = 20;
     const legendItemsPerRow = Math.max(1, Math.floor(estimatedWidth / legendItemWidth));
     const legendRows = Math.ceil(columns.length / legendItemsPerRow);
-    const legendHeight = legendRows * legendRowHeight + 8;
+    const legendHeight = legendRows * legendRowHeight + legendRowHeight + 8;
 
     const margin = {
         top: baseMargin.top,
@@ -137,7 +138,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
 
     const yScale = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(columns);
+    const colorScale = d3.scaleOrdinal(CB_PALETTE).domain(columns);
 
     const xAxis = d3.axisBottom(xScale);
     if (rows.length > 20) {
@@ -217,6 +218,21 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr("x", 18)
             .attr("y", 11)
             .text((column) => column);
+
+        // Benchmark legend entry
+        const bmEntry = legendGroup.append("g")
+            .attr("transform", `translate(0, ${legendRows * legendRowHeight + 4})`);
+        bmEntry.append("rect")
+            .attr("x", 0).attr("y", 1)
+            .attr("width", 12).attr("height", 12)
+            .attr("rx", 2)
+            .attr("fill", "none")
+            .attr("stroke", POINT_COLOR_BENCHMARK)
+            .attr("stroke-dasharray", "3 2")
+            .attr("stroke-width", 2);
+        bmEntry.append("text")
+            .attr("x", 18).attr("y", 11)
+            .text("Benchmark");
 
         const barsRoot = svg.append("g").attr("class", "bars-root");
 

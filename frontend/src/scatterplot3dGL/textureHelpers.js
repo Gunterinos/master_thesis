@@ -2,11 +2,12 @@
 // for the 3D GL scatterplot. All textures are lazily cached by parameter key.
 
 import * as THREE from 'three';
+import { COLOR_WHITE, COLOR_INK, COLOR_BLACK } from '../colors.js';
 
 const _circleTexCache = new Map();
 
 // Creates and caches a filled-circle CanvasTexture with optional stroke.
-export function createCircleTexture(size = 64, fillColor = '#ffffff', alpha = 1.0, strokeColor = null) {
+export function createCircleTexture(size = 64, fillColor = COLOR_WHITE, alpha = 1.0, strokeColor = null) {
     const key = `${size}_${fillColor}_${alpha}_${strokeColor}`;
     if (_circleTexCache.has(key)) return _circleTexCache.get(key);
 
@@ -37,7 +38,7 @@ export function createCircleTexture(size = 64, fillColor = '#ffffff', alpha = 1.
 const _ringTexCache = new Map();
 
 // Creates and caches an outline-only ring CanvasTexture used for selection overlays.
-export function createRingTexture(size = 64, strokeColor = '#1d1d1f', lineWidth = 2.5) {
+export function createRingTexture(size = 64, strokeColor = COLOR_INK, lineWidth = 2.5) {
     const key = `ring_${size}_${strokeColor}_${lineWidth}`;
     if (_ringTexCache.has(key)) return _ringTexCache.get(key);
 
@@ -62,7 +63,7 @@ export function createRingTexture(size = 64, strokeColor = '#1d1d1f', lineWidth 
 
 // Returns a THREE.Sprite with a cached circle texture at the given colour and size.
 export function makeCircleSprite(color, size = 0.02) {
-    const tex = createCircleTexture(32, '#ffffff', 1.0);
+    const tex = createCircleTexture(32, COLOR_WHITE, 1.0);
     const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true, depthWrite: false, color });
     const sprite = new THREE.Sprite(mat);
     sprite.scale.set(size, size, 1);
@@ -70,7 +71,7 @@ export function makeCircleSprite(color, size = 0.02) {
 }
 
 // Renders text to a 3× HiDPI canvas and returns it as a camera-facing THREE.Sprite.
-export function makeTextSprite(text, { color = '#000000', fontSize = 28, bold = false } = {}) {
+export function makeTextSprite(text, { color = COLOR_BLACK, fontSize = 28, bold = false } = {}) {
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
     const font = `${bold ? 'bold ' : ''}${fontSize}px sans-serif`;
@@ -86,7 +87,7 @@ export function makeTextSprite(text, { color = '#000000', fontSize = 28, bold = 
     const ctx = canvas.getContext('2d');
     ctx.scale(SCALE, SCALE);
     ctx.font = font;
-    ctx.strokeStyle = '#ffffff';
+    ctx.strokeStyle = COLOR_WHITE;
     ctx.lineWidth = 4;
     ctx.strokeText(text, 4, fontSize);
     const c = new THREE.Color(color);

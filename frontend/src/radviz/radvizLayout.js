@@ -35,6 +35,12 @@ export function computeRadvizPoints(data, columns) {
         };
     });
 
+    // Zoom to fill: scale so the outermost point sits on the unit-circle boundary.
+    const maxDist = Math.max(...points.map(p => Math.hypot(p.x, p.y)));
+    if (maxDist > 0.001) {
+        points.forEach(p => { p.x /= maxDist; p.y /= maxDist; });
+    }
+
     return { anchors, points };
 }
 

@@ -21,7 +21,7 @@
     bottom: 6px;
     right: 8px;
     font-size: 0.68rem;
-    color: #a0a8b4;
+    color: var(--color-text-muted);
     pointer-events: none;
     user-select: none;
     white-space: nowrap;
@@ -38,7 +38,7 @@
 .scatter3dgl-legend-title {
     display: block;
     font-size: 12px;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     font-weight: 500;
     margin-bottom: 4px;
 }
@@ -47,8 +47,8 @@
     width: 120px;
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(to right, hsl(216, 42%, 92%), hsl(216, 42%, 28%));
-    border: 0.5px solid #d1d5db;
+    background: var(--color-gradient-cividis);
+    border: 0.5px solid var(--color-bounding-box);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     margin-bottom: 2px;
 }
@@ -58,5 +58,22 @@
     justify-content: space-between;
     width: 120px;
     font-size: 10px;
-    color: #9ca3af;
+    color: var(--color-text-muted);
+}
+
+.scatter3dgl-legend-benchmark {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+}
+
+.scatter3dgl-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
 }

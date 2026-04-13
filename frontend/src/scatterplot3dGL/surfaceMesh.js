@@ -1,15 +1,12 @@
-// Builds a Delaunay surface mesh with an HSL distance-to-ideal gradient
+// Builds a Delaunay surface mesh with a Cividis distance-to-ideal gradient
 // for the optional Pareto-approximation overlay in the 3D GL scatterplot.
 
 import * as THREE from 'three';
 import * as d3 from 'd3';
+import { interpolateSurfaceColor, COLOR_SURFACE_EDGE } from '../colors.js';
 
 const surfaceStyle = {
-    fillHue: 0.6,
-    fillSaturation: 0.42,
-    lightnessNear: 0.92,
-    lightnessFar: 0.28,
-    edgeColor: '#1e293b',
+    edgeColor: COLOR_SURFACE_EDGE,
     edgeOpacity: 0.34,
 };
 
@@ -43,10 +40,8 @@ export function buildSurfaceMesh(points, xDir = 'min', yDir = 'min', zDir = 'min
         positions.push(p0.nx, p0.ny, p0.nz, p1.nx, p1.ny, p1.nz, p2.nx, p2.ny, p2.nz);
 
         const ao = (triDists[i / 3] - distMin) / distRange;
-        const lightness = surfaceStyle.lightnessNear - ao * (surfaceStyle.lightnessNear - surfaceStyle.lightnessFar);
-        const c = new THREE.Color();
-        c.setHSL(surfaceStyle.fillHue, surfaceStyle.fillSaturation, lightness);
-        for (let v = 0; v < 3; v++) colors.push(c.r, c.g, c.b);
+        const { r, g, b } = interpolateSurfaceColor(ao);
+        for (let v = 0; v < 3; v++) colors.push(r, g, b);
     }
 
     const geom = new THREE.BufferGeometry();

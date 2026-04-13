@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
+import { CB_PALETTE } from '../colors.js';
 
-export const DEC_COLORS = ['#4f8cff', '#ff9500', '#34c759', '#ff3b30', '#af52de', '#5ac8fa'];
+export const DEC_COLORS = CB_PALETTE;
 export const MINI_R = 8;
 export const DONUT_OUTER = 58;
 export const DONUT_INNER = 34;

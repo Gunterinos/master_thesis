@@ -1,19 +1,19 @@
 .radviz-boundary {
     fill: none;
-    stroke: #e0e4ec;
+    stroke: var(--color-axis-line);
     stroke-width: 1.5;
     transition: opacity 0.2s ease;
 }
 
 .radviz-anchor {
-    fill: #5f6673;
+    fill: var(--color-text-secondary);
     transition: opacity 0.2s ease;
 }
 
 .radviz-anchor-label {
     font-size: 0.78rem;
     font-weight: 600;
-    fill: #1d1d1f;
+    fill: var(--color-ink);
     pointer-events: none;
     user-select: none;
     transition: opacity 0.2s ease;
@@ -29,15 +29,15 @@
 }
 
 .radviz-lasso-path {
-    fill: rgba(79, 140, 255, 0.16);
-    stroke: #4f8cff;
+    fill: var(--color-selection-tint);
+    stroke: var(--color-selection);
     stroke-width: 1.5;
     stroke-dasharray: 4 3;
 }
 
 .radviz-hint {
     font-size: 0.68rem;
-    fill: #a0a8b4;
+    fill: var(--color-text-muted);
     pointer-events: none;
     user-select: none;
 }
@@ -56,7 +56,7 @@
 /* Expanded donut text */
 .radviz-obj-label {
     font-size: 0.62rem;
-    fill: #1d1d1f;
+    fill: var(--color-ink);
     font-weight: 500;
     pointer-events: none;
     user-select: none;
@@ -72,14 +72,14 @@
 .radviz-legend-title {
     font-size: 0.72rem;
     font-weight: 600;
-    fill: #5f6673;
+    fill: var(--color-text-secondary);
     pointer-events: none;
     user-select: none;
 }
 
 .radviz-legend-label {
     font-size: 0.72rem;
-    fill: #5f6673;
+    fill: var(--color-text-secondary);
     dominant-baseline: middle;
     pointer-events: none;
     user-select: none;
@@ -102,7 +102,7 @@
 }
 
 .radviz-point.is-point-selected .radviz-selection-ring {
-    stroke: #1d1d1f;
+    stroke: var(--color-ink);
     stroke-width: 2;
 }
 
@@ -117,7 +117,7 @@
 
 .radviz-benchmark-ring {
     fill: none;
-    stroke: #ffaa32;
+    stroke: var(--color-benchmark);
     stroke-width: 3;
     pointer-events: none;
 }
