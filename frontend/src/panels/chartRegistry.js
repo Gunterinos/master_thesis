@@ -30,12 +30,14 @@ export function createChartRegistry(interactionOptions) {
             label: "2D Scatterplot",
             needsAxes: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null }) => {
+            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [] }) => {
                 renderScatterplot(containerSelector, data, xAxis, yAxis, {
                     ...interactionOptions,
                     animate,
                     showLabels,
                     pcaLabels,
+                    groupColorOverrides,
+                    decisionColumns,
                 });
             },
         },
@@ -45,7 +47,7 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false }) => {
+            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false, groupColorOverrides = null, decisionColumns = [] }) => {
                 renderScatterplot3dGL(containerSelector, data, xAxis, yAxis, zAxis, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -54,6 +56,8 @@ export function createChartRegistry(interactionOptions) {
                     showSurface,
                     showDominated,
                     showIdealPoint,
+                    groupColorOverrides,
+                    decisionColumns,
                 });
             },
         },

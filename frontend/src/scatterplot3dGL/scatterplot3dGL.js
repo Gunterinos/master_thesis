@@ -19,6 +19,7 @@ import {
     POINT_COLOR_BENCHMARK, interpolateSurfaceColor,
     COLOR_WHITE, COLOR_INK, COLOR_DOMINATED,
     COLOR_IDEAL_FILL, COLOR_IDEAL_STROKE, COLOR_TEXT_SECONDARY,
+    getColumnColor,
 } from '../colors.js';
 
 export { setScatter3dGLSelection };
@@ -38,6 +39,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         showDominated       = false,
         showIdealPoint      = false,
         objectiveDirections = {},
+        groupColorOverrides = null,
+        decisionColumns     = [],
     } = options;
 
     const xDir = objectiveDirections[xKey] ?? 'min';
@@ -136,6 +139,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const ringTex        = createRingTexture(64, COLOR_INK, 8);
 
     points.forEach(p => {
+        p.activeColor = p.isBenchmark
+            ? POINT_COLOR_BENCHMARK
+            : (groupColorOverrides?.get(p.rowIndex) ?? p.surfaceColor);
         const sx = shouldAnimate ? p.startNx : p.nx;
         const sy = shouldAnimate ? p.startNy : p.ny;
         const sz = shouldAnimate ? p.startNz : p.nz;
@@ -144,7 +150,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         const mat = new THREE.SpriteMaterial({
             map: pointCircleTex, transparent: true, opacity: 1.0,
             depthTest: true, depthWrite: false,
-            color: p.isBenchmark ? POINT_COLOR_BENCHMARK : p.surfaceColor,
+            color: p.activeColor,
         });
         const sprite = new THREE.Sprite(mat);
         sprite.scale.set(p.baseSize, p.baseSize, 1);
@@ -211,15 +217,30 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     wrapper.append('div').attr('class', 'scatter3dgl-hint')
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
-    const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
-    legendDiv.html(
-        `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
-        '<div class="scatter3dgl-legend-bar"></div>' +
-        '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>' +
-        `<div class="scatter3dgl-legend-benchmark">` +
-        `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
-        `<span>Benchmark</span></div>`
-    );
+    if (groupColorOverrides && decisionColumns.length > 0) {
+        const groupRows = decisionColumns.map((col, i) =>
+            `<div class="scatter3dgl-legend-benchmark">` +
+            `<span class="scatter3dgl-legend-dot" style="background:${getColumnColor(i)}"></span>` +
+            `<span>${col}</span></div>`
+        ).join('');
+        legendDiv.html(
+            `<span class="scatter3dgl-legend-title">Dominant Dec. Variable</span>` +
+            groupRows +
+            `<div class="scatter3dgl-legend-benchmark" style="margin-top:6px">` +
+            `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
+            `<span>Benchmark</span></div>`
+        );
+    } else {
+        const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
+        legendDiv.html(
+            `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
+            '<div class="scatter3dgl-legend-bar"></div>' +
+            '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>' +
+            `<div class="scatter3dgl-legend-benchmark">` +
+            `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
+            `<span>Benchmark</span></div>`
+        );
+    }
 
     const axisScaleMeta = [
         { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: COLOR_INK },

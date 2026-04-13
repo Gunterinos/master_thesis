@@ -4,6 +4,7 @@ export function initializeObjectivesSpacePanel(config) {
     const { data, objectiveDirections = {}, chartRegistry, renderOptions = {}, onAfterRender } = config;
     const allColumns = Object.keys(data[0]);
     const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));
+    const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
 
     initializeSpacePanel({
         containerSelector: "#objectives-container",
@@ -16,11 +17,14 @@ export function initializeObjectivesSpacePanel(config) {
         zLabelSelector: 'label[for="objectives-z-axis"]',
         labelsToggleSelector: "#objectives-labels-toggle",
         pcaToggleSelector: "#objectives-pca-toggle",
+        decGroupsToggleSelector: "#objectives-dec-groups-toggle",
+        optionsDropdownSelector: "#objectives-options-dropdown",
         spreadSliderSelector: "#objectives-spread",
         surfaceToggleSelector: "#objectives-surface-toggle",
         dominatedToggleSelector: "#objectives-dominated-toggle",
         idealToggleSelector: "#objectives-ideal-toggle",
         columns: objectiveColumns,
+        decisionColumns,
         data,
         objectiveDirections,
         defaultChart: "scatter",
