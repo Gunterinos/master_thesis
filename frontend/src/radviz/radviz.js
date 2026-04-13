@@ -3,6 +3,7 @@ import './radviz.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { computeRadvizPoints, computeEquilibrium, getTransform } from './radvizLayout.js';
 import { renderGlyph, DEC_COLORS, MINI_R } from './radvizGlyph.js';
+import { POINT_COLOR_BENCHMARK } from '../colors.js';
 
 const LEGEND_W = 120;
 
@@ -175,7 +176,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         bmRow.append('circle')
             .attr('cx', 6).attr('cy', 6).attr('r', 6)
             .attr('fill', 'none')
-            .attr('stroke', '#B80058')
+            .attr('stroke', POINT_COLOR_BENCHMARK)
             .attr('stroke-width', 2);
         bmRow.append('text')
             .attr('class', 'radviz-legend-label')

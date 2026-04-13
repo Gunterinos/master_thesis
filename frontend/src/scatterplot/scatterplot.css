@@ -10,17 +10,17 @@
 }
 
 body.shift-held .scatter-point.is-point-selected {
-    stroke: #1d1d1f;
+    stroke: var(--color-ink);
     stroke-width: 2;
 }
 
 body.shift-held .scatter-point-label.is-point-selected {
     font-weight: 700;
-    fill: #1d1d1f;
+    fill: var(--color-ink);
 }
 
 .scatter-point.is-linked-highlight {
-    stroke: #333;
+    stroke: var(--color-ink);
     stroke-width: 2;
 }
 
@@ -34,8 +34,8 @@ body.shift-held .scatter-point-label.is-point-selected {
 }
 
 .scatter-lasso-path {
-    fill: rgba(79, 140, 255, 0.16);
-    stroke: #4f8cff;
+    fill: var(--color-selection-tint);
+    stroke: var(--color-selection);
     stroke-width: 1.5;
     stroke-dasharray: 4 3;
 }
@@ -47,8 +47,8 @@ body.shift-held .scatter-point-label.is-point-selected {
     opacity: 0;
     transform: translateY(2px);
     transition: opacity 0.12s ease, transform 0.12s ease;
-    background: rgba(17, 22, 31, 0.92);
-    color: #fff;
+    background: var(--color-tooltip-bg);
+    color: var(--color-white);
     border-radius: 10px;
     padding: 0.38rem 0.5rem;
     font-size: 0.78rem;
@@ -65,13 +65,13 @@ body.shift-held .scatter-point-label.is-point-selected {
 }
 
 .scatter-grid .tick line {
-    stroke: #e0e4ec;
+    stroke: var(--color-axis-line);
     stroke-dasharray: 3 3;
 }
 
 .scatter-point-label {
     font-size: 0.72rem;
-    fill: #5f6673;
+    fill: var(--color-text-secondary);
     pointer-events: none;
     user-select: none;
     transition: opacity 0.15s ease;
@@ -84,12 +84,12 @@ body.shift-held .scatter-point-label.is-point-selected {
 
 .scatter-hint {
     font-size: 0.68rem;
-    fill: #a0a8b4;
+    fill: var(--color-text-muted);
     pointer-events: none;
     user-select: none;
 }
 
 .scatter-point.is-benchmark {
-    stroke: #B80058;
+    stroke: var(--color-benchmark);
     stroke-width: 1.5;
 }

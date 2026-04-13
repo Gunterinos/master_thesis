@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import './barChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
-import { CB_PALETTE } from '../colors.js';
+import { CB_PALETTE, POINT_COLOR_BENCHMARK } from '../colors.js';
 
 function applyBarChartHighlight(rowIndex) {
     d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]')
@@ -227,7 +227,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr("width", 12).attr("height", 12)
             .attr("rx", 2)
             .attr("fill", "none")
-            .attr("stroke", "#B80058")
+            .attr("stroke", POINT_COLOR_BENCHMARK)
             .attr("stroke-dasharray", "3 2")
             .attr("stroke-width", 2);
         bmEntry.append("text")

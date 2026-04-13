@@ -15,7 +15,11 @@ import { buildScene } from './sceneSetup.js';
 import { buildBrushFilter } from './brushFilter.js';
 import { buildOrbitControls } from './orbitControls.js';
 import { buildPointVisuals } from './pointVisuals.js';
-import { POINT_COLOR_BENCHMARK, interpolateSurfaceColor } from '../colors.js';
+import {
+    POINT_COLOR_BENCHMARK, interpolateSurfaceColor,
+    COLOR_WHITE, COLOR_INK, COLOR_DOMINATED,
+    COLOR_IDEAL_FILL, COLOR_IDEAL_STROKE, COLOR_TEXT_SECONDARY,
+} from '../colors.js';
 
 export { setScatter3dGLSelection };
 
@@ -128,8 +132,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const POINT_SIZE     = 0.035;
     const RING_SIZE      = POINT_SIZE * 1.1;
     const pointMeshes    = [], ringMeshes = [];
-    const pointCircleTex = createCircleTexture(64, '#ffffff', 1.0);
-    const ringTex        = createRingTexture(64, '#1d1d1f', 8);
+    const pointCircleTex = createCircleTexture(64, COLOR_WHITE, 1.0);
+    const ringTex        = createRingTexture(64, COLOR_INK, 8);
 
     points.forEach(p => {
         const sx = shouldAnimate ? p.startNx : p.nx;
@@ -164,11 +168,11 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     if (showDominated && points.length > 0) {
         const front  = computeParetoFront(points, xDir, yDir, zDir);
         const cloud  = generateDominatedCloud(front, xScale.domain(), yScale.domain(), zScale.domain(), xDir, yDir, zDir);
-        const domTex = createCircleTexture(32, '#ffffff', 1.0);
+        const domTex = createCircleTexture(32, COLOR_WHITE, 1.0);
         cloud.forEach(c => {
             const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
                 map: domTex, transparent: true, opacity: 0.35,
-                depthTest: true, depthWrite: false, color: '#8a9ab0',
+                depthTest: true, depthWrite: false, color: COLOR_DOMINATED,
             }));
             sprite.scale.set(0.014, 0.014, 1);
             sprite.position.set(xScale(c.xVal), yScale(c.yVal), zScale(c.zVal));
@@ -182,13 +186,13 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         const iz = zDir === 'max' ? d3.max(points, p => p.zVal) : d3.min(points, p => p.zVal);
         if (Number.isFinite(ix) && Number.isFinite(iy) && Number.isFinite(iz)) {
             const idealMesh = new THREE.Sprite(new THREE.SpriteMaterial({
-                map: createCircleTexture(64, '#eab308', 1.0, '#ca8a04'),
+                map: createCircleTexture(64, COLOR_IDEAL_FILL, 1.0, COLOR_IDEAL_STROKE),
                 transparent: true, opacity: 1.0, depthTest: true, depthWrite: false,
             }));
             idealMesh.scale.set(0.05, 0.05, 1);
             idealMesh.position.set(xScale(ix), yScale(iy), zScale(iz));
             scene.add(idealMesh);
-            const idealLabel = makeTextSprite('Ideal Point', { color: '#ca8a04', fontSize: 12, bold: true });
+            const idealLabel = makeTextSprite('Ideal Point', { color: COLOR_IDEAL_STROKE, fontSize: 12, bold: true });
             idealLabel.position.set(xScale(ix) + 0.04, yScale(iy) + 0.04, zScale(iz) + 0.04);
             scene.add(idealLabel);
         }
@@ -197,7 +201,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const labelSprites = [];
     if (showLabels) {
         points.forEach(p => {
-            const sprite = makeTextSprite(p.isBenchmark ? 'Benchmark' : `op${p.rowIndex}`, { color: p.isBenchmark ? POINT_COLOR_BENCHMARK : '#5f6673', fontSize: 11 });
+            const sprite = makeTextSprite(p.isBenchmark ? 'Benchmark' : `op${p.rowIndex}`, { color: p.isBenchmark ? POINT_COLOR_BENCHMARK : COLOR_TEXT_SECONDARY, fontSize: 11 });
             sprite.position.set(p.nx + 0.025, p.ny + 0.025, p.nz + 0.025);
             scene.add(sprite);
             labelSprites.push(sprite);
@@ -218,9 +222,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     );
 
     const axisScaleMeta = [
-        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: '#1d1d1f' },
-        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: '#1d1d1f' },
-        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: '#1d1d1f' },
+        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: COLOR_INK },
+        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: COLOR_INK },
+        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: COLOR_INK },
     ];
 
     const pvModule = buildPointVisuals({

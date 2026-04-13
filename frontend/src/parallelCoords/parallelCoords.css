@@ -9,7 +9,7 @@
 /* ── Lines ──────────────────────────────────────────── */
 .pcp-line {
     fill: none;
-    stroke: #008CF9;
+    stroke: var(--color-point-regular);
     stroke-width: 2.5;
     stroke-opacity: 0.55;
     cursor: pointer;
@@ -26,7 +26,7 @@
 }
 
 .pcp-line.is-line-selected {
-    stroke: #008CF9;
+    stroke: var(--color-point-regular);
     stroke-opacity: 0.9;
     stroke-width: 2.5;
 }
@@ -36,7 +36,7 @@ body.shift-held .pcp-line.is-selection-dim {
 }
 
 body.shift-held .pcp-line.is-line-selected {
-    stroke: #B80058;
+    stroke: var(--color-benchmark);
     stroke-opacity: 1;
     stroke-width: 2.5;
 }
@@ -48,12 +48,12 @@ body.shift-held .pcp-line.is-line-selected {
 }
 .pcp-axis line,
 .pcp-axis path.domain {
-    stroke: #c2cad6;
+    stroke: var(--color-axis-line);
     stroke-width: 1.5;
 }
 
 .pcp-axis .tick text {
-    fill: #5f6673;
+    fill: var(--color-text-secondary);
     font-size: 0.7rem;
     user-select: none;
     -webkit-user-select: none;
@@ -62,19 +62,19 @@ body.shift-held .pcp-line.is-line-selected {
 .pcp-axis-label {
     font-size: 0.78rem;
     font-weight: 600;
-    fill: #1d1d1f;
+    fill: var(--color-ink);
     cursor: grab;
     user-select: none;
 }
 
 .pcp-axis--dragging .pcp-axis-label {
     cursor: grabbing;
-    fill: #4f8cff;
+    fill: var(--color-selection);
 }
 
 .pcp-axis--dragging line,
 .pcp-axis--dragging path.domain {
-    stroke: #4f8cff;
+    stroke: var(--color-selection);
     stroke-width: 2;
 }
 
@@ -105,8 +105,8 @@ body.shift-held .pcp-line.is-line-selected {
     padding: 0.3rem 0.75rem;
     border: 1px solid rgba(194, 202, 214, 0.9);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.96);
-    color: #1d1d1f;
+    background: var(--color-surface);
+    color: var(--color-ink);
     font-size: 0.82rem;
     font-weight: 500;
     cursor: pointer;
@@ -116,21 +116,21 @@ body.shift-held .pcp-line.is-line-selected {
 }
 
 .pcp-axes-btn:hover {
-    border-color: rgba(173, 183, 197, 0.95);
+    border-color: var(--color-border);
     box-shadow: 0 2px 8px rgba(33, 40, 56, 0.09);
 }
 
 .pcp-axes-btn:focus {
     outline: none;
-    border-color: #4f8cff;
-    box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.16);
+    border-color: var(--color-selection);
+    box-shadow: 0 0 0 3px var(--color-selection-tint);
 }
 
 .pcp-axes-panel {
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
-    background: rgba(255, 255, 255, 0.98);
+    background: var(--color-surface);
     border: 1px solid rgba(194, 202, 214, 0.8);
     border-radius: 12px;
     padding: 0.4rem 0.2rem;
@@ -151,17 +151,17 @@ body.shift-held .pcp-line.is-line-selected {
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.82rem;
-    color: #1d1d1f;
+    color: var(--color-ink);
     transition: background 0.1s ease;
     user-select: none;
 }
 
 .pcp-axis-item:hover {
-    background: rgba(79, 140, 255, 0.08);
+    background: var(--color-selection-tint-soft);
 }
 
 .pcp-axis-item input[type="checkbox"] {
-    accent-color: #4f8cff;
+    accent-color: var(--color-selection);
     width: 14px;
     height: 14px;
     flex-shrink: 0;
@@ -170,7 +170,7 @@ body.shift-held .pcp-line.is-line-selected {
 
 .pcp-empty {
     padding: 2rem;
-    color: #8f98a8;
+    color: var(--color-text-soft);
     font-size: 0.9rem;
     text-align: center;
 }
@@ -190,8 +190,8 @@ body.shift-held .pcp-line.is-line-selected {
 }
 
 .pcp-brush .selection {
-    fill: rgba(79, 140, 255, 0.18);
-    stroke: #4f8cff;
+    fill: var(--color-selection-tint);
+    stroke: var(--color-selection);
     stroke-width: 1.5;
     rx: 3px;
     cursor: ns-resize;
@@ -199,7 +199,7 @@ body.shift-held .pcp-line.is-line-selected {
 
 .pcp-brush .handle--n,
 .pcp-brush .handle--s {
-    fill: #4f8cff;
+    fill: var(--color-selection);
     height: 4px;
     rx: 2px;
 }
@@ -211,7 +211,7 @@ body.shift-held .pcp-line.is-line-selected {
 }
 
 .pcp-line.is-linked-highlight {
-    stroke: #B80058;
+    stroke: var(--color-benchmark);
     stroke-opacity: 1;
     stroke-width: 2.5;
 }
@@ -221,7 +221,7 @@ body.shift-held .pcp-line.is-line-selected {
 }
 
 .pcp-line.is-benchmark {
-    stroke: #B80058;
+    stroke: var(--color-benchmark);
     stroke-width: 2.5;
     stroke-opacity: 1;
     stroke-dasharray: 6 4;
@@ -234,4 +234,3 @@ body.shift-held .pcp-line.is-line-selected {
 .pcp-line.is-benchmark.is-brush-filtered {
     stroke-opacity: 0.2;
 }
-

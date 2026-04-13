@@ -7,7 +7,7 @@ table {
 
 th,
 td {
-    border: 1px solid #e5e8ee;
+    border: 1px solid var(--color-table-border);
     padding: 0.52rem 0.62rem;
     text-align: left;
     font-size: 0.86rem;
@@ -20,8 +20,8 @@ thead tr {
 }
 
 th {
-    background: #f6f8fb;
-    color: #525866;
+    background: var(--color-table-header-bg);
+    color: var(--color-table-header-text);
     font-weight: 600;
     cursor: pointer;
     user-select: none;
@@ -29,7 +29,7 @@ th {
 }
 
 th:hover {
-    background: #edf1f7;
+    background: var(--color-table-row-alt);
 }
 
 th[data-col-color] {
@@ -52,7 +52,7 @@ tbody tr {
 }
 
 tbody tr.is-linked-highlight td {
-    background: #ecfff2;
+    background: var(--color-table-positive-bg);
 }
 
 tbody tr.is-linked-dim {
@@ -60,7 +60,7 @@ tbody tr.is-linked-dim {
 }
 
 tbody tr.is-benchmark td:first-child {
-    color: #B80058;
+    color: var(--color-benchmark);
     font-weight: 700;
-    border-left: 3px solid #B80058;
+    border-left: 3px solid var(--color-benchmark);
 }

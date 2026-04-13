@@ -3,10 +3,10 @@
 
 import * as THREE from 'three';
 import * as d3 from 'd3';
-import { interpolateSurfaceColor } from '../colors.js';
+import { interpolateSurfaceColor, COLOR_SURFACE_EDGE } from '../colors.js';
 
 const surfaceStyle = {
-    edgeColor: '#1e293b',
+    edgeColor: COLOR_SURFACE_EDGE,
     edgeOpacity: 0.34,
 };
 

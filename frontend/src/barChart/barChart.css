@@ -4,7 +4,7 @@
 }
 
 .bar-chart-segment.is-linked-highlight {
-    stroke: #243047;
+    stroke: var(--color-axis-dark);
     stroke-width: 1.5;
 }
 
@@ -19,8 +19,8 @@
     opacity: 0;
     transform: translateY(2px);
     transition: opacity 0.12s ease, transform 0.12s ease;
-    background: rgba(17, 22, 31, 0.94);
-    color: #fff;
+    background: var(--color-tooltip-bg-dark);
+    color: var(--color-white);
     border-radius: 10px;
     padding: 0.42rem 0.56rem;
     font-size: 0.78rem;
@@ -34,13 +34,13 @@
 }
 
 .bar-chart-legend text {
-    fill: #4c566a;
+    fill: var(--color-bar-muted);
     font-size: 0.75rem;
 }
 
 .bar-benchmark-outline {
     fill: none;
-    stroke: #B80058;
+    stroke: var(--color-benchmark);
     stroke-width: 3;
     stroke-dasharray: 5 3;
     pointer-events: none;
