@@ -1,0 +1,251 @@
+.radar-svg {
+    width: 100%;
+    height: calc(100% - 42px) !important;
+    display: block;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ── Grid ────────────────────────────────────────────────── */
+.radar-grid-ring {
+    fill: none;
+    stroke: var(--color-axis-line);
+    stroke-width: 1;
+}
+
+.radar-spoke-line {
+    stroke: var(--color-axis-line);
+    stroke-width: 1;
+    pointer-events: none;
+}
+
+.radar-tick-label {
+    font-size: 0.62rem;
+    fill: var(--color-text-muted);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── Polygons ────────────────────────────────────────────── */
+.radar-path {
+    fill-opacity: 0;
+    stroke: var(--color-point-regular);
+    stroke-width: 1.5;
+    stroke-opacity: 0.5;
+    cursor: pointer;
+    transition: stroke-opacity 0.15s ease, stroke-width 0.15s ease;
+}
+
+.radar-path:hover {
+    stroke-opacity: 1;
+    stroke-width: 2;
+}
+
+.radar-path.is-selection-dim {
+    fill-opacity: 0;
+    stroke-opacity: 0.08;
+}
+
+.radar-path.is-path-selected {
+    stroke: var(--color-point-regular);
+    stroke-opacity: 0.9;
+    stroke-width: 2.5;
+    fill-opacity: 0;
+}
+
+body.shift-held .radar-path.is-selection-dim {
+    stroke-opacity: 0.5;
+    fill-opacity: 0;
+}
+
+body.shift-held .radar-path.is-path-selected {
+    stroke: var(--color-benchmark);
+    stroke-opacity: 1;
+    stroke-width: 2.5;
+}
+
+/* ── Linked hover (cross-chart) ─────────────────────────── */
+.radar-path.is-linked-highlight {
+    stroke: var(--color-benchmark);
+    stroke-opacity: 1;
+    stroke-width: 2.5;
+    fill-opacity: 0;
+}
+
+.radar-path.is-linked-dim {
+    stroke-opacity: 0.05;
+    fill-opacity: 0;
+}
+
+/* ── Brush filter dimming ────────────────────────────────── */
+.radar-path.is-brush-filtered {
+    stroke-opacity: 0.06;
+    fill-opacity: 0;
+    stroke-width: 1;
+}
+
+/* ── Benchmark polygon (Step 6) ──────────────────────────── */
+.radar-path.is-benchmark {
+    stroke: var(--color-benchmark);
+    stroke-width: 2.5;
+    stroke-opacity: 1;
+    stroke-dasharray: 6 4;
+    fill: none;
+}
+
+.radar-path.is-benchmark.is-linked-dim {
+    stroke-opacity: 0.2;
+}
+
+.radar-path.is-benchmark.is-brush-filtered {
+    stroke-opacity: 0.2;
+}
+
+/* ── Axis labels (Step 7 & 8) ────────────────────────────── */
+.radar-labels {
+    pointer-events: none;
+}
+
+.radar-label-group {
+    pointer-events: all;
+}
+
+.radar-axis-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    fill: var(--color-ink);
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+}
+
+.radar-spoke--dragging .radar-axis-label {
+    cursor: grabbing;
+    fill: var(--color-selection);
+}
+
+.radar-label-drag-overlay {
+    fill: transparent;
+    pointer-events: all;
+    cursor: grab;
+}
+
+.radar-spoke--dragging .radar-label-drag-overlay {
+    cursor: grabbing;
+}
+
+/* ── Dropdown (Step 2) — reuse same visual as PCP ────────── */
+.radar-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+    padding: 4px 0 0 0;
+    z-index: 10;
+}
+
+.radar-axes-btn {
+    min-height: 30px;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(194, 202, 214, 0.9);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(22, 29, 44, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+}
+
+.radar-axes-btn:hover {
+    border-color: var(--color-border);
+    box-shadow: 0 2px 8px rgba(33, 40, 56, 0.09);
+}
+
+.radar-axes-btn:focus {
+    outline: none;
+    border-color: var(--color-selection);
+    box-shadow: 0 0 0 3px var(--color-selection-tint);
+}
+
+.radar-axes-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: var(--color-surface);
+    border: 1px solid rgba(194, 202, 214, 0.8);
+    border-radius: 12px;
+    padding: 0.4rem 0.2rem;
+    box-shadow: 0 8px 24px rgba(31, 38, 55, 0.14);
+    min-width: 160px;
+    max-height: 260px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.radar-axis-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.32rem 0.65rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--color-ink);
+    transition: background 0.1s ease;
+    user-select: none;
+}
+
+.radar-axis-item:hover {
+    background: var(--color-selection-tint-soft);
+}
+
+.radar-axis-item input[type="checkbox"] {
+    accent-color: var(--color-selection);
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.radar-empty {
+    padding: 2rem;
+    color: var(--color-text-soft);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ── Filter handles (Step 5) ─────────────────────────────── */
+/* Invisible wide hit area on each spoke for click-drag to create filter */
+.radar-spoke-hit {
+    stroke: transparent;
+    stroke-width: 14;
+    cursor: crosshair;
+    fill: none;
+}
+
+.radar-filter-range {
+    stroke: var(--color-selection);
+    stroke-width: 3;
+    stroke-opacity: 0.7;
+    pointer-events: none;
+}
+
+.radar-filter-handle {
+    fill: var(--color-selection);
+    stroke: var(--color-surface);
+    stroke-width: 2;
+    cursor: ns-resize;
+}
+
+.radar-filter-handle:hover {
+    fill: var(--color-selection);
+    stroke-width: 3;
+}
+
+.radar-filter-handle.is-dragging {
+    cursor: grabbing;
+}

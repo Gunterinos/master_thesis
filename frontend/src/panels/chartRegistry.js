@@ -4,6 +4,7 @@ import { renderScatterplot3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { renderBarChart } from '../barChart/barChart.js';
 import { renderParallelCoords } from '../parallelCoords/parallelCoords.js';
 import { renderRadviz } from '../radviz/radviz.js';
+import { renderRadarChart } from '../radarChart/radarChart.js';
 import { getColumnColor } from '../colors.js';
 
 export function createChartRegistry(interactionOptions) {
@@ -89,6 +90,19 @@ export function createChartRegistry(interactionOptions) {
             render: ({ containerSelector, columns, data, animate = false }) => {
                 renderRadviz(containerSelector, data, columns, {
                     ...interactionOptions,
+                    animate,
+                });
+            },
+        },
+        radar: {
+            key: "radar",
+            label: "Radar Chart",
+            needsAxes: false,
+            canRender: ({ numericColumns }) => numericColumns.length >= 3,
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false }) => {
+                renderRadarChart(containerSelector, columns, data, {
+                    ...interactionOptions,
+                    objectiveDirections,
                     animate,
                 });
             },
