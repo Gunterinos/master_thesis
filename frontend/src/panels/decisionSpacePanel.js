@@ -1,7 +1,7 @@
 import { initializeSpacePanel } from './spacePanel.js';
 
 export function initializeDecisionSpacePanel(config) {
-    const { data, chartRegistry, renderOptions = {}, onAfterRender } = config;
+    const { data, chartRegistry, renderOptions = {}, onAfterRender, groups = {} } = config;
     const allColumns = Object.keys(data[0]);
     const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
 
@@ -19,5 +19,6 @@ export function initializeDecisionSpacePanel(config) {
         chartRegistry,
         renderOptions,
         onAfterRender,
+        groups,
     });
 }

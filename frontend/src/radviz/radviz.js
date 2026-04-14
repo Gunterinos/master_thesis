@@ -3,17 +3,18 @@ import './radviz.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { computeRadvizPoints, computeEquilibrium, getTransform } from './radvizLayout.js';
 import { renderGlyph, DEC_COLORS, MINI_R } from './radvizGlyph.js';
-import { POINT_COLOR_BENCHMARK } from '../colors.js';
+import { POINT_COLOR_BENCHMARK, getGroupBaseColor, getGroupOrder, getGroupMembers } from '../colors.js';
 
 const LEGEND_W = 120;
 
 // ── Per-container persistent state ──────────────────────────────────────────
 
-const _radvizInstances = new Map(); // containerSelector → setSelection callback
-const _expandedIndex   = new Map(); // containerSelector → rowIndex | null
-const _prevPositions   = new Map(); // containerSelector → Map<rowIndex, {px, py}>
-const _spreadValue     = new Map(); // containerSelector → 0..1
-const _renderState     = new Map(); // containerSelector → { R, eqMap, maxGlyphR }
+const _radvizInstances  = new Map(); // containerSelector → setSelection callback
+const _expandedIndex    = new Map(); // containerSelector → rowIndex | null
+const _expandedGlyphGroup = new Map(); // `${containerSelector}:${rowIndex}` → groupName | null
+const _prevPositions    = new Map(); // containerSelector → Map<rowIndex, {px, py}>
+const _spreadValue      = new Map(); // containerSelector → 0..1
+const _renderState      = new Map(); // containerSelector → { R, eqMap, maxGlyphR }
 
 // ── Pub-sub wiring ──────────────────────────────────────────────────────────
 
@@ -52,6 +53,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         onSelectionChange = () => {},
         onShiftClick = () => {},
         animate = false,
+        groups = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -145,8 +147,19 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
     // ── Legend ────────────────────────────────────────────────────────────
 
     if (decisionColumns.length > 0) {
+        const hasGroups = groups && Object.keys(groups).length > 0;
         const itemH = 22;
-        const totalItems = decisionColumns.length + 1;
+
+        // Build legend items: groups when available, individual vars otherwise
+        const legendItems = hasGroups
+            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({
+                label: grp, color: getGroupBaseColor(gi), bold: true,
+            }))
+            : decisionColumns.map((col, i) => ({
+                label: col, color: DEC_COLORS[i % DEC_COLORS.length], bold: false,
+            }));
+
+        const totalItems = legendItems.length + 1; // +1 for benchmark
         const legendX = availW + 12;
         const legendY = cy - (totalItems * itemH) / 2;
 
@@ -158,21 +171,22 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             .attr('class', 'radviz-legend-title')
             .attr('x', 0)
             .attr('y', -8)
-            .text('Decision vars');
+            .text(hasGroups ? 'Decision groups' : 'Decision vars');
 
-        decisionColumns.forEach((col, i) => {
+        legendItems.forEach(({ label, color, bold }, i) => {
             const row = legendG.append('g').attr('transform', `translate(0, ${i * itemH})`);
             row.append('rect')
                 .attr('width', 12).attr('height', 12).attr('y', 0)
-                .attr('fill', DEC_COLORS[i % DEC_COLORS.length]).attr('rx', 2);
+                .attr('fill', color).attr('rx', 2);
             row.append('text')
                 .attr('class', 'radviz-legend-label')
                 .attr('x', 18).attr('y', 10)
-                .text(col);
+                .style('font-weight', bold ? '600' : '400')
+                .text(label);
         });
 
         // Benchmark entry
-        const bmRow = legendG.append('g').attr('transform', `translate(0, ${decisionColumns.length * itemH + 6})`);
+        const bmRow = legendG.append('g').attr('transform', `translate(0, ${legendItems.length * itemH + 6})`);
         bmRow.append('circle')
             .attr('cx', 6).attr('cy', 6).attr('r', 6)
             .attr('fill', 'none')
@@ -242,6 +256,8 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         .attr('class', (p) => p.row.__isBenchmark ? 'radviz-point is-benchmark' : 'radviz-point')
         .attr('data-row-index', (p) => p.rowIndex)
         .attr('transform', (p) => {
+            // Centre the expanded glyph on the chart
+            if (p.rowIndex === expandedRowIndex) return 'translate(0, 0)';
             if (animate && storedPrev.has(p.rowIndex)) {
                 const { px, py } = storedPrev.get(p.rowIndex);
                 return `translate(${px}, ${py})`;
@@ -250,7 +266,19 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         });
 
     glyphGroups.each(function (p) {
-        renderGlyph(d3.select(this), p, decisionColumns, expandedRowIndex, tooltip);
+        const glyphGroupKey = `${containerSelector}:${p.rowIndex}`;
+        const expandedGlyphGroup = _expandedGlyphGroup.get(glyphGroupKey) ?? null;
+        renderGlyph(d3.select(this), p, decisionColumns, expandedRowIndex, tooltip, {
+            groups,
+            glyphR: R,
+            expandedGlyphGroup,
+            onGlyphGroupToggle: (grp) => {
+                const key = `${containerSelector}:${p.rowIndex}`;
+                const cur = _expandedGlyphGroup.get(key) ?? null;
+                _expandedGlyphGroup.set(key, cur === grp ? null : grp);
+                rerender();
+            },
+        });
     });
 
     if (animate && storedPrev.size > 0) {

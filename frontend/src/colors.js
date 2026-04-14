@@ -66,6 +66,72 @@ export function getColumnColor(index) {
     return CB_PALETTE[index % CB_PALETTE.length];
 }
 
+// ── Group colours ─────────────────────────────────────────────────────────────
+
+// One distinct base colour per group (up to 8 groups), colour-blind-friendly.
+export const GROUP_COLOR_BASES = [
+    '#008CF9', // blue
+    '#EBAC23', // amber
+    '#00A76C', // emerald
+    '#D163E6', // violet
+    '#B80058', // deep pink
+    '#00BBAD', // teal
+    '#B24502', // burnt orange
+    '#5954D6', // indigo
+];
+
+export function getGroupBaseColor(groupIndex) {
+    return GROUP_COLOR_BASES[groupIndex % GROUP_COLOR_BASES.length];
+}
+
+/**
+ * Lightness variant of a group's base colour for individual variables.
+ * varIndexInGroup=0 → base colour; higher indices → progressively lighter.
+ */
+export function getVariableColor(groupIndex, varIndexInGroup, groupSize) {
+    const base = getGroupBaseColor(groupIndex);
+    if (groupSize <= 1) return base;
+    const factor = (varIndexInGroup / (groupSize - 1)) * 0.30;
+    return _lightenHex(base, factor);
+}
+
+function _lightenHex(hex, factor) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const clamp = v => Math.max(0, Math.min(255, Math.round(v)));
+    return `#${[r, g, b].map(c => clamp(c + factor * (255 - c)).toString(16).padStart(2, '0')).join('')}`;
+}
+
+/**
+ * Returns ordered unique group names from { colName: groupName } mapping,
+ * preserving the order they first appear across the columns array.
+ */
+export function getGroupOrder(columns, groups) {
+    const seen = new Set();
+    const order = [];
+    for (const col of columns) {
+        const grp = groups[col];
+        if (grp && !seen.has(grp)) { seen.add(grp); order.push(grp); }
+    }
+    return order;
+}
+
+/**
+ * Returns { groupName: [col, …] } preserving column order within each group.
+ */
+export function getGroupMembers(columns, groups) {
+    const map = {};
+    for (const col of columns) {
+        const grp = groups[col];
+        if (grp) {
+            if (!map[grp]) map[grp] = [];
+            map[grp].push(col);
+        }
+    }
+    return map;
+}
+
 // Cividis gradient stops — CB-friendly, perceptually uniform sequential scale.
 // ao=0 → near ideal (bright yellow), ao=1 → far from ideal (dark navy).
 const _CIVIDIS = [

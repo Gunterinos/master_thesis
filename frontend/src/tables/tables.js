@@ -1,15 +1,22 @@
 import * as d3 from 'd3';
 import './tables.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+import { getGroupBaseColor, getVariableColor, getGroupOrder, getGroupMembers } from '../colors.js';
+
+// ── Per-container persistent state ───────────────────────────────────────────
+
+const _expandedGroups = new Map(); // containerSelector → Set<groupName>
+
+// ── Highlight / selection ─────────────────────────────────────────────────────
 
 function applyTableHighlight(rowIndex) {
     d3.selectAll('tr[data-row-index]')
         .classed('is-linked-highlight', function () { return rowIndex !== null && Number(this.dataset.rowIndex) === rowIndex; })
-        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; })
+        .classed('is-linked-dim', function () { return rowIndex !== null && Number(this.dataset.rowIndex) !== rowIndex; });
 
     if (rowIndex !== null) {
-        document.querySelectorAll(`tr[data-row-index="${rowIndex}"]`).forEach((rowElement) => {
-            rowElement.scrollIntoView({ block: 'nearest', behavior: 'smooth', inline: 'nearest' });
+        document.querySelectorAll(`tr[data-row-index="${rowIndex}"]`).forEach(el => {
+            el.scrollIntoView({ block: 'nearest', behavior: 'smooth', inline: 'nearest' });
         });
     }
 }
@@ -23,21 +30,74 @@ function applyTableSelection(rowIndexSet) {
 subscribe('hover-change', applyTableHighlight);
 subscribe('selection-change', applyTableSelection);
 
+// ── Group helpers ─────────────────────────────────────────────────────────────
+
+/**
+ * Returns the effective column list: group aggregate columns for collapsed groups,
+ * individual variable columns for expanded groups.
+ */
+function buildEffectiveColumns(columns, groups, expandedSet) {
+    if (!groups || Object.keys(groups).length === 0) return { effective: columns, isGroupCol: {}, isVarCol: {}, groupOrder: [], groupMembersMap: {} };
+
+    const groupOrder = getGroupOrder(columns, groups);
+    const groupMembersMap = getGroupMembers(columns, groups);
+    const effective = [];
+    const isGroupCol = {};
+    const isVarCol = {};
+
+    for (const grp of groupOrder) {
+        effective.push(grp);
+        isGroupCol[grp] = true;
+        if (expandedSet.has(grp)) {
+            for (const col of (groupMembersMap[grp] || [])) {
+                effective.push(col);
+                isVarCol[col] = grp;
+            }
+        }
+    }
+    return { effective, isGroupCol, isVarCol, groupOrder, groupMembersMap };
+}
+
+function getCellValue(row, col, isGroupCol, groupMembersMap) {
+    if (isGroupCol[col]) {
+        return (groupMembersMap[col] || []).reduce((s, c) => s + (Number(row[c]) || 0), 0);
+    }
+    return row[col];
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false, columnColors = {} } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false, groups = {} } = options;
+
     const container = d3.select(containerSelector);
     const containerNode = container.node();
-    const tableColumns = ["Point", ...columns];
 
-    // Sort state stored on the container DOM node to survive re-renders.
-    if (!containerNode._sortState) {
-        containerNode._sortState = { col: null, dir: 1 };
+    const hasGroups = groups && Object.keys(groups).length > 0;
+    const expandedSet = _expandedGroups.get(containerSelector) ?? new Set();
+    const { effective: effectiveColumns, isGroupCol, isVarCol, groupOrder, groupMembersMap } =
+        buildEffectiveColumns(columns, groups, expandedSet);
+
+    const tableColumns = ["Point", ...effectiveColumns];
+
+    // Compute group colour mapping for headers
+    const headerColors = {};
+    if (hasGroups) {
+        groupOrder.forEach((grp, gi) => {
+            headerColors[grp] = getGroupBaseColor(gi);
+            (groupMembersMap[grp] || []).forEach((col, vi, arr) => {
+                headerColors[col] = getVariableColor(gi, vi, arr.length);
+            });
+        });
     }
+
+    // Sort state stored on the DOM node to survive re-renders
+    if (!containerNode._sortState) containerNode._sortState = { col: null, dir: 1 };
     const sortState = containerNode._sortState;
 
     function getColValue(row, col) {
         if (col === 'Point') return row.__isBenchmark ? 'Benchmark' : row.__rowIndex;
-        return row[col];
+        return getCellValue(row, col, isGroupCol, groupMembersMap);
     }
 
     function getSortedData(rawData) {
@@ -45,8 +105,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
         return [...rawData].sort((a, b) => {
             if (a.__isBenchmark && !b.__isBenchmark) return -1;
             if (!a.__isBenchmark && b.__isBenchmark) return 1;
-            const av = getColValue(a, sortState.col);
-            const bv = getColValue(b, sortState.col);
+            const av = getColValue(a, sortState.col), bv = getColValue(b, sortState.col);
             const an = Number(av), bn = Number(bv);
             if (Number.isFinite(an) && Number.isFinite(bn)) return sortState.dir * (an - bn);
             return sortState.dir * String(av).localeCompare(String(bv));
@@ -61,135 +120,134 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             if (typeof value === 'string') return value;
             return String(Math.trunc(Number(value)));
         }
-        const numericValue = Number(value);
-        if (Number.isFinite(numericValue)) {
-            return numericValue.toFixed(3);
-        }
-        return value;
+        const n = Number(value);
+        return Number.isFinite(n) ? n.toFixed(3) : value;
     };
 
     const attachRowEvents = (rowSelection) => {
         rowSelection
-            .on("mouseenter", (event, row) => {
-                onHoverStart(row.__rowIndex);
-            })
-            .on("mouseleave", () => {
-                onHoverEnd();
-            });
+            .on("mouseenter", (event, row) => onHoverStart(row.__rowIndex))
+            .on("mouseleave", () => onHoverEnd());
     };
 
     function buildHeaders(thead) {
         const headerRow = thead.append("tr");
-        headerRow
-            .selectAll("th")
+        headerRow.selectAll("th")
             .data(tableColumns)
             .enter()
             .append("th")
             .each(function (col) {
                 const th = d3.select(this);
-                const color = columnColors[col];
+                const color = headerColors[col];
                 if (color) {
-                    th.attr('data-col-color', color)
-                      .style('--col-color', color);
+                    th.attr('data-col-color', color).style('--col-color', color);
                 }
                 if (col === sortState.col) th.classed('sort-active', true);
+                if (isGroupCol[col]) th.classed('group-header', true);
+                if (isVarCol[col]) th.classed('var-sub-header', true);
             })
-            .html((col) => {
+            .html(col => {
+                if (isGroupCol[col]) {
+                    const isExpanded = expandedSet.has(col);
+                    return `${col} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>`;
+                }
                 const indicator = col === sortState.col
                     ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                     : `<span class="sort-indicator">↕</span>`;
                 return `${col}${indicator}`;
             })
             .on("click", (event, col) => {
-                if (sortState.col === col) {
-                    sortState.dir *= -1;
+                if (col === 'Point') {
+                    // Sort by point index
+                    sortState.col === col ? (sortState.dir *= -1) : Object.assign(sortState, { col, dir: 1 });
+                    container.selectAll("*").remove();
+                    containerNode._sortState = sortState;
+                    renderTable(containerSelector, columns, data, options);
+                    applyTableHighlight(getActiveRowIndex());
+                    applyTableSelection(getEffectiveSelection());
+                } else if (isGroupCol[col]) {
+                    // Toggle group expansion
+                    const next = new Set(expandedSet);
+                    next.has(col) ? next.delete(col) : next.add(col);
+                    _expandedGroups.set(containerSelector, next);
+                    container.selectAll("*").remove();
+                    containerNode._sortState = sortState;
+                    renderTable(containerSelector, columns, data, options);
+                    applyTableHighlight(getActiveRowIndex());
+                    applyTableSelection(getEffectiveSelection());
                 } else {
-                    sortState.col = col;
-                    sortState.dir = 1;
+                    // Sort by variable column
+                    sortState.col === col ? (sortState.dir *= -1) : Object.assign(sortState, { col, dir: 1 });
+                    container.selectAll("*").remove();
+                    containerNode._sortState = sortState;
+                    renderTable(containerSelector, columns, data, options);
+                    applyTableHighlight(getActiveRowIndex());
+                    applyTableSelection(getEffectiveSelection());
                 }
-                // Full redraw to apply sort
-                container.selectAll("*").remove();
-                containerNode._sortState = sortState;
-                renderTable(containerSelector, columns, data, options);
-                applyTableHighlight(getActiveRowIndex());
-                applyTableSelection(getEffectiveSelection());
             });
     }
 
-    // Full redraw (first render or non-animated call)
+    // Full redraw
     if (!isUpdate) {
         container.selectAll("*").remove();
-
         const table = container.append("table");
-        const thead = table.append("thead");
+        buildHeaders(table.append("thead"));
         const tbody = table.append("tbody");
 
-        buildHeaders(thead);
-
         const sortedData = getSortedData(data);
-        const rows = tbody
-            .selectAll("tr")
-            .data(sortedData, (row) => row.__rowIndex)
+        const rowsSel = tbody.selectAll("tr")
+            .data(sortedData, row => row.__rowIndex)
             .enter()
             .append("tr")
-            .attr("class", (row) => row.__isBenchmark ? "is-benchmark" : null)
-            .attr("data-row-index", (row) => row.__rowIndex);
+            .attr("class", row => row.__isBenchmark ? "is-benchmark" : null)
+            .attr("data-row-index", row => row.__rowIndex);
 
-        attachRowEvents(rows);
-
-        rows
-            .selectAll("td")
-            .data((row) => [row.__isBenchmark ? 'Benchmark' : row.__rowIndex, ...columns.map((column) => row[column])])
+        attachRowEvents(rowsSel);
+        rowsSel.selectAll("td")
+            .data(row => [
+                row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
+                ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
+            ])
             .enter()
             .append("td")
             .text(formatCell);
-
         return;
     }
 
-    // Incremental update — re-sort and update rows.
+    // Incremental update
     const tbody = existingTable.select("tbody");
     const sortedData = getSortedData(data);
-    const rowSel = tbody
-        .selectAll("tr")
-        .data(sortedData, (row) => row.__rowIndex);
+    const rowSel = tbody.selectAll("tr").data(sortedData, row => row.__rowIndex);
 
-    // EXIT: remove rows no longer in the dataset
     rowSel.exit().remove();
 
-    // ENTER: add rows for new data points
-    const rowEnter = rowSel
-        .enter()
+    const rowEnter = rowSel.enter()
         .append("tr")
-        .attr("class", (row) => row.__isBenchmark ? "is-benchmark" : null)
-        .attr("data-row-index", (row) => row.__rowIndex);
+        .attr("class", row => row.__isBenchmark ? "is-benchmark" : null)
+        .attr("data-row-index", row => row.__rowIndex);
 
     attachRowEvents(rowEnter);
+    rowEnter.selectAll("td")
+        .data(row => [
+            row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
+            ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
+        ])
+        .enter().append("td").text(formatCell);
 
-    rowEnter
-        .selectAll("td")
-        .data((row) => [row.__isBenchmark ? 'Benchmark' : row.__rowIndex, ...columns.map((column) => row[column])])
-        .enter()
-        .append("td")
-        .text(formatCell);
-
-    // UPDATE: refresh cell text for rows that stayed
     rowSel.each(function (row) {
-        d3.select(this)
-            .selectAll("td")
-            .data([row.__isBenchmark ? 'Benchmark' : row.__rowIndex, ...columns.map((column) => row[column])])
+        d3.select(this).selectAll("td")
+            .data([
+                row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
+                ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
+            ])
             .text(formatCell);
     });
 
-    // Subscribers don't fire on re-render, so reapply state manually.
     applyTableHighlight(getActiveRowIndex());
     applyTableSelection(getEffectiveSelection());
 }
 
 export function getNumericColumns(data, columns) {
-    if (!data || data.length === 0) {
-        return [];
-    }
-
-    return columns.filter((column) => data.some((row) => Number.isFinite(Number(row[column]))));
+    if (!data || data.length === 0) return [];
+    return columns.filter(col => data.some(row => Number.isFinite(Number(row[col]))));
 }

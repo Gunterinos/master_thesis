@@ -19,7 +19,7 @@ import {
     POINT_COLOR_BENCHMARK, interpolateSurfaceColor,
     COLOR_WHITE, COLOR_INK, COLOR_DOMINATED,
     COLOR_IDEAL_FILL, COLOR_IDEAL_STROKE, COLOR_TEXT_SECONDARY,
-    getColumnColor,
+    getColumnColor, getGroupBaseColor, getGroupOrder,
 } from '../colors.js';
 
 export { setScatter3dGLSelection };
@@ -41,6 +41,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         objectiveDirections = {},
         groupColorOverrides = null,
         decisionColumns     = [],
+        groups              = {},
     } = options;
 
     const xDir = objectiveDirections[xKey] ?? 'min';
@@ -218,14 +219,18 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
     if (groupColorOverrides && decisionColumns.length > 0) {
-        const groupRows = decisionColumns.map((col, i) =>
+        const hasGroups = groups && Object.keys(groups).length > 0;
+        const legendItems = hasGroups
+            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
+            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+        const itemRows = legendItems.map(({ label, color }) =>
             `<div class="scatter3dgl-legend-benchmark">` +
-            `<span class="scatter3dgl-legend-dot" style="background:${getColumnColor(i)}"></span>` +
-            `<span>${col}</span></div>`
+            `<span class="scatter3dgl-legend-dot" style="background:${color}"></span>` +
+            `<span>${label}</span></div>`
         ).join('');
         legendDiv.html(
-            `<span class="scatter3dgl-legend-title">Dominant Dec. Variable</span>` +
-            groupRows +
+            `<span class="scatter3dgl-legend-title">${hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable'}</span>` +
+            itemRows +
             `<div class="scatter3dgl-legend-benchmark" style="margin-top:6px">` +
             `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
             `<span>Benchmark</span></div>`
