@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import './radarChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+import { POINT_COLOR_BENCHMARK, getGroupBaseColor, getGroupOrder, getColumnColor, computeDominantGroups } from '../colors.js';
 
 // ── Step 3: Cross-chart hover highlight ─────────────────────────────────────
 function applyRadarHighlight(rowIndex) {
@@ -59,6 +60,9 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         disableBrush = false,
         animate = false,
         objectiveDirections = {},
+        groupColorOverrides = null,
+        decisionColumns = [],
+        groups = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -71,6 +75,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             axisOrder: [...allColumns],
             enabledAxes: new Set(allColumns),
             dropdownOpen: false,
+            showDecGroups: false,
             // Step 5: filters stored in normalized radius space { t1, t2 } ∈ [0,1]
             axisFilters: {},
             hiddenFilters: new Set(),
@@ -150,6 +155,19 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         }
     });
 
+    // ── Dec. Groups toggle button ─────────────────────────────────
+    if (decisionColumns.length > 0) {
+        dropdownWrapper
+            .append('button')
+            .attr('class', state.showDecGroups ? 'radar-axes-btn radar-dec-groups-btn active' : 'radar-axes-btn radar-dec-groups-btn')
+            .text('Dec. Groups')
+            .on('click', (event) => {
+                event.stopPropagation();
+                state.showDecGroups = !state.showDecGroups;
+                rerender(false);
+            });
+    }
+
     if (activeAxes.length < 2) {
         container.append('p').attr('class', 'radar-empty').text('Not enough dimensions selected.');
         return;
@@ -219,6 +237,47 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
     const filterG = svgEl.append('g').attr('class', 'radar-filter-layer');
     const labelsG = svgEl.append('g').attr('class', 'radar-labels');
 
+    // Local button takes precedence; fall back to externally computed overrides
+    const effectiveGroupColorOverrides = (state.showDecGroups && decisionColumns.length > 0)
+        ? computeDominantGroups(data, decisionColumns, groups)
+        : groupColorOverrides;
+
+    // ── Dec-groups legend ─────────────────────────────────────────────────────
+    if (effectiveGroupColorOverrides && decisionColumns.length > 0) {
+        const hasGroups = groups && Object.keys(groups).length > 0;
+        const legendItems = hasGroups
+            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
+            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+
+        const ITEM_H = 20;
+        const legendW = 140;
+        const legendX = containerWidth - legendW - 8;
+        const legendY = 12;
+
+        const legendG = svgEl.append('g')
+            .attr('class', 'radar-dec-legend')
+            .attr('transform', `translate(${legendX}, ${legendY})`);
+
+        legendG.append('text')
+            .attr('class', 'radar-dec-legend-title')
+            .attr('x', 0).attr('y', 0)
+            .text(hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable');
+
+        legendItems.forEach(({ label, color }, i) => {
+            const row = legendG.append('g').attr('transform', `translate(0, ${i * ITEM_H + 10})`);
+            row.append('rect').attr('width', 12).attr('height', 12).attr('rx', 2).attr('fill', color);
+            row.append('text').attr('x', 18).attr('y', 10).attr('class', 'radar-dec-legend-label').text(label);
+        });
+
+        const bmRow = legendG.append('g')
+            .attr('transform', `translate(0, ${legendItems.length * ITEM_H + 14})`);
+        bmRow.append('line')
+            .attr('x1', 0).attr('y1', 6).attr('x2', 14).attr('y2', 6)
+            .attr('stroke', POINT_COLOR_BENCHMARK).attr('stroke-width', 2.5)
+            .attr('stroke-dasharray', '6 4');
+        bmRow.append('text').attr('x', 18).attr('y', 10).attr('class', 'radar-dec-legend-label').text('Benchmark');
+    }
+
     // ── Grid rings ────────────────────────────────────────────────────────────
     const GRID_LEVELS = [0.2, 0.4, 0.6, 0.8, 1.0];
     GRID_LEVELS.forEach((level) => {
@@ -265,6 +324,10 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         // Step 6: benchmark class
         .attr('class', (row) => row.__isBenchmark ? 'radar-path is-benchmark' : 'radar-path')
         .attr('data-row-index', (row, i) => row.__rowIndex ?? i)
+        .style('stroke', (row) => {
+            if (row.__isBenchmark) return null;
+            return effectiveGroupColorOverrides?.get(row.__rowIndex) ?? null;
+        })
         .attr('d', (row) => buildRadarPath(activeAxes, angleMap, rScales, row))
         // Step 4: shift-click
         .on('click', function (event) {

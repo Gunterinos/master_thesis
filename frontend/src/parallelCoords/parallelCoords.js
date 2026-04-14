@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import './parallelCoords.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
+import { POINT_COLOR_BENCHMARK, getGroupBaseColor, getGroupOrder, getColumnColor, computeDominantGroups } from '../colors.js';
 
 function applyPcpHighlight(rowIndex) {
     d3.selectAll('.pcp-line[data-row-index]')
@@ -56,6 +57,9 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         disableBrush = false,
         animate = false,
         objectiveDirections = {},
+        groupColorOverrides = null,
+        decisionColumns = [],
+        groups = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -68,6 +72,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
             axisOrder: [...allColumns],
             enabledAxes: new Set(allColumns),
             dropdownOpen: false,
+            showDecGroups: false,
             prevAxisPositions: {},
             prevYDomains: {},
             axisFilters: {},
@@ -172,7 +177,20 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         }
     });
 
-    // ── Early-exit when not enough axes to draw ───────────────── 
+    // ── Dec. Groups toggle button ─────────────────────────────────
+    if (decisionColumns.length > 0) {
+        dropdownWrapper
+            .append("button")
+            .attr("class", state.showDecGroups ? "pcp-axes-btn pcp-dec-groups-btn active" : "pcp-axes-btn pcp-dec-groups-btn")
+            .text("Dec. Groups")
+            .on("click", (event) => {
+                event.stopPropagation();
+                state.showDecGroups = !state.showDecGroups;
+                rerender(false);
+            });
+    }
+
+    // ── Early-exit when not enough axes to draw ─────────────────
     if (activeAxes.length < 2) {
         container.append("p").attr("class", "pcp-empty").text("Not enough dimensions selected.");
         return;
@@ -196,6 +214,47 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     const g = svgEl
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // Local button takes precedence; fall back to externally computed overrides
+    const effectiveGroupColorOverrides = (state.showDecGroups && decisionColumns.length > 0)
+        ? computeDominantGroups(data, decisionColumns, groups)
+        : groupColorOverrides;
+
+    // ── Dec-groups legend ─────────────────────────────────────
+    if (effectiveGroupColorOverrides && decisionColumns.length > 0) {
+        const hasGroups = groups && Object.keys(groups).length > 0;
+        const legendItems = hasGroups
+            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
+            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+
+        const ITEM_H = 20;
+        const legendW = 140;
+        const legendX = containerWidth - legendW - 8;
+        const legendY = margin.top;
+
+        const legendG = svgEl.append("g")
+            .attr("class", "pcp-dec-legend")
+            .attr("transform", `translate(${legendX}, ${legendY})`);
+
+        legendG.append("text")
+            .attr("class", "pcp-dec-legend-title")
+            .attr("x", 0).attr("y", -6)
+            .text(hasGroups ? "Dominant Dec. Group" : "Dominant Dec. Variable");
+
+        legendItems.forEach(({ label, color }, i) => {
+            const row = legendG.append("g").attr("transform", `translate(0, ${i * ITEM_H})`);
+            row.append("rect").attr("width", 12).attr("height", 12).attr("rx", 2).attr("fill", color);
+            row.append("text").attr("x", 18).attr("y", 10).attr("class", "pcp-dec-legend-label").text(label);
+        });
+
+        const bmRow = legendG.append("g")
+            .attr("transform", `translate(0, ${legendItems.length * ITEM_H + 4})`);
+        bmRow.append("line")
+            .attr("x1", 0).attr("y1", 6).attr("x2", 14).attr("y2", 6)
+            .attr("stroke", POINT_COLOR_BENCHMARK).attr("stroke-width", 2.5)
+            .attr("stroke-dasharray", "6 4");
+        bmRow.append("text").attr("x", 18).attr("y", 10).attr("class", "pcp-dec-legend-label").text("Benchmark");
+    }
 
     // ── Y scales ─────────────────────────────────────────────────
     // For 'min' objectives the range is inverted ([0, height]) so the
@@ -245,6 +304,10 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .append("path")
         .attr("class", (row) => row.__isBenchmark ? "pcp-line is-benchmark" : "pcp-line")
         .attr("data-row-index", (row, i) => row.__rowIndex ?? i)
+        .style("stroke", (row) => {
+            if (row.__isBenchmark) return null;
+            return effectiveGroupColorOverrides?.get(row.__rowIndex) ?? null;
+        })
         .on("click", function (event) {
             if (event.shiftKey) {
                 event.stopPropagation();

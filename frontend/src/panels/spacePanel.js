@@ -3,41 +3,7 @@ import { getNumericColumns } from '../tables/tables.js';
 import { populateAxisSelect } from '../scatterplot/scatterplot.js';
 import { populateAxisSelect3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { setRadvizSpread } from '../radviz/radviz.js';
-import { getColumnColor, getGroupBaseColor, getGroupOrder, getGroupMembers } from '../colors.js';
-
-function computeDominantGroups(data, decisionColumns, groups = {}) {
-    const result = new Map();
-    const hasGroups = groups && Object.keys(groups).length > 0;
-
-    if (hasGroups) {
-        const groupOrder = getGroupOrder(decisionColumns, groups);
-        const groupMembersMap = getGroupMembers(decisionColumns, groups);
-        for (const row of data) {
-            let maxVal = -Infinity, dominantGi = 0;
-            groupOrder.forEach((grp, gi) => {
-                const total = (groupMembersMap[grp] || []).reduce((s, col) => s + (Number(row[col]) || 0), 0);
-                if (total > maxVal) { maxVal = total; dominantGi = gi; }
-            });
-            result.set(row.__rowIndex, getGroupBaseColor(dominantGi));
-        }
-    } else {
-        const ranges = {};
-        for (const col of decisionColumns) {
-            const vals = data.map(r => Number(r[col])).filter(Number.isFinite);
-            ranges[col] = { min: Math.min(...vals), max: Math.max(...vals) };
-        }
-        for (const row of data) {
-            let maxNorm = -Infinity, dominantIdx = 0;
-            decisionColumns.forEach((col, idx) => {
-                const { min, max } = ranges[col];
-                const norm = max > min ? (Number(row[col]) - min) / (max - min) : 0;
-                if (norm > maxNorm) { maxNorm = norm; dominantIdx = idx; }
-            });
-            result.set(row.__rowIndex, getColumnColor(dominantIdx));
-        }
-    }
-    return result;
-}
+import { computeDominantGroups } from '../colors.js';
 
 const _observers = new Map(); // containerSelector → ResizeObserver
 

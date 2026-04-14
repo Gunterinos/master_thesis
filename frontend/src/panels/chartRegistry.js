@@ -82,11 +82,14 @@ export function createChartRegistry(interactionOptions) {
             label: "Parallel Coordinates",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
                 renderParallelCoords(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
                     animate,
+                    groupColorOverrides,
+                    decisionColumns,
+                    groups,
                 });
             },
         },
@@ -95,11 +98,14 @@ export function createChartRegistry(interactionOptions) {
             label: "Radar Chart",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
                 renderRadarChart(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
                     animate,
+                    groupColorOverrides,
+                    decisionColumns,
+                    groups,
                 });
             },
         },
