@@ -419,6 +419,8 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             }
         }
 
+        applyBarChartHighlight(getActiveRowIndex());
+        applyBarChartSelection(getEffectiveSelection());
         return;
     }
 

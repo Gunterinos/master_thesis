@@ -218,6 +218,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     wrapper.append('div').attr('class', 'scatter3dgl-hint')
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
+    const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
     if (groupColorOverrides && decisionColumns.length > 0) {
         const hasGroups = groups && Object.keys(groups).length > 0;
         const legendItems = hasGroups
@@ -228,15 +229,21 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             `<span class="scatter3dgl-legend-dot" style="background:${color}"></span>` +
             `<span>${label}</span></div>`
         ).join('');
+        const surfaceSection = showSurface
+            ? `<div style="margin-top:8px">` +
+              `<span class="scatter3dgl-legend-title">Surface · Distance to Ideal [${idealLabel}]</span>` +
+              `<div class="scatter3dgl-legend-bar"></div>` +
+              `<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div></div>`
+            : '';
         legendDiv.html(
             `<span class="scatter3dgl-legend-title">${hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable'}</span>` +
             itemRows +
             `<div class="scatter3dgl-legend-benchmark" style="margin-top:6px">` +
             `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
-            `<span>Benchmark</span></div>`
+            `<span>Benchmark</span></div>` +
+            surfaceSection
         );
     } else {
-        const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
         legendDiv.html(
             `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
             '<div class="scatter3dgl-legend-bar"></div>' +
