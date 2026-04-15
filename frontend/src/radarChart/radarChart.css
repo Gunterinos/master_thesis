@@ -250,3 +250,26 @@ body.shift-held .radar-path.is-path-selected {
 .radar-filter-handle.is-dragging {
     cursor: grabbing;
 }
+
+/* ── Dec. Groups button ──────────────────────────────────── */
+.radar-dec-groups-btn {
+    margin-left: 6px;
+}
+
+.radar-dec-groups-btn.active {
+    background: var(--color-selection);
+    border-color: var(--color-selection);
+    color: #fff;
+}
+
+/* ── Dec-groups legend ───────────────────────────────────── */
+.radar-dec-legend-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    fill: var(--color-ink);
+}
+
+.radar-dec-legend-label {
+    font-size: 0.72rem;
+    fill: var(--color-ink);
+}

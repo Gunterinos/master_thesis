@@ -3,6 +3,7 @@ import { getNumericColumns } from '../tables/tables.js';
 import { populateAxisSelect } from '../scatterplot/scatterplot.js';
 import { populateAxisSelect3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { setRadvizSpread } from '../radviz/radviz.js';
+import { computeDominantGroups } from '../colors.js';
 
 const _observers = new Map(); // containerSelector → ResizeObserver
 
@@ -21,7 +22,11 @@ export function initializeSpacePanel(config) {
         dominatedToggleSelector = null,
         idealToggleSelector = null,
         pcaToggleSelector = null,
+        decGroupsToggleSelector = null,
+        optionsDropdownSelector = null,
         spreadSliderSelector = null,
+        decisionColumns = [],
+        groups = {},
         columns,
         data,
         objectiveDirections = {},
@@ -48,10 +53,15 @@ export function initializeSpacePanel(config) {
     const dominatedToggle = dominatedToggleSelector ? d3.select(dominatedToggleSelector) : null;
     const idealToggle = idealToggleSelector ? d3.select(idealToggleSelector) : null;
     const pcaToggle = pcaToggleSelector ? d3.select(pcaToggleSelector) : null;
+    const decGroupsToggle = decGroupsToggleSelector ? d3.select(decGroupsToggleSelector) : null;
+    const optionsDropdown = optionsDropdownSelector ? d3.select(optionsDropdownSelector) : null;
+    const optionsMenu = optionsDropdown ? optionsDropdown.select('.options-dropdown-menu') : null;
+    const optionsBtn = optionsDropdown ? optionsDropdown.select('.options-dropdown-btn') : null;
     const spreadSlider = spreadSliderSelector ? d3.select(spreadSliderSelector) : null;
     // Persist toggle state across re-renders via button's active class
     let showLabels = labelsToggle ? labelsToggle.classed("active") : false;
     let showPCA = pcaToggle ? pcaToggle.classed("active") : false;
+    let showDecGroups = decGroupsToggle ? decGroupsToggle.classed("active") : false;
     let showSurface = surfaceToggle ? surfaceToggle.classed("active") : false;
     let showDominated = dominatedToggle ? dominatedToggle.classed("active") : false;
     let showIdealPoint = idealToggle ? idealToggle.classed("active") : false;
@@ -118,11 +128,17 @@ export function initializeSpacePanel(config) {
         yLabel.classed("hidden", !isScatter || isPCA);
         if (zAxisSelect) zAxisSelect.classed("hidden", !needsZ);
         if (zLabel)      zLabel.classed("hidden", !needsZ);
+        if (optionsDropdown) {
+            optionsDropdown.classed("hidden", !isScatter);
+        }
         if (labelsToggle) {
-            labelsToggle.classed("hidden", !isScatter);
+            labelsToggle.classed("hidden", false);
         }
         if (pcaToggle) {
-            pcaToggle.classed("hidden", !isScatter || needsZ);
+            pcaToggle.classed("hidden", needsZ);
+        }
+        if (decGroupsToggle) {
+            decGroupsToggle.classed("hidden", false);
         }
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);
@@ -143,6 +159,9 @@ export function initializeSpacePanel(config) {
         }
 
         const renderWith = (renderData, pcaLabels = null) => {
+            const groupColorOverrides = showDecGroups && decisionColumns.length > 0
+                ? computeDominantGroups(renderData, decisionColumns, groups)
+                : null;
             chartConfig.render({
                 containerSelector,
                 columns,
@@ -157,6 +176,9 @@ export function initializeSpacePanel(config) {
                 showDominated,
                 showIdealPoint,
                 pcaLabels,
+                groupColorOverrides,
+                decisionColumns,
+                groups,
             });
             onAfterRender();
         };
@@ -213,6 +235,27 @@ export function initializeSpacePanel(config) {
             showPCA = !showPCA;
             pcaToggle.classed("active", showPCA);
             updatePanel();
+        });
+    }
+
+    if (decGroupsToggle) {
+        decGroupsToggle.on("click", () => {
+            showDecGroups = !showDecGroups;
+            decGroupsToggle.classed("active", showDecGroups);
+            updatePanel();
+        });
+    }
+
+    if (optionsBtn) {
+        optionsBtn.on("click", (event) => {
+            event.stopPropagation();
+            optionsMenu.classed("open", !optionsMenu.classed("open"));
+        });
+        optionsDropdown.on("click", (event) => {
+            event.stopPropagation();
+        });
+        d3.select(document).on(`click.options-dropdown-${containerSelector}`, () => {
+            optionsMenu.classed("open", false);
         });
     }
 

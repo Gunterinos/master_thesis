@@ -14,17 +14,36 @@ app = Flask(
 CSV_PATH = Path(__file__).resolve().parent / "portfolio_data.csv"
 
 
+def _is_numeric(val):
+    try:
+        float(val)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
 def load_portfolio_data():
     with CSV_PATH.open(mode="r", newline="", encoding="utf-8") as csv_file:
         reader = csv.DictReader(csv_file)
         rows = list(reader)
 
     if not rows:
-        return [], {}
+        return [], {}, {}
 
-    # First row is the direction metadata (1 = max, -1 = min)
+    # Row 0: direction metadata (1=max, -1=min, empty=decision)
     meta_row = rows[0]
-    data_rows = rows[1:]
+
+    # Row 1: group metadata or first data row (benchmark).
+    # Group rows have at least one non-empty, non-numeric value.
+    groups = {}
+    data_start = 1
+    if len(rows) > 1:
+        candidate_vals = [v for v in rows[1].values() if v]
+        if candidate_vals and any(not _is_numeric(v) for v in candidate_vals):
+            groups = {col: val for col, val in rows[1].items() if val}
+            data_start = 2
+
+    data_rows = rows[data_start:]
 
     directions = {}
     for col, val in meta_row.items():
@@ -33,7 +52,7 @@ def load_portfolio_data():
         elif val == "-1":
             directions[col] = "min"
 
-    return data_rows, directions
+    return data_rows, directions, groups
 
 
 @app.get("/")
@@ -43,8 +62,8 @@ def index():
 
 @app.get("/api/portfolio-data")
 def portfolio_data():
-    rows, directions = load_portfolio_data()
-    return jsonify({"rows": rows, "directions": directions})
+    rows, directions, groups = load_portfolio_data()
+    return jsonify({"rows": rows, "directions": directions, "groups": groups})
 
 
 @app.post("/api/pca")

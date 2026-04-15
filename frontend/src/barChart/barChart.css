@@ -54,3 +54,22 @@
 .bar-benchmark-outline.is-selection-dim {
     opacity: 0.15;
 }
+
+/* ── Group click expansion ────────────────────────────────────────────────── */
+
+.bar-group-seg {
+    transition: opacity 0.1s ease;
+    cursor: pointer;
+}
+
+.bar-group-area .bar-var-layer {
+    display: none;
+}
+
+.bar-group-area.is-expanded .bar-group-seg {
+    opacity: 0.15;
+}
+
+.bar-group-area.is-expanded .bar-var-layer {
+    display: block;
+}

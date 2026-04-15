@@ -93,3 +93,10 @@ body.shift-held .scatter-point-label.is-point-selected {
     stroke: var(--color-benchmark);
     stroke-width: 1.5;
 }
+
+.scatter-legend-label {
+    font-size: 11px;
+    fill: var(--color-text-secondary);
+    pointer-events: none;
+    user-select: none;
+}

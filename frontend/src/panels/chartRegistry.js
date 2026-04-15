@@ -14,7 +14,7 @@ export function createChartRegistry(interactionOptions) {
             label: "Table",
             needsAxes: false,
             canRender: () => true,
-            render: ({ containerSelector, columns, data, animate = false }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
                 const columnColors = Object.fromEntries(
                     columns.map((col, i) => [col, getColumnColor(i)])
                 );
@@ -22,6 +22,7 @@ export function createChartRegistry(interactionOptions) {
                     ...interactionOptions,
                     animate,
                     columnColors,
+                    groups,
                 });
             },
         },
@@ -30,12 +31,15 @@ export function createChartRegistry(interactionOptions) {
             label: "2D Scatterplot",
             needsAxes: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null }) => {
+            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
                 renderScatterplot(containerSelector, data, xAxis, yAxis, {
                     ...interactionOptions,
                     animate,
                     showLabels,
                     pcaLabels,
+                    groupColorOverrides,
+                    decisionColumns,
+                    groups,
                 });
             },
         },
@@ -45,7 +49,7 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false }) => {
+            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
                 renderScatterplot3dGL(containerSelector, data, xAxis, yAxis, zAxis, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -54,6 +58,9 @@ export function createChartRegistry(interactionOptions) {
                     showSurface,
                     showDominated,
                     showIdealPoint,
+                    groupColorOverrides,
+                    decisionColumns,
+                    groups,
                 });
             },
         },
@@ -62,10 +69,11 @@ export function createChartRegistry(interactionOptions) {
             label: "Column Chart",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 1,
-            render: ({ containerSelector, columns, data, animate = false }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
                 renderBarChart(containerSelector, columns, data, {
                     ...interactionOptions,
                     animate,
+                    groups,
                 });
             },
         },
@@ -74,11 +82,14 @@ export function createChartRegistry(interactionOptions) {
             label: "Parallel Coordinates",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
                 renderParallelCoords(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
                     animate,
+                    groupColorOverrides,
+                    decisionColumns,
+                    groups,
                 });
             },
         },
@@ -87,11 +98,14 @@ export function createChartRegistry(interactionOptions) {
             label: "Radar Chart",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
                 renderRadarChart(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
                     animate,
+                    groupColorOverrides,
+                    decisionColumns,
+                    groups,
                 });
             },
         },
@@ -100,10 +114,11 @@ export function createChartRegistry(interactionOptions) {
             label: "RadViz",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, animate = false }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
                 renderRadviz(containerSelector, data, columns, {
                     ...interactionOptions,
                     animate,
+                    groups,
                 });
             },
         },

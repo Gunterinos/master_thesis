@@ -235,3 +235,26 @@ body.shift-held .pcp-line.is-line-selected {
 .pcp-line.is-benchmark.is-brush-filtered {
     stroke-opacity: 0.2;
 }
+
+/* ── Dec. Groups button ──────────────────────────────────── */
+.pcp-dec-groups-btn {
+    margin-left: 6px;
+}
+
+.pcp-dec-groups-btn.active {
+    background: var(--color-selection);
+    border-color: var(--color-selection);
+    color: #fff;
+}
+
+/* ── Dec-groups legend ───────────────────────────────────── */
+.pcp-dec-legend-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    fill: var(--color-ink);
+}
+
+.pcp-dec-legend-label {
+    font-size: 0.72rem;
+    fill: var(--color-ink);
+}

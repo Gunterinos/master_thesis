@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import './scatterplot.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
-import { POINT_COLOR_REGULAR, POINT_COLOR_BENCHMARK } from '../colors.js';
+import { POINT_COLOR_REGULAR, POINT_COLOR_BENCHMARK, getColumnColor, getGroupBaseColor, getGroupOrder } from '../colors.js';
 
 function applyScatterHighlight(rowIndex) {
     d3.selectAll('circle[data-row-index]')
@@ -38,6 +38,9 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         animate = false,
         showLabels = false,
         pcaLabels = null,
+        groupColorOverrides = null,
+        decisionColumns = [],
+        groups = {},
     } = options;
 
     const xAxisLabel = pcaLabels?.x ?? xKey;
@@ -206,7 +209,11 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .attr("cx", (point) => startXScale(point.x))
         .attr("cy", (point) => startYScale(point.y))
         .attr("r", (point) => point.isBenchmark ? 5.5 : 4)
-        .attr("fill", (point) => point.isBenchmark ? POINT_COLOR_BENCHMARK : POINT_COLOR_REGULAR)
+        .attr("fill", (point) =>
+            !point.isBenchmark && groupColorOverrides?.has(point.rowIndex)
+                ? groupColorOverrides.get(point.rowIndex)
+                : point.isBenchmark ? POINT_COLOR_BENCHMARK : POINT_COLOR_REGULAR
+        )
         .attr("opacity", 0.9)
         .on("click", (event, point) => {
             if (event.shiftKey) {
@@ -240,6 +247,37 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             .duration(420)
             .attr("cx", (point) => xScale(point.x))
             .attr("cy", (point) => yScale(point.y));
+    }
+
+    if (groupColorOverrides && decisionColumns.length > 0) {
+        const hasGroups = groups && Object.keys(groups).length > 0;
+        const legendItems = hasGroups
+            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
+            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+
+        const legend = svg.append("g")
+            .attr("class", "scatter-dec-legend")
+            .attr("transform", `translate(${width - 10}, 0)`);
+
+        legend.append("text")
+            .attr("x", -8)
+            .attr("y", -6)
+            .attr("text-anchor", "end")
+            .attr("class", "scatter-legend-label")
+            .style("font-weight", "600")
+            .text(hasGroups ? "Dec. Group" : "Dec. Variable");
+
+        legendItems.forEach(({ label, color }, i) => {
+            const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
+            row.append("circle")
+                .attr("r", 5).attr("cx", 0).attr("cy", 0)
+                .attr("fill", color);
+            row.append("text")
+                .attr("x", -8).attr("y", 4)
+                .attr("text-anchor", "end")
+                .attr("class", "scatter-legend-label")
+                .text(label);
+        });
     }
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));

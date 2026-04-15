@@ -17,11 +17,17 @@
                         <select id="objectives-chart-select"></select>
                         <button id="objectives-clear-selection" class="hidden" type="button">Clear Selection</button>
                         <button id="objectives-zoom-toggle" class="hidden" type="button">Zoom In</button>
-                        <button id="objectives-surface-toggle" class="hidden" type="button">Surface</button>
-                        <button id="objectives-ideal-toggle" class="hidden" type="button">Ideal Point</button>
-                        <button id="objectives-dominated-toggle" class="hidden" type="button">Dominated</button>
-                        <button id="objectives-labels-toggle" class="hidden" type="button">Labels</button>
-                        <button id="objectives-pca-toggle" class="hidden" type="button">Dim. Reduction</button>
+                        <div class="options-dropdown hidden" id="objectives-options-dropdown">
+                            <button type="button" class="options-dropdown-btn">Options ▾</button>
+                            <div class="options-dropdown-menu">
+                                <button id="objectives-pca-toggle" type="button" class="options-dropdown-item">Dim. Reduction</button>
+                                <button id="objectives-labels-toggle" type="button" class="options-dropdown-item">Labels</button>
+                                <button id="objectives-dec-groups-toggle" type="button" class="options-dropdown-item">Dec. Groups</button>
+                                <button id="objectives-surface-toggle" type="button" class="options-dropdown-item">Surface</button>
+                                <button id="objectives-ideal-toggle" type="button" class="options-dropdown-item">Ideal Point</button>
+                                <button id="objectives-dominated-toggle" type="button" class="options-dropdown-item">Dominated</button>
+                            </div>
+                        </div>
                         <label for="objectives-x-axis" class="axis-label hidden">X:</label>
                         <select id="objectives-x-axis" class="hidden"></select>
                         <label for="objectives-y-axis" class="axis-label hidden">Y:</label>
@@ -42,7 +48,6 @@
                         <select id="decision-x-axis" class="hidden"></select>
                         <label for="decision-y-axis" class="axis-label hidden">Y:</label>
                         <select id="decision-y-axis" class="hidden"></select>
-                        <button id="decision-labels-toggle" class="hidden" type="button">Labels</button>
                     </div>
                 </div>
                 <div id="decision-container" class="panel-content"></div>
