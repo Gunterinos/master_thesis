@@ -68,6 +68,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const W = Math.max(400, rect.width || containerNode.clientWidth || 400);
     const H = Math.max(300, rect.height || containerNode.clientHeight || 300);
 
+    const totalObj = Object.keys(data[0] || {}).filter(k => k.startsWith('obj')).length;
+
     const wrapper = container.append('div').attr('class', 'scatter3dgl-wrapper');
 
     const points = data
@@ -217,6 +219,30 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
     wrapper.append('div').attr('class', 'scatter3dgl-hint')
         .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
+
+    if (totalObj > 3) {
+        const warnTooltip = d3.select("body")
+            .selectAll(".scatter-warn-tooltip")
+            .data([null]).join("div")
+            .attr("class", "scatter-warn-tooltip");
+
+        wrapper.append("div")
+            .attr("class", "scatter-dim-warning")
+            .text("!")
+            .on("mouseenter", (event) => {
+                warnTooltip
+                    .classed("visible", true)
+                    .html(`Only 3 of ${totalObj} objectives shown —<br>results may be misleading.`)
+                    .style("left", `${event.pageX + 12}px`)
+                    .style("top",  `${event.pageY - 36}px`);
+            })
+            .on("mousemove", (event) => {
+                warnTooltip
+                    .style("left", `${event.pageX + 12}px`)
+                    .style("top",  `${event.pageY - 36}px`);
+            })
+            .on("mouseleave", () => warnTooltip.classed("visible", false));
+    }
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
     const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
     if (groupColorOverrides && decisionColumns.length > 0) {

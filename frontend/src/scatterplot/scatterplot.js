@@ -60,6 +60,9 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
     const hasPrevDomain = [prevXMin, prevXMax, prevYMin, prevYMax].every(Number.isFinite);
 
     container.selectAll("*").remove();
+    container.style("position", "relative");
+
+    const totalObj = Object.keys(data[0] || {}).filter(k => k.startsWith('obj')).length;
 
     const tooltip = d3
         .select("body")
@@ -67,6 +70,30 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .data([null])
         .join("div")
         .attr("class", "scatter-tooltip");
+
+    if (totalObj > 2 && !pcaLabels) {
+        const warnTooltip = d3.select("body")
+            .selectAll(".scatter-warn-tooltip")
+            .data([null]).join("div")
+            .attr("class", "scatter-warn-tooltip");
+
+        container.append("div")
+            .attr("class", "scatter-dim-warning")
+            .text("!")
+            .on("mouseenter", (event) => {
+                warnTooltip
+                    .classed("visible", true)
+                    .html(`Only 2 of ${totalObj} objectives shown —<br>results may be misleading.`)
+                    .style("left", `${event.pageX + 12}px`)
+                    .style("top",  `${event.pageY - 36}px`);
+            })
+            .on("mousemove", (event) => {
+                warnTooltip
+                    .style("left", `${event.pageX + 12}px`)
+                    .style("top",  `${event.pageY - 36}px`);
+            })
+            .on("mouseleave", () => warnTooltip.classed("visible", false));
+    }
 
     const containerWidth = Math.max(400, containerNode.clientWidth || 0);
     const containerHeight = Math.max(300, containerNode.clientHeight || 0);
