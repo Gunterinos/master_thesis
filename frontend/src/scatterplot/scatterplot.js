@@ -83,7 +83,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             .on("mouseenter", (event) => {
                 warnTooltip
                     .classed("visible", true)
-                    .html(`Only 2 of ${totalObj} objectives shown —<br>results may be misleading.`)
+                    .html(`Only 2 of ${totalObj} objectives shown<br>results may be misleading.`)
                     .style("left", `${event.pageX + 12}px`)
                     .style("top",  `${event.pageY - 36}px`);
             })
