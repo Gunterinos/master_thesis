@@ -1,0 +1,52 @@
+.corr-heatmap-cell {
+    stroke: var(--color-axis-line);
+    stroke-width: 0.5;
+    cursor: default;
+}
+
+.corr-heatmap-cell--diag {
+    cursor: default;
+}
+
+.corr-heatmap-cell-text {
+    font-size: 0.72rem;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+.corr-heatmap-axis-label {
+    fill: var(--color-axis-dark);
+    font-size: 0.72rem;
+}
+
+.corr-heatmap-legend-tick {
+    fill: var(--color-bar-muted);
+    font-size: 0.7rem;
+}
+
+.corr-heatmap-legend-label {
+    fill: var(--color-bar-muted);
+    font-size: 0.62rem;
+}
+
+.corr-heatmap-tooltip {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    background: var(--color-tooltip-bg-dark);
+    color: var(--color-white);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    box-shadow: 0 6px 18px rgba(10, 13, 18, 0.25);
+    white-space: nowrap;
+}
+
+.corr-heatmap-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
