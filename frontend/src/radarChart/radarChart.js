@@ -75,7 +75,6 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             axisOrder: [...allColumns],
             enabledAxes: new Set(allColumns),
             dropdownOpen: false,
-            showDecGroups: false,
             // Step 5: filters stored in normalized radius space { t1, t2 } ∈ [0,1]
             axisFilters: {},
             hiddenFilters: new Set(),
@@ -155,19 +154,6 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         }
     });
 
-    // ── Dec. Groups toggle button ─────────────────────────────────
-    if (decisionColumns.length > 0) {
-        dropdownWrapper
-            .append('button')
-            .attr('class', state.showDecGroups ? 'radar-axes-btn radar-dec-groups-btn active' : 'radar-axes-btn radar-dec-groups-btn')
-            .text('Dec. Groups')
-            .on('click', (event) => {
-                event.stopPropagation();
-                state.showDecGroups = !state.showDecGroups;
-                rerender(false);
-            });
-    }
-
     if (activeAxes.length < 2) {
         container.append('p').attr('class', 'radar-empty').text('Not enough dimensions selected.');
         return;
@@ -238,9 +224,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
     const labelsG = svgEl.append('g').attr('class', 'radar-labels');
 
     // Local button takes precedence; fall back to externally computed overrides
-    const effectiveGroupColorOverrides = (state.showDecGroups && decisionColumns.length > 0)
-        ? computeDominantGroups(data, decisionColumns, groups)
-        : groupColorOverrides;
+    const effectiveGroupColorOverrides = groupColorOverrides;
 
     // ── Dec-groups legend ─────────────────────────────────────────────────────
     if (effectiveGroupColorOverrides && decisionColumns.length > 0) {

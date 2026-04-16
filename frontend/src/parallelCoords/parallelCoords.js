@@ -72,7 +72,6 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
             axisOrder: [...allColumns],
             enabledAxes: new Set(allColumns),
             dropdownOpen: false,
-            showDecGroups: false,
             prevAxisPositions: {},
             prevYDomains: {},
             axisFilters: {},
@@ -177,19 +176,6 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         }
     });
 
-    // ── Dec. Groups toggle button ─────────────────────────────────
-    if (decisionColumns.length > 0) {
-        dropdownWrapper
-            .append("button")
-            .attr("class", state.showDecGroups ? "pcp-axes-btn pcp-dec-groups-btn active" : "pcp-axes-btn pcp-dec-groups-btn")
-            .text("Dec. Groups")
-            .on("click", (event) => {
-                event.stopPropagation();
-                state.showDecGroups = !state.showDecGroups;
-                rerender(false);
-            });
-    }
-
     // ── Early-exit when not enough axes to draw ─────────────────
     if (activeAxes.length < 2) {
         container.append("p").attr("class", "pcp-empty").text("Not enough dimensions selected.");
@@ -216,9 +202,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // Local button takes precedence; fall back to externally computed overrides
-    const effectiveGroupColorOverrides = (state.showDecGroups && decisionColumns.length > 0)
-        ? computeDominantGroups(data, decisionColumns, groups)
-        : groupColorOverrides;
+    const effectiveGroupColorOverrides = groupColorOverrides;
 
     // ── Dec-groups legend ─────────────────────────────────────
     if (effectiveGroupColorOverrides && decisionColumns.length > 0) {
