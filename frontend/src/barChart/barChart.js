@@ -318,7 +318,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                         });
 
                     // Group segment rect (dimmed by CSS when expanded)
-                    groupArea.append('rect')
+                    const segRect = groupArea.append('rect')
                         .attr('class', 'bar-group-seg bar-chart-segment')
                         .attr('data-row-index', row.rowIndex)
                         .attr('data-group', seg.grp)
@@ -328,11 +328,17 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                         .attr('height', animate ? 0 : yScale(seg.y0) - yScale(seg.y1))
                         .attr('fill', getGroupBaseColor(seg.gi));
 
+                    if (animate) {
+                        segRect.transition(transition)
+                            .attr('y', yScale(seg.y1))
+                            .attr('height', yScale(seg.y0) - yScale(seg.y1));
+                    }
+
                     // Variable sub-layer (hidden; shown via CSS .is-expanded on parent)
                     const varLayer = groupArea.append('g').attr('class', 'bar-var-layer');
 
                     seg.varSegs.forEach(v => {
-                        varLayer.append('rect')
+                        const varRect = varLayer.append('rect')
                             .attr('class', 'bar-chart-segment')
                             .attr('data-row-index', row.rowIndex)
                             .attr('x', 0)
@@ -346,33 +352,31 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                                 positionTooltip(event);
                             })
                             .on('mousemove', event => positionTooltip(event));
+
+                        if (animate) {
+                            varRect.transition(transition)
+                                .attr('y', yScale(v.y1))
+                                .attr('height', yScale(v.y0) - yScale(v.y1));
+                        }
                     });
                 });
 
                 // Benchmark outline
                 if (row.isBenchmark) {
-                    barG.append('rect')
+                    const bmRect = barG.append('rect')
                         .attr('class', 'bar-benchmark-outline')
                         .attr('data-row-index', row.rowIndex)
                         .attr('x', 0).attr('width', xScale.bandwidth())
                         .attr('y', animate ? yScale(0) : yScale(1))
                         .attr('height', animate ? 0 : yScale(0) - yScale(1));
+
+                    if (animate) {
+                        bmRect.transition(transition)
+                            .attr('y', yScale(1))
+                            .attr('height', yScale(0) - yScale(1));
+                    }
                 }
             });
-
-            if (animate) {
-                barGroup.selectAll('rect.bar-group-seg')
-                    .transition(transition)
-                    .attr('y', (_, i, nodes) => {
-                        const el = d3.select(nodes[i]);
-                        // Recover y1 from data - need row/seg reference
-                        return el.attr('data-y1') ? yScale(+el.attr('data-y1')) : yScale(0);
-                    });
-                // Simple fade-in for groups mode animate
-                barGroup.selectAll('rect.bar-group-seg, .bar-var-layer rect')
-                    .attr('y', yScale(0)).attr('height', 0)
-                    .transition(transition);
-            }
 
         } else {
             // ── Flat (no groups) bars ─────────────────────────────────────────
