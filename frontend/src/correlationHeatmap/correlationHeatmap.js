@@ -169,8 +169,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         .data(variables)
         .enter().append('text')
         .attr('class', 'corr-heatmap-axis-label')
-        .attr('x', 0)
-        .attr('y', (_d, i) => i * cellSize + cellSize / 2)
+        .attr('transform', (_d, i) => `translate(0, ${i * cellSize + cellSize / 2}) rotate(-45)`)
         .attr('dy', '0.35em')
         .attr('text-anchor', 'end')
         .text((d) => d);
@@ -181,7 +180,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         .data(variables)
         .enter().append('text')
         .attr('class', 'corr-heatmap-axis-label')
-        .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2 + 10}, 0)`)
+        .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2 + 10}, 0) rotate(-45)`)
         .attr('text-anchor', 'end')
         .text((d) => d);
 
