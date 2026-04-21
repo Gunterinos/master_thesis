@@ -533,10 +533,13 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
                 if (!event.sourceEvent) return; // skip programmatic moves
                 if (!event.selection) return;
                 const [y0, y1] = event.selection;
-                // y0 = top pixel (higher value), y1 = bottom pixel (lower value)
+                // Use Math.min/max so the correct min/max is assigned regardless
+                // of whether the scale is normal ([height,0]) or inverted ([0,height])
+                const val0 = yScales[axis].invert(y0);
+                const val1 = yScales[axis].invert(y1);
                 state.axisFilters[axis] = {
-                    min: yScales[axis].invert(y1),
-                    max: yScales[axis].invert(y0),
+                    min: Math.min(val0, val1),
+                    max: Math.max(val0, val1),
                 };
                 updateFilteredLines();
             })
