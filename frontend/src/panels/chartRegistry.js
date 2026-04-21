@@ -5,6 +5,7 @@ import { renderBarChart } from '../barChart/barChart.js';
 import { renderParallelCoords } from '../parallelCoords/parallelCoords.js';
 import { renderRadviz } from '../radviz/radviz.js';
 import { renderRadarChart } from '../radarChart/radarChart.js';
+import { renderCorrelationHeatmap } from '../correlationHeatmap/correlationHeatmap.js';
 import { getColumnColor } from '../colors.js';
 
 export function createChartRegistry(interactionOptions) {
@@ -119,6 +120,18 @@ export function createChartRegistry(interactionOptions) {
                     ...interactionOptions,
                     animate,
                     groups,
+                });
+            },
+        },
+        correlationHeatmap: {
+            key: "correlationHeatmap",
+            label: "Correlation Heatmap",
+            needsAxes: false,
+            canRender: ({ numericColumns }) => numericColumns.length >= 2,
+            render: ({ containerSelector, columns, data, decisionColumns = [], animate = false }) => {
+                renderCorrelationHeatmap(containerSelector, columns, data, {
+                    decisionColumns,
+                    animate,
                 });
             },
         },

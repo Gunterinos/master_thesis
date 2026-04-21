@@ -47,6 +47,8 @@
     --color-gradient-cividis: linear-gradient(
         to right, #FDE725, #ADA857, #67827A, #34577F, #00204C
     );
+
+    --color-heatmap-diag: #c8cdd6;
 }
 
 *,
