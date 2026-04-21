@@ -144,7 +144,7 @@ export function initializeSpacePanel(config) {
             decGroupsToggle.classed("hidden", false);
         }
         if (decGroupsBtn) {
-            decGroupsBtn.classed("hidden", isScatter || decisionColumns.length === 0);
+            decGroupsBtn.classed("hidden", isScatter || decisionColumns.length === 0 || chartType === 'radviz');
         }
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);
