@@ -1,8 +1,6 @@
 import * as d3 from 'd3';
 import './correlationHeatmap.css';
 
-const _dataCache = new Map();
-
 function pearson(xs, ys) {
     let n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
     for (let i = 0; i < xs.length; i++) {
@@ -78,11 +76,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
     containerNode._corrRenderedW = containerNode.clientWidth;
     containerNode._corrRenderedH = containerNode.clientHeight;
 
-    let rows = _dataCache.get(containerSelector);
-    if (!rows) {
-        rows = data.slice();
-        _dataCache.set(containerSelector, rows);
-    }
+    const rows = data.slice();
 
     const variables = [...decisionColumns, ...columns];
     if (variables.length < 2) {
