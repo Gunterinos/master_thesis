@@ -62,7 +62,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         containerNode._corrHeatmapObserver.disconnect();
     }
     const observer = new ResizeObserver(() => {
-        if (!document.contains(containerNode)) {
+        if (!document.contains(containerNode) || !containerNode.querySelector('.corr-heatmap')) {
             observer.disconnect();
             return;
         }
