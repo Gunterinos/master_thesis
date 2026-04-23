@@ -81,6 +81,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         }))
         .filter(p => Number.isFinite(p.xVal) && Number.isFinite(p.yVal) && Number.isFinite(p.zVal));
 
+    const frontierByIndex = new Map(data.map(row => [row.__rowIndex, row.__frontier ?? null]));
+
     if (points.length === 0) {
         container.append('p').text('No numeric data for selected axes.');
         return;
@@ -323,7 +325,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
     const orbitModule = buildOrbitControls({
         canvas, camera, spherical, updateCamera, renderer, containerNode,
-        pointMeshes, xKey, yKey, zKey,
+        pointMeshes, xKey, yKey, zKey, frontierByIndex,
         renderFrame, onHoverStart, onHoverEnd, onShiftClick,
     });
 

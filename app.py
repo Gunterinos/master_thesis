@@ -107,8 +107,10 @@ def load_data():
             directions = file_directions
             groups = file_groups
 
-        all_frontier_rows.extend(rows)
+        frontier_name = fname.removesuffix(".csv")
+        all_frontier_rows.extend({**r, "__frontier": frontier_name} for r in rows)
 
+    benchmark_row = {**benchmark_row, "__frontier": "Benchmark"}
     merged = [benchmark_row] + all_frontier_rows
     return jsonify({"rows": merged, "directions": directions, "groups": groups})
 

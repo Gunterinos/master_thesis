@@ -327,8 +327,10 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             const row = this.__dataRow;
             if (row) {
                 const lines = activeAxes.map((col) => `${col}: ${(+row[col]).toFixed(3)}`).join('<br>');
+                const frontier = row.__frontier;
+                const header = row.__isBenchmark ? 'Benchmark' : `Point: ${rowIndex}${frontier ? `<br>${frontier}` : ''}`;
                 tooltip.classed('visible', true)
-                    .html(`${row.__isBenchmark ? 'Benchmark' : `Point: ${rowIndex}`}<br>${lines}`)
+                    .html(`${header}<br>${lines}`)
                     .style('left', `${event.pageX + 12}px`)
                     .style('top', `${event.pageY - 36}px`);
             }

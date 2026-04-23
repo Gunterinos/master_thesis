@@ -113,6 +113,8 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         }))
         .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
 
+    const frontierByIndex = new Map(data.map(row => [row.__rowIndex, row.__frontier ?? null]));
+
     if (points.length === 0) {
         container.append("p").text("No numeric data available for selected axes.");
         return;
@@ -250,10 +252,12 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         })
         .on("mouseenter", (event, point) => {
             onHoverStart(point.rowIndex);
+            const frontier = frontierByIndex.get(point.rowIndex);
+            const header = point.isBenchmark ? 'Benchmark' : `Point: ${point.rowIndex}${frontier ? `<br>${frontier}` : ''}`;
             tooltip
                 .classed("visible", true)
                 .html(
-                    `${point.isBenchmark ? "Benchmark" : `Point: ${point.rowIndex}`}<br>${xTooltipLabel}: ${Number(point.rawX).toFixed(3)}<br>${yTooltipLabel}: ${Number(point.rawY).toFixed(3)}`,
+                    `${header}<br>${xTooltipLabel}: ${Number(point.rawX).toFixed(3)}<br>${yTooltipLabel}: ${Number(point.rawY).toFixed(3)}`,
                 )
                 .style("left", `${event.pageX + 12}px`)
                 .style("top", `${event.pageY - 36}px`);

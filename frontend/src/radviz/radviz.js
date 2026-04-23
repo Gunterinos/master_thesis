@@ -313,9 +313,11 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         .on('mouseenter', function (event, p) {
             if (expandedRowIndex !== null) return;
             onHoverStart(p.rowIndex);
+            const frontier = p.row.__frontier;
+            const header = p.row.__isBenchmark ? 'Benchmark' : `Point ${p.rowIndex}${frontier ? `<br>${frontier}` : ''}`;
             const objLines = columns.map(col => `${col}: ${(+p.row[col]).toFixed(2)}`).join('<br>');
             tooltip.classed('visible', true)
-                .html(`<b>${p.row.__isBenchmark ? 'Benchmark' : `Point ${p.rowIndex}`}</b><br>${objLines}`)
+                .html(`<b>${header}</b><br>${objLines}`)
                 .style('left', `${event.pageX + 12}px`)
                 .style('top', `${event.pageY - 36}px`);
         })
