@@ -107,24 +107,18 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const containerWidth  = Math.max(440, containerNode.clientWidth  || 0);
     const containerHeight = Math.max(300, containerNode.clientHeight || 0);
 
-    const baseMargin       = { top: 24, right: 24, bottom: 56, left: 56 };
-    const estWidth         = containerWidth - baseMargin.left - baseMargin.right;
-    const legendItemWidth  = 140;
-    const legendRowHeight  = 20;
-    const itemsPerRow      = Math.max(1, Math.floor(estWidth / legendItemWidth));
-
     const legendExpandedSet = _legendExpandedGroups.get(containerSelector) ?? new Set();
 
-    // Count total legend items (only expanded groups show their variables)
-    const legendItemCount = hasGroups
-        ? groupOrder.reduce((s, grp) => s + 1 + (legendExpandedSet.has(grp) ? (groupMembersMap[grp] || []).length : 0), 0) + 1
-        : columns.length + 1;
-    const legendRows   = Math.ceil(legendItemCount / itemsPerRow);
-    const legendHeight = legendRows * legendRowHeight + legendRowHeight + 8;
+    const LEGEND_ROW_H = 28;
+    const LEGEND_PAD   = 6;
+    const LEGEND_H     = hasGroups
+        ? LEGEND_PAD + LEGEND_ROW_H + 4 + LEGEND_ROW_H + LEGEND_PAD
+        : LEGEND_PAD + LEGEND_ROW_H + LEGEND_PAD;
 
-    const margin = { ...baseMargin, bottom: baseMargin.bottom + legendHeight };
-    const width  = containerWidth  - margin.left - margin.right;
-    const height = containerHeight - margin.top  - margin.bottom;
+    const svgHeight = containerHeight - LEGEND_H;
+    const margin    = { top: 24, right: 24, bottom: 56, left: 56 };
+    const width     = containerWidth - margin.left - margin.right;
+    const height    = svgHeight - margin.top - margin.bottom;
 
     // ── Row data ──────────────────────────────────────────────────────────────
 
@@ -174,11 +168,13 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const colorScale = d3.scaleOrdinal(CB_PALETTE).domain(columns);
 
     container.selectAll('*').remove();
+    container.style('display', 'flex').style('flex-direction', 'column');
 
     {
 
         const svgRoot = container.append('svg')
-            .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
+            .style('flex', '1 1 0').style('min-height', '0')
+            .attr('viewBox', `0 0 ${containerWidth} ${svgHeight}`)
             .attr('preserveAspectRatio', 'none');
 
         const svg = svgRoot.append('g').attr('class', 'chart-root')
@@ -194,57 +190,54 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .attr('transform', 'rotate(-90)').attr('x', -height / 2).attr('y', -40)
             .attr('text-anchor', 'middle').text('Percentage');
 
-        // ── Legend ──────────────────────────────────────────────────────────
+        // ── Legend (HTML rows outside SVG) ───────────────────────────────────
 
-        const legendG = svg.append('g').attr('class', 'bar-chart-legend')
-            .attr('transform', `translate(0, ${height + 64})`);
+        const rerender = () => renderBarChart(containerSelector, columns, data, options);
+        const legendWrap = container.append('div').attr('class', 'bar-legend-wrap');
 
-        let lRow = 0, lCol = 0;
-        const addLegendItem = (color, label, bold = false, indent = false) => {
-            const x = lCol * legendItemWidth + (indent ? 12 : 0);
-            const y = lRow * legendRowHeight;
-            const g = legendG.append('g').attr('transform', `translate(${x}, ${y})`);
-            g.append('rect').attr('x', 0).attr('y', 1)
-                .attr('width', indent ? 9 : 12).attr('height', indent ? 9 : 12)
-                .attr('rx', indent ? 2 : 3).attr('fill', color);
-            g.append('text').attr('x', indent ? 14 : 18).attr('y', indent ? 9 : 11)
-                .style('font-weight', bold ? '600' : '400')
-                .attr('class', indent ? 'bar-legend-var' : null)
-                .text(label);
-            lCol++;
-            if (lCol >= itemsPerRow) { lCol = 0; lRow++; }
-            return g;
-        };
+        // Row 1: groups / columns + benchmark
+        const row1 = legendWrap.append('div').attr('class', 'bar-legend-row bar-legend-groups');
 
         if (hasGroups) {
             groupOrder.forEach((grp, gi) => {
-                const isLegendExpanded = legendExpandedSet.has(grp);
-                const grpG = addLegendItem(getGroupBaseColor(gi), grp, true, false);
-                // Expand indicator appended after the text
-                grpG.append('text')
-                    .attr('x', legendItemWidth - 8)
-                    .attr('y', 11)
-                    .attr('text-anchor', 'end')
-                    .style('font-size', '0.65rem')
-                    .style('opacity', '0.6')
-                    .text(isLegendExpanded ? '▼' : '▶');
-                if (isLegendExpanded) {
-                    (groupMembersMap[grp] || []).forEach((col, vi, arr) => {
-                        addLegendItem(getVariableColor(gi, vi, arr.length), col, false, true);
+                const isExp = legendExpandedSet.has(grp);
+                const item = row1.append('div')
+                    .attr('class', isExp ? 'bar-legend-item is-active' : 'bar-legend-item')
+                    .style('cursor', 'pointer')
+                    .on('click', () => {
+                        const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
+                        next.has(grp) ? next.delete(grp) : next.add(grp);
+                        _legendExpandedGroups.set(containerSelector, next);
+                        rerender();
                     });
-                }
+                item.append('span').attr('class', 'bar-legend-swatch').style('background', getGroupBaseColor(gi));
+                item.append('span').attr('class', 'bar-legend-text').text(grp);
             });
         } else {
-            columns.forEach(col => addLegendItem(colorScale(col), col));
+            columns.forEach((col, i) => {
+                const item = row1.append('div').attr('class', 'bar-legend-item');
+                item.append('span').attr('class', 'bar-legend-swatch').style('background', colorScale(col));
+                item.append('span').attr('class', 'bar-legend-text').text(col);
+            });
         }
 
-        // Benchmark legend entry
-        const bmX = lCol * legendItemWidth, bmY = lRow * legendRowHeight + (lCol > 0 ? 0 : 0);
-        const bmG = legendG.append('g').attr('transform', `translate(${bmX}, ${bmY + 4})`);
-        bmG.append('rect').attr('x', 0).attr('y', 1).attr('width', 12).attr('height', 12)
-            .attr('rx', 2).attr('fill', 'none')
-            .attr('stroke', POINT_COLOR_BENCHMARK).attr('stroke-dasharray', '3 2').attr('stroke-width', 2);
-        bmG.append('text').attr('x', 18).attr('y', 11).text('Benchmark');
+        const bmItem = row1.append('div').attr('class', 'bar-legend-item');
+        bmItem.append('span').attr('class', 'bar-legend-swatch bar-legend-swatch--outline').style('border-color', POINT_COLOR_BENCHMARK);
+        bmItem.append('span').attr('class', 'bar-legend-text').text('Benchmark');
+
+        // Row 2: variables for all expanded groups (horizontally scrollable)
+        if (hasGroups) {
+            const row2 = legendWrap.append('div').attr('class', 'bar-legend-row bar-legend-vars');
+            groupOrder.forEach((grp, gi) => {
+                if (!legendExpandedSet.has(grp)) return;
+                const members = groupMembersMap[grp] || [];
+                members.forEach((col, vi) => {
+                    const item = row2.append('div').attr('class', 'bar-legend-item bar-legend-item--var');
+                    item.append('span').attr('class', 'bar-legend-swatch bar-legend-swatch--sm').style('background', getVariableColor(gi, vi, members.length));
+                    item.append('span').attr('class', 'bar-legend-text').text(col);
+                });
+            });
+        }
 
         // ── Bars ─────────────────────────────────────────────────────────────
 
@@ -301,7 +294,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                             const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
                             next.has(seg.grp) ? next.delete(seg.grp) : next.add(seg.grp);
                             _legendExpandedGroups.set(containerSelector, next);
-                            renderBarChart(containerSelector, columns, data, { ...options, animate: false });
+                            rerender();
                         })
                         .on('mouseenter', function (event) {
                             onHoverStart(row.rowIndex);
