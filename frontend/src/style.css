@@ -357,7 +357,7 @@ body.shift-held .is-selection-dim {
     background: var(--color-overlay);
     border-radius: 12px;
     border: 1px solid rgba(212, 218, 227, 0.7);
-    padding: 0.4rem;
+    padding: 0;
     flex: 1;
     min-height: 0;
     overflow: auto;

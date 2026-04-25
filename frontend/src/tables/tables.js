@@ -100,6 +100,17 @@ export function renderTable(containerSelector, columns, data, options = {}) {
         return getCellValue(row, col, isGroupCol, groupMembersMap);
     }
 
+    function cycleSort(col) {
+        if (sortState.col !== col) {
+            Object.assign(sortState, { col, dir: 1 });
+        } else if (sortState.dir === 1) {
+            sortState.dir = -1;
+        } else {
+            sortState.col = null;
+            sortState.dir = 1;
+        }
+    }
+
     function getSortedData(rawData) {
         if (!sortState.col) return rawData;
         return [...rawData].sort((a, b) => {
@@ -148,6 +159,13 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             })
             .html(col => {
                 if (isGroupCol[col]) {
+                    const canExpand = (groupMembersMap[col] || []).length > 1;
+                    if (!canExpand) {
+                        const indicator = col === sortState.col
+                            ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
+                            : `<span class="sort-indicator">↕</span>`;
+                        return `${col}${indicator}`;
+                    }
                     const isExpanded = expandedSet.has(col);
                     return `${col} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>`;
                 }
@@ -157,32 +175,23 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                 return `${col}${indicator}`;
             })
             .on("click", (event, col) => {
-                if (col === 'Point') {
-                    // Sort by point index
-                    sortState.col === col ? (sortState.dir *= -1) : Object.assign(sortState, { col, dir: 1 });
+                const rerender = () => {
                     container.selectAll("*").remove();
                     containerNode._sortState = sortState;
                     renderTable(containerSelector, columns, data, options);
                     applyTableHighlight(getActiveRowIndex());
                     applyTableSelection(getEffectiveSelection());
-                } else if (isGroupCol[col]) {
-                    // Toggle group expansion
+                };
+                if (isGroupCol[col] && (groupMembersMap[col] || []).length > 1) {
+                    // Toggle group expansion (multi-member groups only)
                     const next = new Set(expandedSet);
                     next.has(col) ? next.delete(col) : next.add(col);
                     _expandedGroups.set(containerSelector, next);
-                    container.selectAll("*").remove();
-                    containerNode._sortState = sortState;
-                    renderTable(containerSelector, columns, data, options);
-                    applyTableHighlight(getActiveRowIndex());
-                    applyTableSelection(getEffectiveSelection());
+                    rerender();
                 } else {
-                    // Sort by variable column
-                    sortState.col === col ? (sortState.dir *= -1) : Object.assign(sortState, { col, dir: 1 });
-                    container.selectAll("*").remove();
-                    containerNode._sortState = sortState;
-                    renderTable(containerSelector, columns, data, options);
-                    applyTableHighlight(getActiveRowIndex());
-                    applyTableSelection(getEffectiveSelection());
+                    // Sort (Point, single-member groups, variable columns)
+                    cycleSort(col);
+                    rerender();
                 }
             });
     }
