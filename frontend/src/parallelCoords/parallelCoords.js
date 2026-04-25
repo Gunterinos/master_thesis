@@ -104,7 +104,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     const containerWidth = Math.max(400, containerNode.clientWidth || 0);
     const containerHeight = Math.max(300, containerNode.clientHeight || 0);
     const HEADER_H = 40;
-    const margin = { top: 46, right: 40, bottom: 24, left: 40 };
+    const margin = { top: 46, right: 120, bottom: 24, left: 40 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - HEADER_H - margin.top - margin.bottom;
 
@@ -208,8 +208,8 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
     // ── Colour legend (frontier takes priority over dec-groups) ──────────────
     const _renderPcpLegend = (legendItems, title) => {
         const ITEM_H = 20;
-        const legendX = containerWidth - 148;
-        const legendY = margin.top;
+        const legendX = containerWidth - 140;
+        const legendY = margin.top + 10;
         const legendG = svgEl.append("g")
             .attr("class", "pcp-dec-legend")
             .attr("transform", `translate(${legendX}, ${legendY})`);
