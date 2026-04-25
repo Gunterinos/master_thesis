@@ -201,17 +201,21 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
         if (hasGroups) {
             groupOrder.forEach((grp, gi) => {
                 const isExp = legendExpandedSet.has(grp);
+                const canExpand = (groupMembersMap[grp] || []).length > 1;
                 const item = row1.append('div')
                     .attr('class', isExp ? 'bar-legend-item is-active' : 'bar-legend-item')
-                    .style('cursor', 'pointer')
-                    .on('click', () => {
+                    .style('cursor', canExpand ? 'pointer' : 'default');
+                if (canExpand) {
+                    item.on('click', () => {
                         const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
                         next.has(grp) ? next.delete(grp) : next.add(grp);
                         _legendExpandedGroups.set(containerSelector, next);
                         rerender();
                     });
+                }
                 item.append('span').attr('class', 'bar-legend-swatch').style('background', getGroupBaseColor(gi));
                 item.append('span').attr('class', 'bar-legend-text').text(grp);
+                if (canExpand) item.append('span').attr('class', 'bar-legend-arrow').text(isExp ? '▾' : '▸');
             });
         } else {
             columns.forEach((col, i) => {
@@ -291,6 +295,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                         .attr('class', isSegExpanded ? 'bar-group-area is-expanded' : 'bar-group-area')
                         .attr('data-group', seg.grp)
                         .on('click', () => {
+                            if ((groupMembersMap[seg.grp] || []).length <= 1) return;
                             const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
                             next.has(seg.grp) ? next.delete(seg.grp) : next.add(seg.grp);
                             _legendExpandedGroups.set(containerSelector, next);
