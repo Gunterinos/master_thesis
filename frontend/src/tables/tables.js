@@ -121,7 +121,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             return String(Math.trunc(Number(value)));
         }
         const n = Number(value);
-        return Number.isFinite(n) ? n.toFixed(3) : value;
+        return Number.isFinite(n) ? n.toFixed(3) : String(value);
     };
 
     const attachRowEvents = (rowSelection) => {
@@ -205,12 +205,12 @@ export function renderTable(containerSelector, columns, data, options = {}) {
         attachRowEvents(rowsSel);
         rowsSel.selectAll("td")
             .data(row => [
-                row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
+                row.__isBenchmark ? 'Benchmark' : (row.__frontier ? `${row.__rowIndex}<br>${row.__frontier}` : row.__rowIndex),
                 ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
             ])
             .enter()
             .append("td")
-            .text(formatCell);
+            .html(formatCell);
         return;
     }
 
@@ -229,18 +229,18 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     attachRowEvents(rowEnter);
     rowEnter.selectAll("td")
         .data(row => [
-            row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
+            row.__isBenchmark ? 'Benchmark' : (row.__frontier ? `${row.__rowIndex}<br>${row.__frontier}` : row.__rowIndex),
             ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
         ])
-        .enter().append("td").text(formatCell);
+        .enter().append("td").html(formatCell);
 
     rowSel.each(function (row) {
         d3.select(this).selectAll("td")
             .data([
-                row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
+                row.__isBenchmark ? 'Benchmark' : (row.__frontier ? `${row.__rowIndex}<br>${row.__frontier}` : row.__rowIndex),
                 ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
             ])
-            .text(formatCell);
+            .html(formatCell);
     });
 
     applyTableHighlight(getActiveRowIndex());

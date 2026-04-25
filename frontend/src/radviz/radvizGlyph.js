@@ -22,7 +22,7 @@ export const DONUT_INNER = 34;
  *   onGlyphGroupToggle  (groupName) => void — called when user clicks a group arc
  */
 export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, tooltip, options = {}) {
-    const { groups = {}, glyphR = null, expandedGlyphGroup = null, onGlyphGroupToggle = () => {} } = options;
+    const { groups = {}, glyphR = null, expandedGlyphGroup = null, frontierColor = null, onGlyphGroupToggle = () => {} } = options;
 
     glyphG.selectAll('*').remove();
 
@@ -84,6 +84,10 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
         glyphG.append('circle').attr('class', 'radviz-selection-ring').attr('r', MINI_R + 3);
         if (point.row.__isBenchmark) {
             glyphG.append('circle').attr('class', 'radviz-benchmark-ring').attr('r', MINI_R + 1);
+        } else if (frontierColor) {
+            glyphG.append('circle').attr('class', 'radviz-benchmark-ring')
+                .attr('r', MINI_R + 1)
+                .style('stroke', frontierColor);
         }
         return;
     }
@@ -215,5 +219,9 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
     glyphG.append('circle').attr('class', 'radviz-selection-ring').attr('r', dynOuter + 3);
     if (point.row.__isBenchmark) {
         glyphG.append('circle').attr('class', 'radviz-benchmark-ring').attr('r', dynOuter + 7);
+    } else if (frontierColor) {
+        glyphG.append('circle').attr('class', 'radviz-benchmark-ring')
+            .attr('r', dynOuter + 7)
+            .style('stroke', frontierColor);
     }
 }

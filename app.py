@@ -2,7 +2,7 @@ from pathlib import Path
 import csv
 
 from sklearn.decomposition import PCA
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request
 from jinja2 import TemplateNotFound
 
 app = Flask(
@@ -11,7 +11,8 @@ app = Flask(
     static_folder="frontend",
     static_url_path="/frontend",
 )
-CSV_PATH = Path(__file__).resolve().parent / "portfolio_data.csv"
+DATA_DIR = Path(__file__).resolve().parent / "data"
+BENCHMARK_PATH = DATA_DIR / "benchmark.csv"
 
 
 def _is_numeric(val):
@@ -22,8 +23,8 @@ def _is_numeric(val):
         return False
 
 
-def load_portfolio_data():
-    with CSV_PATH.open(mode="r", newline="", encoding="utf-8") as csv_file:
+def load_csv(path):
+    with path.open(mode="r", newline="", encoding="utf-8") as csv_file:
         reader = csv.DictReader(csv_file)
         rows = list(reader)
 
@@ -60,10 +61,58 @@ def index():
     return render_template("index.html")
 
 
-@app.get("/api/portfolio-data")
-def portfolio_data():
-    rows, directions, groups = load_portfolio_data()
-    return jsonify({"rows": rows, "directions": directions, "groups": groups})
+@app.get("/api/data-files")
+def data_files():
+    # Only return files whose obj_/dec_ columns match the benchmark
+    bm_rows, _, _ = load_csv(BENCHMARK_PATH)
+    bm_cols = frozenset(
+        k for k in (bm_rows[0] if bm_rows else {})
+        if k.startswith("obj_") or k.startswith("dec_")
+    )
+
+    compatible = []
+    for p in sorted(DATA_DIR.glob("*.csv")):
+        if p.name.lower() == "benchmark.csv":
+            continue
+        rows, _, _ = load_csv(p)
+        if rows:
+            file_cols = frozenset(
+                k for k in rows[0]
+                if k.startswith("obj_") or k.startswith("dec_")
+            )
+            if file_cols == bm_cols:
+                compatible.append(p.name)
+
+    return jsonify({"files": compatible})
+
+
+@app.post("/api/load-data")
+def load_data():
+    body = request.get_json(force=True)
+    filenames = body.get("files", [])
+
+    bm_rows, _, _ = load_csv(BENCHMARK_PATH)
+    benchmark_row = bm_rows[0]
+
+    all_frontier_rows = []
+    directions = {}
+    groups = {}
+
+    for fname in filenames:
+        path = (DATA_DIR / fname).resolve()
+
+        rows, file_directions, file_groups = load_csv(path)
+
+        if not all_frontier_rows:
+            directions = file_directions
+            groups = file_groups
+
+        frontier_name = fname.removesuffix(".csv")
+        all_frontier_rows.extend({**r, "__frontier": frontier_name} for r in rows)
+
+    benchmark_row = {**benchmark_row, "__frontier": "Benchmark"}
+    merged = [benchmark_row] + all_frontier_rows
+    return jsonify({"rows": merged, "directions": directions, "groups": groups})
 
 
 @app.post("/api/pca")

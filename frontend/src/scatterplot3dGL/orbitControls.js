@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 export function buildOrbitControls(ctx) {
     const {
         canvas, camera, spherical, updateCamera, renderer, containerNode,
-        pointMeshes, xKey, yKey, zKey,
+        pointMeshes, xKey, yKey, zKey, frontierByIndex,
         renderFrame, onHoverStart, onHoverEnd, onShiftClick,
     } = ctx;
 
@@ -34,8 +34,10 @@ export function buildOrbitControls(ctx) {
                 hoveredMesh = m;
                 const p = m.userData;
                 onHoverStart(p.rowIndex);
+                const frontier = frontierByIndex?.get(p.rowIndex);
+                const header = p.isBenchmark ? 'Benchmark' : `Point: ${p.rowIndex}${frontier ? `<br>${frontier}` : ''}`;
                 tooltip.classed('visible', true)
-                    .html(`${p.isBenchmark ? 'Benchmark' : `Point: ${p.rowIndex}`}<br>${xKey}: ${Number(p.rawX).toFixed(3)}<br>${yKey}: ${Number(p.rawY).toFixed(3)}<br>${zKey}: ${Number(p.rawZ).toFixed(3)}`)
+                    .html(`${header}<br>${xKey}: ${Number(p.rawX).toFixed(3)}<br>${yKey}: ${Number(p.rawY).toFixed(3)}<br>${zKey}: ${Number(p.rawZ).toFixed(3)}`)
                     .style('left', `${event.pageX + 12}px`)
                     .style('top',  `${event.pageY - 36}px`);
             } else {

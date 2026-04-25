@@ -7,26 +7,32 @@
 </head>
 <body>
     <div class="page" style="opacity: 0">
+        <div class="header-panel">
+            <div class="panel-controls">
+                <span class="frontier-label">Frontiers:</span>
+                <div id="frontier-buttons"></div>
+            </div>
+        </div>
         <div class="layout">
             <div class="table-panel">
                 <div class="panel-header">
                     <h2>Objectives Space</h2>
                     <div class="panel-controls">
-                        <button id="objectives-spread" class="hidden" type="button">Spread</button>
                         <label for="objectives-chart-select">Chart:</label>
                         <select id="objectives-chart-select"></select>
                         <button id="objectives-clear-selection" class="hidden" type="button">Clear Selection</button>
                         <button id="objectives-zoom-toggle" class="hidden" type="button">Zoom In</button>
-                        <button id="objectives-dec-groups-btn" class="hidden" type="button">Dec. Groups</button>
                         <div class="options-dropdown hidden" id="objectives-options-dropdown">
                             <button type="button" class="options-dropdown-btn">Options ▾</button>
                             <div class="options-dropdown-menu">
                                 <button id="objectives-pca-toggle" type="button" class="options-dropdown-item">Dim. Reduction</button>
                                 <button id="objectives-labels-toggle" type="button" class="options-dropdown-item">Labels</button>
                                 <button id="objectives-dec-groups-toggle" type="button" class="options-dropdown-item">Dec. Groups</button>
+                                <button id="objectives-frontier-colors-toggle" type="button" class="options-dropdown-item">Frontier Colours</button>
                                 <button id="objectives-surface-toggle" type="button" class="options-dropdown-item">Surface</button>
                                 <button id="objectives-ideal-toggle" type="button" class="options-dropdown-item">Ideal Point</button>
                                 <button id="objectives-dominated-toggle" type="button" class="options-dropdown-item">Dominated</button>
+                                <button id="objectives-spread" type="button" class="options-dropdown-item">Spread</button>
                             </div>
                         </div>
                         <label for="objectives-x-axis" class="axis-label hidden">X:</label>

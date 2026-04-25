@@ -56,6 +56,8 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         onShiftClick = () => {},
         animate = false,
         groups = {},
+        frontierColorOverrides = null,
+        frontierLegendItems = [],
     } = options;
 
     const container = d3.select(containerSelector);
@@ -152,7 +154,6 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         const hasGroups = groups && Object.keys(groups).length > 0;
         const itemH = 22;
 
-        // Build legend items: groups when available, individual vars otherwise
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({
                 label: grp, color: getGroupBaseColor(gi), bold: true,
@@ -161,7 +162,11 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
                 label: col, color: DEC_COLORS[i % DEC_COLORS.length], bold: false,
             }));
 
-        const totalItems = legendItems.length + 1; // +1 for benchmark
+        const ringItems = frontierColorOverrides && frontierLegendItems.length > 0
+            ? frontierLegendItems
+            : [{ label: 'Benchmark', color: POINT_COLOR_BENCHMARK }];
+
+        const totalItems = legendItems.length + ringItems.length;
         const legendX = availW + 12;
         const legendY = cy - (totalItems * itemH) / 2;
 
@@ -187,17 +192,20 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
                 .text(label);
         });
 
-        // Benchmark entry
-        const bmRow = legendG.append('g').attr('transform', `translate(0, ${legendItems.length * itemH + 6})`);
-        bmRow.append('circle')
-            .attr('cx', 6).attr('cy', 6).attr('r', 6)
-            .attr('fill', 'none')
-            .attr('stroke', POINT_COLOR_BENCHMARK)
-            .attr('stroke-width', 2);
-        bmRow.append('text')
-            .attr('class', 'radviz-legend-label')
-            .attr('x', 18).attr('y', 10)
-            .text('Benchmark');
+        // Ring entries: frontiers when active, otherwise just benchmark
+        ringItems.forEach(({ label, color }, i) => {
+            const row = legendG.append('g')
+                .attr('transform', `translate(0, ${(legendItems.length + i) * itemH + 6})`);
+            row.append('circle')
+                .attr('cx', 6).attr('cy', 6).attr('r', 6)
+                .attr('fill', 'none')
+                .attr('stroke', color)
+                .attr('stroke-width', 2);
+            row.append('text')
+                .attr('class', 'radviz-legend-label')
+                .attr('x', 18).attr('y', 10)
+                .text(label);
+        });
     }
 
     // ── Lasso ────────────────────────────────────────────────────────────
@@ -270,10 +278,14 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
     glyphGroups.each(function (p) {
         const glyphGroupKey = `${containerSelector}:${p.rowIndex}`;
         const expandedGlyphGroup = _expandedGlyphGroup.get(glyphGroupKey) ?? null;
+        const frontierColor = (!p.row.__isBenchmark && frontierColorOverrides)
+            ? (frontierColorOverrides.get(p.rowIndex) ?? null)
+            : null;
         renderGlyph(d3.select(this), p, decisionColumns, expandedRowIndex, tooltip, {
             groups,
             glyphR: R,
             expandedGlyphGroup,
+            frontierColor,
             onGlyphGroupToggle: (grp) => {
                 const key = `${containerSelector}:${p.rowIndex}`;
                 const cur = _expandedGlyphGroup.get(key) ?? null;
@@ -313,9 +325,11 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         .on('mouseenter', function (event, p) {
             if (expandedRowIndex !== null) return;
             onHoverStart(p.rowIndex);
+            const frontier = p.row.__frontier;
+            const header = p.row.__isBenchmark ? 'Benchmark' : `Point ${p.rowIndex}${frontier ? `<br>${frontier}` : ''}`;
             const objLines = columns.map(col => `${col}: ${(+p.row[col]).toFixed(2)}`).join('<br>');
             tooltip.classed('visible', true)
-                .html(`<b>${p.row.__isBenchmark ? 'Benchmark' : `Point ${p.rowIndex}`}</b><br>${objLines}`)
+                .html(`<b>${header}</b><br>${objLines}`)
                 .style('left', `${event.pageX + 12}px`)
                 .style('top', `${event.pageY - 36}px`);
         })

@@ -18,7 +18,7 @@ export function initializeObjectivesSpacePanel(config) {
         labelsToggleSelector: "#objectives-labels-toggle",
         pcaToggleSelector: "#objectives-pca-toggle",
         decGroupsToggleSelector: "#objectives-dec-groups-toggle",
-        decGroupsBtnSelector: "#objectives-dec-groups-btn",
+        frontierColorsToggleSelector: "#objectives-frontier-colors-toggle",
         optionsDropdownSelector: "#objectives-options-dropdown",
         spreadSliderSelector: "#objectives-spread",
         surfaceToggleSelector: "#objectives-surface-toggle",

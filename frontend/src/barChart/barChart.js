@@ -81,6 +81,8 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     const groupOrder     = hasGroups ? getGroupOrder(columns, groups)     : [];
     const groupMembersMap = hasGroups ? getGroupMembers(columns, groups)  : {};
 
+    const frontierByIndex = new Map(data.map(row => [row.__rowIndex, row.__frontier ?? null]));
+
     // ── Tooltip ───────────────────────────────────────────────────────────────
 
     const tooltip = d3.select('body')
@@ -267,7 +269,10 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
 
             // Build tooltip HTML: all groups listed, expanded group shows its variables
             const buildGroupTooltip = (row, hoveredGrp, expandedGrp, activeVar = null) => {
-                const header = row.isBenchmark ? 'Benchmark' : `Point: ${row.pointLabel}`;
+                const frontier = frontierByIndex.get(row.rowIndex);
+                const header = row.isBenchmark
+                    ? 'Benchmark'
+                    : `Point: ${row.pointLabel}${frontier ? `<br>${frontier}` : ''}`;  
                 const lines = row.segments.map(seg => {
                     const isHovered  = seg.grp === hoveredGrp;
                     const isExpanded = seg.grp === expandedGrp;
@@ -398,8 +403,12 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     onHoverStart(seg.rowIndex);
                     const lines = seg.allSegments
                         .map(s => `${s.key}: ${(s.share * 100).toFixed(2)}%`).join('<br>');
+                    const frontier = frontierByIndex.get(seg.rowIndex);
+                    const header = seg.isBenchmark
+                        ? 'Benchmark'
+                        : `Point: ${seg.pointLabel}${frontier ? `<br>${frontier}` : ''}`;  
                     tooltip.classed('visible', true)
-                        .html(`${seg.isBenchmark ? 'Benchmark' : `Point: ${seg.pointLabel}`}<br>${lines}`);
+                        .html(`${header}<br>${lines}`);
                     positionTooltip(event);
                 })
                 .on('mousemove', event => positionTooltip(event))
@@ -469,8 +478,12 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .on('mouseenter', (event, seg) => {
                 onHoverStart(seg.rowIndex);
                 const lines = seg.allSegments.map(s => `${s.key}: ${(s.share * 100).toFixed(2)}%`).join('<br>');
+                const frontier = frontierByIndex.get(seg.rowIndex);
+                const header = seg.isBenchmark
+                    ? 'Benchmark'
+                    : `Point: ${seg.pointLabel}${frontier ? `<br>${frontier}` : ''}`;
                 tooltip.classed('visible', true)
-                    .html(`${seg.isBenchmark ? 'Benchmark' : `Point: ${seg.pointLabel}`}<br>${lines}`);
+                    .html(`${header}<br>${lines}`);
                 positionTooltip(event);
             })
             .on('mousemove', event => positionTooltip(event))

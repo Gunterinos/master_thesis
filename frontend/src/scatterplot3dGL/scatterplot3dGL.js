@@ -42,6 +42,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         groupColorOverrides = null,
         decisionColumns     = [],
         groups              = {},
+        frontierColorOverrides = null,
+        frontierLegendItems    = [],
     } = options;
 
     const xDir = objectiveDirections[xKey] ?? 'min';
@@ -80,6 +82,8 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             isBenchmark: row.__isBenchmark === true,
         }))
         .filter(p => Number.isFinite(p.xVal) && Number.isFinite(p.yVal) && Number.isFinite(p.zVal));
+
+    const frontierByIndex = new Map(data.map(row => [row.__rowIndex, row.__frontier ?? null]));
 
     if (points.length === 0) {
         container.append('p').text('No numeric data for selected axes.');
@@ -144,7 +148,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     points.forEach(p => {
         p.activeColor = p.isBenchmark
             ? POINT_COLOR_BENCHMARK
-            : (groupColorOverrides?.get(p.rowIndex) ?? p.surfaceColor);
+            : (frontierColorOverrides?.get(p.rowIndex) ?? groupColorOverrides?.get(p.rowIndex) ?? p.surfaceColor);
         const sx = shouldAnimate ? p.startNx : p.nx;
         const sy = shouldAnimate ? p.startNy : p.ny;
         const sz = shouldAnimate ? p.startNz : p.nz;
@@ -245,28 +249,37 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     }
     const legendDiv = wrapper.append('div').attr('class', 'scatter3dgl-legend');
     const idealLabel = [xDir, yDir, zDir].map(d => d === 'max' ? 'max' : 'min').join(', ');
-    if (groupColorOverrides && decisionColumns.length > 0) {
+    const _buildLegendRows = (items) => items.map(({ label, color }) =>
+        `<div class="scatter3dgl-legend-benchmark">` +
+        `<span class="scatter3dgl-legend-dot" style="background:${color}"></span>` +
+        `<span>${label}</span></div>`
+    ).join('');
+    const surfaceSection = showSurface
+        ? `<div style="margin-top:8px">` +
+          `<span class="scatter3dgl-legend-title">Surface · Distance to Ideal [${idealLabel}]</span>` +
+          `<div class="scatter3dgl-legend-bar"></div>` +
+          `<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div></div>`
+        : '';
+    const benchmarkRow = `<div class="scatter3dgl-legend-benchmark" style="margin-top:6px">` +
+        `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
+        `<span>Benchmark</span></div>`;
+
+    if (frontierColorOverrides && frontierLegendItems.length > 0) {
+        legendDiv.html(
+            `<span class="scatter3dgl-legend-title">Frontier</span>` +
+            _buildLegendRows(frontierLegendItems) +
+            benchmarkRow +
+            surfaceSection
+        );
+    } else if (groupColorOverrides && decisionColumns.length > 0) {
         const hasGroups = groups && Object.keys(groups).length > 0;
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
             : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
-        const itemRows = legendItems.map(({ label, color }) =>
-            `<div class="scatter3dgl-legend-benchmark">` +
-            `<span class="scatter3dgl-legend-dot" style="background:${color}"></span>` +
-            `<span>${label}</span></div>`
-        ).join('');
-        const surfaceSection = showSurface
-            ? `<div style="margin-top:8px">` +
-              `<span class="scatter3dgl-legend-title">Surface · Distance to Ideal [${idealLabel}]</span>` +
-              `<div class="scatter3dgl-legend-bar"></div>` +
-              `<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div></div>`
-            : '';
         legendDiv.html(
             `<span class="scatter3dgl-legend-title">${hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable'}</span>` +
-            itemRows +
-            `<div class="scatter3dgl-legend-benchmark" style="margin-top:6px">` +
-            `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
-            `<span>Benchmark</span></div>` +
+            _buildLegendRows(legendItems) +
+            benchmarkRow +
             surfaceSection
         );
     } else {
@@ -274,9 +287,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
             '<div class="scatter3dgl-legend-bar"></div>' +
             '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>' +
-            `<div class="scatter3dgl-legend-benchmark">` +
-            `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_BENCHMARK}"></span>` +
-            `<span>Benchmark</span></div>`
+            benchmarkRow
         );
     }
 
@@ -323,7 +334,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
     const orbitModule = buildOrbitControls({
         canvas, camera, spherical, updateCamera, renderer, containerNode,
-        pointMeshes, xKey, yKey, zKey,
+        pointMeshes, xKey, yKey, zKey, frontierByIndex,
         renderFrame, onHoverStart, onHoverEnd, onShiftClick,
     });
 

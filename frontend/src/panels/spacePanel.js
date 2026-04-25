@@ -3,7 +3,7 @@ import { getNumericColumns } from '../tables/tables.js';
 import { populateAxisSelect } from '../scatterplot/scatterplot.js';
 import { populateAxisSelect3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { setRadvizSpread } from '../radviz/radviz.js';
-import { computeDominantGroups } from '../colors.js';
+import { computeDominantGroups, computeFrontierColors } from '../colors.js';
 
 const _observers = new Map(); // containerSelector → ResizeObserver
 
@@ -24,6 +24,7 @@ export function initializeSpacePanel(config) {
         pcaToggleSelector = null,
         decGroupsToggleSelector = null,
         decGroupsBtnSelector = null,
+        frontierColorsToggleSelector = null,
         optionsDropdownSelector = null,
         spreadSliderSelector = null,
         decisionColumns = [],
@@ -56,6 +57,7 @@ export function initializeSpacePanel(config) {
     const pcaToggle = pcaToggleSelector ? d3.select(pcaToggleSelector) : null;
     const decGroupsToggle = decGroupsToggleSelector ? d3.select(decGroupsToggleSelector) : null;
     const decGroupsBtn = decGroupsBtnSelector ? d3.select(decGroupsBtnSelector) : null;
+    const frontierColorsToggle = frontierColorsToggleSelector ? d3.select(frontierColorsToggleSelector) : null;
     const optionsDropdown = optionsDropdownSelector ? d3.select(optionsDropdownSelector) : null;
     const optionsMenu = optionsDropdown ? optionsDropdown.select('.options-dropdown-menu') : null;
     const optionsBtn = optionsDropdown ? optionsDropdown.select('.options-dropdown-btn') : null;
@@ -68,6 +70,7 @@ export function initializeSpacePanel(config) {
     let showSurface = surfaceToggle ? surfaceToggle.classed("active") : false;
     let showDominated = dominatedToggle ? dominatedToggle.classed("active") : false;
     let showIdealPoint = idealToggle ? idealToggle.classed("active") : false;
+    let showFrontierColors = frontierColorsToggle ? frontierColorsToggle.classed("active") : false;
 
     const previousChart = chartSelect.property("value");
     const previousXAxis = xAxisSelect.property("value");
@@ -124,6 +127,8 @@ export function initializeSpacePanel(config) {
         const isScatter = chartConfig?.needsAxes === true;
         const needsZ = chartConfig?.needsZAxis === true;
         const isPCA = showPCA && isScatter && !needsZ;
+        const isRadviz = chartType === 'radviz';
+        const hasColorOptions = isScatter || chartType === 'pcp' || chartType === 'radar' || isRadviz;
 
         xAxisSelect.classed("hidden", !isScatter || isPCA);
         yAxisSelect.classed("hidden", !isScatter || isPCA);
@@ -132,19 +137,16 @@ export function initializeSpacePanel(config) {
         if (zAxisSelect) zAxisSelect.classed("hidden", !needsZ);
         if (zLabel)      zLabel.classed("hidden", !needsZ);
         if (optionsDropdown) {
-            optionsDropdown.classed("hidden", !isScatter);
+            optionsDropdown.classed("hidden", !hasColorOptions);
         }
         if (labelsToggle) {
-            labelsToggle.classed("hidden", false);
+            labelsToggle.classed("hidden", !isScatter);
         }
         if (pcaToggle) {
-            pcaToggle.classed("hidden", needsZ);
+            pcaToggle.classed("hidden", !isScatter || needsZ);
         }
         if (decGroupsToggle) {
-            decGroupsToggle.classed("hidden", false);
-        }
-        if (decGroupsBtn) {
-            decGroupsBtn.classed("hidden", isScatter || decisionColumns.length === 0 || chartType === 'radviz' || chartType === 'correlationHeatmap');
+            decGroupsToggle.classed("hidden", isRadviz);
         }
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);
@@ -156,7 +158,6 @@ export function initializeSpacePanel(config) {
             idealToggle.classed("hidden", !needsZ);
         }
         if (spreadSlider) {
-            const isRadviz = chartType === 'radviz';
             spreadSlider.classed("hidden", !isRadviz);
         }
 
@@ -168,6 +169,9 @@ export function initializeSpacePanel(config) {
             const groupColorOverrides = showDecGroups && decisionColumns.length > 0
                 ? computeDominantGroups(renderData, decisionColumns, groups)
                 : null;
+            const { colorMap: frontierColorOverrides, items: frontierLegendItems } = showFrontierColors
+                ? computeFrontierColors(renderData)
+                : { colorMap: null, items: [] };
             chartConfig.render({
                 containerSelector,
                 columns,
@@ -185,6 +189,8 @@ export function initializeSpacePanel(config) {
                 groupColorOverrides,
                 decisionColumns,
                 groups,
+                frontierColorOverrides,
+                frontierLegendItems,
             });
             onAfterRender();
         };
@@ -248,10 +254,27 @@ export function initializeSpacePanel(config) {
         showDecGroups = !showDecGroups;
         if (decGroupsToggle) decGroupsToggle.classed("active", showDecGroups);
         if (decGroupsBtn) decGroupsBtn.classed("active", showDecGroups);
+        if (showDecGroups && showFrontierColors) {
+            showFrontierColors = false;
+            if (frontierColorsToggle) frontierColorsToggle.classed("active", false);
+        }
         updatePanel();
     };
     if (decGroupsToggle) decGroupsToggle.on("click", toggleDecGroups);
     if (decGroupsBtn) decGroupsBtn.on("click", toggleDecGroups);
+
+    if (frontierColorsToggle) {
+        frontierColorsToggle.on("click", () => {
+            showFrontierColors = !showFrontierColors;
+            frontierColorsToggle.classed("active", showFrontierColors);
+            if (showFrontierColors && showDecGroups) {
+                showDecGroups = false;
+                if (decGroupsToggle) decGroupsToggle.classed("active", false);
+                if (decGroupsBtn) decGroupsBtn.classed("active", false);
+            }
+            updatePanel();
+        });
+    }
 
     if (optionsBtn) {
         optionsBtn.on("click", (event) => {
