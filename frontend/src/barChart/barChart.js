@@ -307,7 +307,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                             const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
                             next.has(seg.grp) ? next.delete(seg.grp) : next.add(seg.grp);
                             _legendExpandedGroups.set(containerSelector, next);
-                            renderBarChart(containerSelector, columns, data, options);
+                            renderBarChart(containerSelector, columns, data, { ...options, animate: false });
                         })
                         .on('mouseenter', function (event) {
                             onHoverStart(row.rowIndex);
