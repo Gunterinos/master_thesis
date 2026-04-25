@@ -71,7 +71,7 @@ function computeGroupedRows(data, groupOrder, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderBarChart(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false, groups = {} } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, groups = {} } = options;
 
     const container     = d3.select(containerSelector);
     const containerNode = container.node();
@@ -172,16 +172,10 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
     }
 
     const colorScale = d3.scaleOrdinal(CB_PALETTE).domain(columns);
-    const transition  = d3.transition().duration(420);
 
-    // For groups path always do full redraw (hover state is ephemeral, no click state)
-    const existingSvg = container.select('svg');
-    const isUpdate    = animate && !existingSvg.empty() && !hasGroups;
+    container.selectAll('*').remove();
 
-    // ── Full redraw ───────────────────────────────────────────────────────────
-
-    if (!isUpdate) {
-        container.selectAll('*').remove();
+    {
 
         const svgRoot = container.append('svg')
             .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
@@ -307,7 +301,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                             const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
                             next.has(seg.grp) ? next.delete(seg.grp) : next.add(seg.grp);
                             _legendExpandedGroups.set(containerSelector, next);
-                            renderBarChart(containerSelector, columns, data, options);
+                            renderBarChart(containerSelector, columns, data, { ...options, animate: false });
                         })
                         .on('mouseenter', function (event) {
                             onHoverStart(row.rowIndex);
@@ -323,33 +317,27 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                         });
 
                     // Group segment rect (dimmed by CSS when expanded)
-                    const segRect = groupArea.append('rect')
+                    groupArea.append('rect')
                         .attr('class', 'bar-group-seg bar-chart-segment')
                         .attr('data-row-index', row.rowIndex)
                         .attr('data-group', seg.grp)
                         .attr('x', 0)
-                        .attr('y', animate ? yScale(0) : yScale(seg.y1))
+                        .attr('y', yScale(seg.y1))
                         .attr('width', xScale.bandwidth())
-                        .attr('height', animate ? 0 : yScale(seg.y0) - yScale(seg.y1))
+                        .attr('height', yScale(seg.y0) - yScale(seg.y1))
                         .attr('fill', getGroupBaseColor(seg.gi));
-
-                    if (animate) {
-                        segRect.transition(transition)
-                            .attr('y', yScale(seg.y1))
-                            .attr('height', yScale(seg.y0) - yScale(seg.y1));
-                    }
 
                     // Variable sub-layer (hidden; shown via CSS .is-expanded on parent)
                     const varLayer = groupArea.append('g').attr('class', 'bar-var-layer');
 
                     seg.varSegs.forEach(v => {
-                        const varRect = varLayer.append('rect')
+                        varLayer.append('rect')
                             .attr('class', 'bar-chart-segment')
                             .attr('data-row-index', row.rowIndex)
                             .attr('x', 0)
-                            .attr('y', animate ? yScale(0) : yScale(v.y1))
+                            .attr('y', yScale(v.y1))
                             .attr('width', xScale.bandwidth())
-                            .attr('height', animate ? 0 : yScale(v.y0) - yScale(v.y1))
+                            .attr('height', yScale(v.y0) - yScale(v.y1))
                             .attr('fill', getVariableColor(v.gi, v.vi, v.members.length))
                             .on('mouseenter', event => {
                                 tooltip.classed('visible', true)
@@ -357,29 +345,17 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                                 positionTooltip(event);
                             })
                             .on('mousemove', event => positionTooltip(event));
-
-                        if (animate) {
-                            varRect.transition(transition)
-                                .attr('y', yScale(v.y1))
-                                .attr('height', yScale(v.y0) - yScale(v.y1));
-                        }
                     });
                 });
 
                 // Benchmark outline
                 if (row.isBenchmark) {
-                    const bmRect = barG.append('rect')
+                    barG.append('rect')
                         .attr('class', 'bar-benchmark-outline')
                         .attr('data-row-index', row.rowIndex)
                         .attr('x', 0).attr('width', xScale.bandwidth())
-                        .attr('y', animate ? yScale(0) : yScale(1))
-                        .attr('height', animate ? 0 : yScale(0) - yScale(1));
-
-                    if (animate) {
-                        bmRect.transition(transition)
-                            .attr('y', yScale(1))
-                            .attr('height', yScale(0) - yScale(1));
-                    }
+                        .attr('y', yScale(1))
+                        .attr('height', yScale(0) - yScale(1));
                 }
             });
 
@@ -395,9 +371,9 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 .attr('class', 'bar-chart-segment')
                 .attr('data-row-index', seg => seg.rowIndex)
                 .attr('x', 0)
-                .attr('y', seg => animate ? yScale(0) : yScale(seg.y1))
+                .attr('y', seg => yScale(seg.y1))
                 .attr('width', xScale.bandwidth())
-                .attr('height', seg => animate ? 0 : yScale(seg.y0) - yScale(seg.y1))
+                .attr('height', seg => yScale(seg.y0) - yScale(seg.y1))
                 .attr('fill', seg => colorScale(seg.key))
                 .on('mouseenter', (event, seg) => {
                     onHoverStart(seg.rowIndex);
@@ -406,7 +382,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     const frontier = frontierByIndex.get(seg.rowIndex);
                     const header = seg.isBenchmark
                         ? 'Benchmark'
-                        : `Point: ${seg.pointLabel}${frontier ? `<br>${frontier}` : ''}`;  
+                        : `Point: ${seg.pointLabel}${frontier ? `<br>${frontier}` : ''}`;
                     tooltip.classed('visible', true)
                         .html(`${header}<br>${lines}`);
                     positionTooltip(event);
@@ -419,95 +395,11 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 .attr('class', 'bar-benchmark-outline')
                 .attr('data-row-index', r => r.rowIndex)
                 .attr('x', 0).attr('width', xScale.bandwidth())
-                .attr('y', animate ? yScale(0) : yScale(1))
-                .attr('height', animate ? 0 : yScale(0) - yScale(1));
-
-            if (animate) {
-                barGroup.selectAll('rect.bar-chart-segment')
-                    .transition(transition)
-                    .attr('y', seg => yScale(seg.y1))
-                    .attr('height', seg => yScale(seg.y0) - yScale(seg.y1));
-                barGroup.selectAll('rect.bar-benchmark-outline')
-                    .transition(transition).attr('y', yScale(1)).attr('height', yScale(0) - yScale(1));
-            }
+                .attr('y', yScale(1))
+                .attr('height', yScale(0) - yScale(1));
         }
 
         applyBarChartHighlight(getActiveRowIndex());
         applyBarChartSelection(getEffectiveSelection());
-        return;
     }
-
-    // ── Incremental animated update (flat / no-groups mode only) ─────────────
-
-    const svg = existingSvg.select('g.chart-root');
-    svg.select('.x-axis').transition(transition).call(xAxis);
-
-    const barsRoot    = svg.select('.bars-root');
-    const barGroupSel = barsRoot.selectAll('g.bar-chart-bar').data(rows, r => r.rowIndex);
-
-    barGroupSel.exit()
-        .selectAll('rect.bar-chart-segment, rect.bar-benchmark-outline')
-        .transition(transition).attr('y', yScale(0)).attr('height', 0);
-    barGroupSel.exit().transition(transition).remove();
-
-    const barGroupEnter = barGroupSel.enter()
-        .append('g')
-        .attr('class', r => r.isBenchmark ? 'bar-chart-bar is-benchmark' : 'bar-chart-bar')
-        .attr('data-row-index', r => r.rowIndex)
-        .attr('transform', r => `translate(${xScale(r.pointLabel)}, 0)`);
-
-    const barGroupMerge = barGroupEnter.merge(barGroupSel);
-    barGroupMerge.transition(transition).attr('transform', r => `translate(${xScale(r.pointLabel)}, 0)`);
-
-    barGroupMerge.each(function (row) {
-        const g = d3.select(this);
-        const segData = row.segments.map(seg => ({
-            ...seg, rowIndex: row.rowIndex, pointLabel: row.pointLabel, allSegments: row.segments,
-        }));
-
-        const segSel = g.selectAll('rect.bar-chart-segment').data(segData, seg => seg.key);
-
-        segSel.exit().transition(transition).attr('y', yScale(0)).attr('height', 0).remove();
-
-        const segEnter = segSel.enter()
-            .append('rect')
-            .attr('class', 'bar-chart-segment')
-            .attr('data-row-index', seg => seg.rowIndex)
-            .attr('x', 0).attr('y', yScale(0)).attr('width', xScale.bandwidth()).attr('height', 0)
-            .attr('fill', seg => colorScale(seg.key))
-            .on('mouseenter', (event, seg) => {
-                onHoverStart(seg.rowIndex);
-                const lines = seg.allSegments.map(s => `${s.key}: ${(s.share * 100).toFixed(2)}%`).join('<br>');
-                const frontier = frontierByIndex.get(seg.rowIndex);
-                const header = seg.isBenchmark
-                    ? 'Benchmark'
-                    : `Point: ${seg.pointLabel}${frontier ? `<br>${frontier}` : ''}`;
-                tooltip.classed('visible', true)
-                    .html(`${header}<br>${lines}`);
-                positionTooltip(event);
-            })
-            .on('mousemove', event => positionTooltip(event))
-            .on('mouseleave', () => { onHoverEnd(); tooltip.classed('visible', false); });
-
-        segEnter.merge(segSel)
-            .transition(transition)
-            .attr('y', seg => yScale(seg.y1))
-            .attr('height', seg => yScale(seg.y0) - yScale(seg.y1))
-            .attr('width', xScale.bandwidth())
-            .attr('fill', seg => colorScale(seg.key));
-
-        if (row.isBenchmark) {
-            let outline = g.select('rect.bar-benchmark-outline');
-            if (outline.empty()) {
-                outline = g.append('rect').attr('class', 'bar-benchmark-outline')
-                    .attr('data-row-index', row.rowIndex)
-                    .attr('x', 0).attr('y', yScale(0)).attr('height', 0);
-            }
-            outline.attr('width', xScale.bandwidth())
-                .transition(transition).attr('y', yScale(1)).attr('height', yScale(0) - yScale(1));
-        }
-    });
-
-    applyBarChartHighlight(getActiveRowIndex());
-    applyBarChartSelection(getEffectiveSelection());
 }

@@ -77,15 +77,16 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             axisOrder: [...allColumns],
             enabledAxes: new Set(allColumns),
             dropdownOpen: false,
-            // Step 5: filters stored in normalized radius space { t1, t2 } ∈ [0,1]
             axisFilters: {},
             hiddenFilters: new Set(),
             hadActiveBrushFilters: false,
+            prevRDomains: {},
         });
     }
     const state = _radarState.get(containerSelector);
     if (!state.axisFilters) state.axisFilters = {};
     if (!state.hiddenFilters) state.hiddenFilters = new Set();
+    if (!state.prevRDomains) state.prevRDomains = {};
 
     // Sync state with potentially changed column list
     const addedCols = allColumns.filter((c) => !state.axisOrder.includes(c));
@@ -100,6 +101,10 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         renderRadarChart(containerSelector, allColumns, data, { ...options, animate: anim });
 
     const activeAxes = state.axisOrder.filter((c) => state.enabledAxes.has(c));
+
+    // Snapshot previous scale domains before clearing
+    const prevRDomains = { ...state.prevRDomains };
+    const hasPrevR = activeAxes.length > 0 && activeAxes.every((a) => prevRDomains[a]);
 
     // ── Layout ───────────────────────────────────────────────────────────────
     const containerWidth = Math.max(400, containerNode.clientWidth || 0);
@@ -180,7 +185,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
     const cy = svgHeight / 2;
     const radius = Math.min(cx, cy) - LABEL_MARGIN;
 
-    // ── Step 8: Scales — invert domain for 'min' so best value = outer ring ──
+    // ── Scales — invert domain for 'min' so best value = outer ring ──────────
     const rScales = {};
     activeAxes.forEach((axis) => {
         const ext = d3.extent(data, (row) => +row[axis]);
@@ -197,7 +202,14 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                 .range([0, radius])
                 .clamp(true);
         }
+        state.prevRDomains[axis] = rScales[axis].domain();
     });
+
+    const startRScales = animate && hasPrevR
+        ? Object.fromEntries(activeAxes.map((a) => [a,
+            d3.scaleLinear().domain(prevRDomains[a]).range([0, radius]).clamp(true)
+          ]))
+        : rScales;
 
     // ── Step 7: Angular positions (from state.axisOrder) ─────────────────────
     const N = activeAxes.length;
@@ -299,20 +311,18 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         });
     });
 
-    // ── Step 1 + 6: Polygons ──────────────────────────────────────────────────
-    pathsG.selectAll('path.radar-path')
+    // ── Polygons ──────────────────────────────────────────────────────────────
+    const pathSelection = pathsG.selectAll('path.radar-path')
         .data(data)
         .enter()
         .append('path')
-        // Step 6: benchmark class
         .attr('class', (row) => row.__isBenchmark ? 'radar-path is-benchmark' : 'radar-path')
         .attr('data-row-index', (row, i) => row.__rowIndex ?? i)
         .style('stroke', (row) => {
             if (row.__isBenchmark) return null;
             return effectiveGroupColorOverrides?.get(row.__rowIndex) ?? null;
         })
-        .attr('d', (row) => buildRadarPath(activeAxes, angleMap, rScales, row))
-        // Step 4: shift-click
+        .attr('d', (row) => buildRadarPath(activeAxes, angleMap, startRScales, row))
         .on('click', function (event) {
             if (event.shiftKey) {
                 event.stopPropagation();
@@ -341,7 +351,14 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
 
     pathsG.selectAll('path.radar-path').each(function (row) { this.__dataRow = row; });
 
-    // Step 6: keep benchmark polygon on top of all others
+    if (animate && hasPrevR) {
+        pathSelection
+            .transition()
+            .duration(420)
+            .ease(d3.easeCubicInOut)
+            .attr('d', (row) => buildRadarPath(activeAxes, angleMap, rScales, row));
+    }
+
     pathsG.selectAll('path.radar-path.is-benchmark').raise();
 
     // ── Step 5: Per-spoke brush filtering ────────────────────────────────────

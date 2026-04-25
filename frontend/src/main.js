@@ -169,7 +169,7 @@ function loadActiveFiles(activeFiles) {
 
             clearSelectionState();
             initializeApp();
-            renderAllPanels({ animate: false });
+            renderAllPanels({ animate: true });
             updateSelectionButtons();
         })
         .catch(() => {

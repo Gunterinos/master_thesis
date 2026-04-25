@@ -121,7 +121,7 @@ export function initializeSpacePanel(config) {
         }
     }
 
-    const updatePanel = () => {
+    const updatePanel = (forceAnimate = false) => {
         const chartType = chartSelect.property("value");
         const chartConfig = chartRegistry[chartType];
         const isScatter = chartConfig?.needsAxes === true;
@@ -180,7 +180,7 @@ export function initializeSpacePanel(config) {
                 xAxis: pcaLabels ? '__pc1' : xAxisSelect.property("value"),
                 yAxis: pcaLabels ? '__pc2' : yAxisSelect.property("value"),
                 zAxis: zAxisSelect ? zAxisSelect.property("value") : undefined,
-                animate: renderOptions.animate === true,
+                animate: forceAnimate,
                 showLabels,
                 showSurface,
                 showDominated,
@@ -214,7 +214,7 @@ export function initializeSpacePanel(config) {
         labelsToggle.on("click", () => {
             showLabels = !showLabels;
             labelsToggle.classed("active", showLabels);
-            updatePanel();
+            updatePanel(true);
         });
     }
 
@@ -222,7 +222,7 @@ export function initializeSpacePanel(config) {
         surfaceToggle.on("click", () => {
             showSurface = !showSurface;
             surfaceToggle.classed("active", showSurface);
-            updatePanel();
+            updatePanel(true);
         });
     }
 
@@ -230,7 +230,7 @@ export function initializeSpacePanel(config) {
         dominatedToggle.on("click", () => {
             showDominated = !showDominated;
             dominatedToggle.classed("active", showDominated);
-            updatePanel();
+            updatePanel(true);
         });
     }
 
@@ -238,7 +238,7 @@ export function initializeSpacePanel(config) {
         idealToggle.on("click", () => {
             showIdealPoint = !showIdealPoint;
             idealToggle.classed("active", showIdealPoint);
-            updatePanel();
+            updatePanel(true);
         });
     }
 
@@ -246,7 +246,7 @@ export function initializeSpacePanel(config) {
         pcaToggle.on("click", () => {
             showPCA = !showPCA;
             pcaToggle.classed("active", showPCA);
-            updatePanel();
+            updatePanel(true);
         });
     }
 
@@ -258,7 +258,7 @@ export function initializeSpacePanel(config) {
             showFrontierColors = false;
             if (frontierColorsToggle) frontierColorsToggle.classed("active", false);
         }
-        updatePanel();
+        updatePanel(true);
     };
     if (decGroupsToggle) decGroupsToggle.on("click", toggleDecGroups);
     if (decGroupsBtn) decGroupsBtn.on("click", toggleDecGroups);
@@ -272,7 +272,7 @@ export function initializeSpacePanel(config) {
                 if (decGroupsToggle) decGroupsToggle.classed("active", false);
                 if (decGroupsBtn) decGroupsBtn.classed("active", false);
             }
-            updatePanel();
+            updatePanel(true);
         });
     }
 
@@ -297,12 +297,12 @@ export function initializeSpacePanel(config) {
         });
     }
 
-    chartSelect.on("change", updatePanel);
-    xAxisSelect.on("change", updatePanel);
-    yAxisSelect.on("change", updatePanel);
-    if (zAxisSelect) zAxisSelect.on("change", updatePanel);
+    chartSelect.on("change", () => updatePanel(true));
+    xAxisSelect.on("change", () => updatePanel(true));
+    yAxisSelect.on("change", () => updatePanel(true));
+    if (zAxisSelect) zAxisSelect.on("change", () => updatePanel(true));
 
-    // Re-render when the panel changes size (window resize, etc.)
+    // Re-render when the panel changes size
     if (_observers.has(containerSelector)) {
         _observers.get(containerSelector).disconnect();
     }
@@ -310,16 +310,18 @@ export function initializeSpacePanel(config) {
     if (panelNode) {
         const rect = panelNode.getBoundingClientRect();
         let lastW = rect.width, lastH = rect.height;
+        let resizeTimer = null;
         const observer = new ResizeObserver((entries) => {
             const { width: w, height: h } = entries[0].contentRect;
             if (Math.abs(w - lastW) > 1 || Math.abs(h - lastH) > 1) {
                 lastW = w; lastH = h;
-                updatePanel();
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => updatePanel(false), 450);
             }
         });
         observer.observe(panelNode);
         _observers.set(containerSelector, observer);
     }
 
-    updatePanel();
+    updatePanel(renderOptions.animate === true);
 }

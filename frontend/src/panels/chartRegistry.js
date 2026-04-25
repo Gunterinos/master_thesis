@@ -74,10 +74,9 @@ export function createChartRegistry(interactionOptions) {
             label: "Column Chart",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 1,
-            render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
+            render: ({ containerSelector, columns, data, groups = {} }) => {
                 renderBarChart(containerSelector, columns, data, {
                     ...interactionOptions,
-                    animate,
                     groups,
                 });
             },
