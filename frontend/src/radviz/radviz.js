@@ -296,7 +296,9 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
     });
 
     if (animate && storedPrev.size > 0) {
-        glyphGroups.transition()
+        glyphGroups
+            .filter((p) => p.rowIndex !== expandedRowIndex)
+            .transition()
             .duration(420)
             .ease(d3.easeCubicInOut)
             .attr('transform', (p) => getTransform(p, spread, R, eqMap, maxGlyphR));
