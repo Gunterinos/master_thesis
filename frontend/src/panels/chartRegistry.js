@@ -123,11 +123,13 @@ export function createChartRegistry(interactionOptions) {
             label: "RadViz",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderRadviz(containerSelector, data, columns, {
                     ...interactionOptions,
                     animate,
                     groups,
+                    frontierColorOverrides,
+                    frontierLegendItems,
                 });
             },
         },

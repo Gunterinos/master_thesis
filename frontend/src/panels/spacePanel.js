@@ -127,7 +127,8 @@ export function initializeSpacePanel(config) {
         const isScatter = chartConfig?.needsAxes === true;
         const needsZ = chartConfig?.needsZAxis === true;
         const isPCA = showPCA && isScatter && !needsZ;
-        const hasColorOptions = isScatter || chartType === 'pcp' || chartType === 'radar';
+        const isRadviz = chartType === 'radviz';
+        const hasColorOptions = isScatter || chartType === 'pcp' || chartType === 'radar' || isRadviz;
 
         xAxisSelect.classed("hidden", !isScatter || isPCA);
         yAxisSelect.classed("hidden", !isScatter || isPCA);
@@ -145,7 +146,7 @@ export function initializeSpacePanel(config) {
             pcaToggle.classed("hidden", !isScatter || needsZ);
         }
         if (decGroupsToggle) {
-            decGroupsToggle.classed("hidden", false);
+            decGroupsToggle.classed("hidden", isRadviz);
         }
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);
@@ -157,7 +158,6 @@ export function initializeSpacePanel(config) {
             idealToggle.classed("hidden", !needsZ);
         }
         if (spreadSlider) {
-            const isRadviz = chartType === 'radviz';
             spreadSlider.classed("hidden", !isRadviz);
         }
 
