@@ -60,6 +60,8 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         groupColorOverrides = null,
         decisionColumns = [],
         groups = {},
+        frontierColorOverrides = null,
+        frontierLegendItems = [],
     } = options;
 
     const container = d3.select(containerSelector);
@@ -201,43 +203,41 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    // Local button takes precedence; fall back to externally computed overrides
-    const effectiveGroupColorOverrides = groupColorOverrides;
+    const effectiveGroupColorOverrides = frontierColorOverrides ?? groupColorOverrides;
 
-    // ── Dec-groups legend ─────────────────────────────────────
-    if (effectiveGroupColorOverrides && decisionColumns.length > 0) {
-        const hasGroups = groups && Object.keys(groups).length > 0;
-        const legendItems = hasGroups
-            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
-            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
-
+    // ── Colour legend (frontier takes priority over dec-groups) ──────────────
+    const _renderPcpLegend = (legendItems, title) => {
         const ITEM_H = 20;
-        const legendW = 140;
-        const legendX = containerWidth - legendW - 8;
+        const legendX = containerWidth - 148;
         const legendY = margin.top;
-
         const legendG = svgEl.append("g")
             .attr("class", "pcp-dec-legend")
             .attr("transform", `translate(${legendX}, ${legendY})`);
-
         legendG.append("text")
             .attr("class", "pcp-dec-legend-title")
             .attr("x", 0).attr("y", -6)
-            .text(hasGroups ? "Dominant Dec. Group" : "Dominant Dec. Variable");
-
+            .text(title);
         legendItems.forEach(({ label, color }, i) => {
             const row = legendG.append("g").attr("transform", `translate(0, ${i * ITEM_H})`);
             row.append("rect").attr("width", 12).attr("height", 12).attr("rx", 2).attr("fill", color);
             row.append("text").attr("x", 18).attr("y", 10).attr("class", "pcp-dec-legend-label").text(label);
         });
-
-        const bmRow = legendG.append("g")
-            .attr("transform", `translate(0, ${legendItems.length * ITEM_H + 4})`);
+        const bmRow = legendG.append("g").attr("transform", `translate(0, ${legendItems.length * ITEM_H + 4})`);
         bmRow.append("line")
             .attr("x1", 0).attr("y1", 6).attr("x2", 14).attr("y2", 6)
             .attr("stroke", POINT_COLOR_BENCHMARK).attr("stroke-width", 2.5)
             .attr("stroke-dasharray", "6 4");
         bmRow.append("text").attr("x", 18).attr("y", 10).attr("class", "pcp-dec-legend-label").text("Benchmark");
+    };
+
+    if (frontierColorOverrides && frontierLegendItems.length > 0) {
+        _renderPcpLegend(frontierLegendItems, "Frontier");
+    } else if (groupColorOverrides && decisionColumns.length > 0) {
+        const hasGroups = groups && Object.keys(groups).length > 0;
+        const legendItems = hasGroups
+            ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
+            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+        _renderPcpLegend(legendItems, hasGroups ? "Dominant Dec. Group" : "Dominant Dec. Variable");
     }
 
     // ── Y scales ─────────────────────────────────────────────────

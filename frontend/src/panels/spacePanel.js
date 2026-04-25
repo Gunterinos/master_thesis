@@ -127,6 +127,7 @@ export function initializeSpacePanel(config) {
         const isScatter = chartConfig?.needsAxes === true;
         const needsZ = chartConfig?.needsZAxis === true;
         const isPCA = showPCA && isScatter && !needsZ;
+        const hasColorOptions = isScatter || chartType === 'pcp' || chartType === 'radar';
 
         xAxisSelect.classed("hidden", !isScatter || isPCA);
         yAxisSelect.classed("hidden", !isScatter || isPCA);
@@ -135,19 +136,16 @@ export function initializeSpacePanel(config) {
         if (zAxisSelect) zAxisSelect.classed("hidden", !needsZ);
         if (zLabel)      zLabel.classed("hidden", !needsZ);
         if (optionsDropdown) {
-            optionsDropdown.classed("hidden", !isScatter);
+            optionsDropdown.classed("hidden", !hasColorOptions);
         }
         if (labelsToggle) {
-            labelsToggle.classed("hidden", false);
+            labelsToggle.classed("hidden", !isScatter);
         }
         if (pcaToggle) {
-            pcaToggle.classed("hidden", needsZ);
+            pcaToggle.classed("hidden", !isScatter || needsZ);
         }
         if (decGroupsToggle) {
             decGroupsToggle.classed("hidden", false);
-        }
-        if (decGroupsBtn) {
-            decGroupsBtn.classed("hidden", isScatter || decisionColumns.length === 0 || chartType === 'radviz' || chartType === 'correlationHeatmap');
         }
         if (surfaceToggle) {
             surfaceToggle.classed("hidden", !needsZ);

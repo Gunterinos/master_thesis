@@ -87,7 +87,7 @@ export function createChartRegistry(interactionOptions) {
             label: "Parallel Coordinates",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderParallelCoords(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -95,6 +95,8 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    frontierColorOverrides,
+                    frontierLegendItems,
                 });
             },
         },
@@ -103,7 +105,7 @@ export function createChartRegistry(interactionOptions) {
             label: "Radar Chart",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderRadarChart(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -111,6 +113,8 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    frontierColorOverrides,
+                    frontierLegendItems,
                 });
             },
         },
