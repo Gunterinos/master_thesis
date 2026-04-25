@@ -66,6 +66,47 @@ export function getColumnColor(index) {
     return CB_PALETTE[index % CB_PALETTE.length];
 }
 
+// ── Frontier colours ──────────────────────────────────────────────────────────
+
+// Paul Tol's "bright" qualitative scheme — CB-friendly, distinct from CB_PALETTE.
+// Source: https://personal.sron.nl/~pault/
+export const FRONTIER_PALETTE = [
+    '#4477AA', // blue
+    '#EE6677', // red
+    '#228833', // green
+    '#CCBB44', // yellow
+    '#66CCEE', // cyan
+    '#AA3377', // purple
+    '#BBBBBB', // grey
+];
+
+export function getFrontierColor(index) {
+    return FRONTIER_PALETTE[index % FRONTIER_PALETTE.length];
+}
+
+/**
+ * For each non-benchmark row maps rowIndex → frontier colour.
+ * Returns { colorMap: Map<rowIndex, colorString>, items: [{ label, color }] }.
+ * Benchmark rows are excluded — they always render with POINT_COLOR_BENCHMARK.
+ */
+export function computeFrontierColors(data) {
+    const frontierOrder = [];
+    const seen = new Set();
+    for (const row of data) {
+        if (row.__isBenchmark) continue;
+        const name = row.__frontier ?? 'Unknown';
+        if (!seen.has(name)) { seen.add(name); frontierOrder.push(name); }
+    }
+    const colorMap = new Map();
+    for (const row of data) {
+        if (row.__isBenchmark) continue;
+        const name = row.__frontier ?? 'Unknown';
+        colorMap.set(row.__rowIndex, getFrontierColor(frontierOrder.indexOf(name)));
+    }
+    const items = frontierOrder.map((label, i) => ({ label, color: getFrontierColor(i) }));
+    return { colorMap, items };
+}
+
 // ── Group colours ─────────────────────────────────────────────────────────────
 
 // One distinct base colour per group (up to 8 groups), colour-blind-friendly.

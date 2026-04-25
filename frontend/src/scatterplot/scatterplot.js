@@ -41,6 +41,8 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         groupColorOverrides = null,
         decisionColumns = [],
         groups = {},
+        frontierColorOverrides = null,
+        frontierLegendItems = [],
     } = options;
 
     const xAxisLabel = pcaLabels?.x ?? xKey;
@@ -239,9 +241,8 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .attr("cy", (point) => startYScale(point.y))
         .attr("r", (point) => point.isBenchmark ? 5.5 : 4)
         .attr("fill", (point) =>
-            !point.isBenchmark && groupColorOverrides?.has(point.rowIndex)
-                ? groupColorOverrides.get(point.rowIndex)
-                : point.isBenchmark ? POINT_COLOR_BENCHMARK : POINT_COLOR_REGULAR
+            point.isBenchmark ? POINT_COLOR_BENCHMARK
+            : (frontierColorOverrides?.get(point.rowIndex) ?? groupColorOverrides?.get(point.rowIndex) ?? POINT_COLOR_REGULAR)
         )
         .attr("opacity", 0.9)
         .on("click", (event, point) => {
@@ -280,35 +281,32 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
             .attr("cy", (point) => yScale(point.y));
     }
 
-    if (groupColorOverrides && decisionColumns.length > 0) {
+    const _renderScatterLegend = (legendItems, title) => {
+        const legend = svg.append("g")
+            .attr("class", "scatter-dec-legend")
+            .attr("transform", `translate(${width - 10}, 0)`);
+        legend.append("text")
+            .attr("x", -8).attr("y", -6)
+            .attr("text-anchor", "end")
+            .attr("class", "scatter-legend-label")
+            .style("font-weight", "600")
+            .text(title);
+        legendItems.forEach(({ label, color }, i) => {
+            const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
+            row.append("circle").attr("r", 5).attr("cx", 0).attr("cy", 0).attr("fill", color);
+            row.append("text").attr("x", -8).attr("y", 4).attr("text-anchor", "end")
+                .attr("class", "scatter-legend-label").text(label);
+        });
+    };
+
+    if (frontierColorOverrides && frontierLegendItems.length > 0) {
+        _renderScatterLegend(frontierLegendItems, "Frontier");
+    } else if (groupColorOverrides && decisionColumns.length > 0) {
         const hasGroups = groups && Object.keys(groups).length > 0;
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
             : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
-
-        const legend = svg.append("g")
-            .attr("class", "scatter-dec-legend")
-            .attr("transform", `translate(${width - 10}, 0)`);
-
-        legend.append("text")
-            .attr("x", -8)
-            .attr("y", -6)
-            .attr("text-anchor", "end")
-            .attr("class", "scatter-legend-label")
-            .style("font-weight", "600")
-            .text(hasGroups ? "Dec. Group" : "Dec. Variable");
-
-        legendItems.forEach(({ label, color }, i) => {
-            const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
-            row.append("circle")
-                .attr("r", 5).attr("cx", 0).attr("cy", 0)
-                .attr("fill", color);
-            row.append("text")
-                .attr("x", -8).attr("y", 4)
-                .attr("text-anchor", "end")
-                .attr("class", "scatter-legend-label")
-                .text(label);
-        });
+        _renderScatterLegend(legendItems, hasGroups ? "Dec. Group" : "Dec. Variable");
     }
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));

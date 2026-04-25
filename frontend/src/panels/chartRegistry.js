@@ -32,7 +32,7 @@ export function createChartRegistry(interactionOptions) {
             label: "2D Scatterplot",
             needsAxes: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
+            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderScatterplot(containerSelector, data, xAxis, yAxis, {
                     ...interactionOptions,
                     animate,
@@ -41,6 +41,8 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    frontierColorOverrides,
+                    frontierLegendItems,
                 });
             },
         },
@@ -50,7 +52,7 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false, groupColorOverrides = null, decisionColumns = [], groups = {} }) => {
+            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderScatterplot3dGL(containerSelector, data, xAxis, yAxis, zAxis, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -62,6 +64,8 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    frontierColorOverrides,
+                    frontierLegendItems,
                 });
             },
         },
