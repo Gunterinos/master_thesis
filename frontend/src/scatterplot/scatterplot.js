@@ -282,19 +282,39 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
     }
 
     const _renderScatterLegend = (legendItems, title) => {
+        const LEGEND_W = 130;
+        const LEGEND_H = 20 + legendItems.length * 18;
+        const PAD = 12;
+
+        const corners = [
+            { x: 0,                y: 0 },
+            { x: width - LEGEND_W, y: 0 },
+            { x: 0,                y: height - LEGEND_H },
+            { x: width - LEGEND_W, y: height - LEGEND_H },
+        ].map(c => ({
+            ...c,
+            count: points.filter(p => {
+                const px = xScale(p.x), py = yScale(p.y);
+                return px >= c.x - PAD && px <= c.x + LEGEND_W + PAD
+                    && py >= c.y - PAD && py <= c.y + LEGEND_H + PAD;
+            }).length,
+        }));
+
+        const best = corners.reduce((a, b) => a.count <= b.count ? a : b);
+
         const legend = svg.append("g")
             .attr("class", "scatter-dec-legend")
-            .attr("transform", `translate(${width - 10}, 0)`);
+            .attr("transform", `translate(${best.x + 4}, ${best.y + 6})`);
         legend.append("text")
-            .attr("x", -8).attr("y", -6)
-            .attr("text-anchor", "end")
+            .attr("x", 0).attr("y", 0)
+            .attr("text-anchor", "start")
             .attr("class", "scatter-legend-label")
             .style("font-weight", "600")
             .text(title);
         legendItems.forEach(({ label, color }, i) => {
-            const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
-            row.append("circle").attr("r", 5).attr("cx", 0).attr("cy", 0).attr("fill", color);
-            row.append("text").attr("x", -8).attr("y", 4).attr("text-anchor", "end")
+            const row = legend.append("g").attr("transform", `translate(0, ${16 + i * 18})`);
+            row.append("circle").attr("r", 5).attr("cx", 5).attr("cy", 0).attr("fill", color);
+            row.append("text").attr("x", 14).attr("y", 4).attr("text-anchor", "start")
                 .attr("class", "scatter-legend-label").text(label);
         });
     };

@@ -1,22 +1,29 @@
 table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
-    border-radius: 10px;
-    overflow: hidden;
 }
 
 th,
 td {
-    border: 1px solid var(--color-table-border);
+    border-right: 1px solid var(--color-table-border);
+    border-bottom: 1px solid var(--color-table-border);
     padding: 0.52rem 0.62rem;
     text-align: left;
     font-size: 0.86rem;
 }
 
-thead tr {
+th:first-child,
+td:first-child {
+    border-left: 1px solid var(--color-table-border);
+}
+
+thead th {
+    border-top: 1px solid var(--color-table-border);
     position: sticky;
     top: 0;
     z-index: 2;
+    background: var(--color-table-header-bg);
 }
 
 th {
@@ -79,6 +86,5 @@ th.group-header .expand-indicator {
 th.var-sub-header {
     font-weight: 400;
     font-size: 0.80rem;
-    opacity: 0.85;
     padding-left: 1.1rem;
 }
