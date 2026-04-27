@@ -15,7 +15,7 @@
     font-weight: 600;
     fill: var(--color-ink);
     pointer-events: none;
-    user-select: none;
+
     transition: opacity 0.2s ease;
 }
 
@@ -39,7 +39,7 @@
     font-size: 0.68rem;
     fill: var(--color-text-muted);
     pointer-events: none;
-    user-select: none;
+
 }
 
 /* Glyph groups */
@@ -59,7 +59,7 @@
     fill: var(--color-ink);
     font-weight: 500;
     pointer-events: none;
-    user-select: none;
+
 }
 
 /* Hover effect on individual slices of the expanded donut */
@@ -74,7 +74,7 @@
     font-weight: 600;
     fill: var(--color-text-secondary);
     pointer-events: none;
-    user-select: none;
+
 }
 
 .radviz-legend-label {
@@ -82,7 +82,7 @@
     fill: var(--color-text-secondary);
     dominant-baseline: middle;
     pointer-events: none;
-    user-select: none;
+
 }
 
 /* ── Expanded mode — dim everything except the open glyph ── */

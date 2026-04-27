@@ -2,8 +2,6 @@
     width: 100%;
     height: calc(100% - 42px) !important;
     display: block;
-    user-select: none;
-    -webkit-user-select: none;
 }
 
 /* ── Lines ──────────────────────────────────────────── */
@@ -56,8 +54,7 @@ body.shift-held .pcp-line.is-line-selected {
 .pcp-axis .tick text {
     fill: var(--color-text-secondary);
     font-size: 0.7rem;
-    user-select: none;
-    -webkit-user-select: none;
+
 }
 
 .pcp-axis-label {
@@ -65,7 +62,7 @@ body.shift-held .pcp-line.is-line-selected {
     font-weight: 600;
     fill: var(--color-ink);
     cursor: grab;
-    user-select: none;
+
 }
 
 .pcp-axis--dragging .pcp-axis-label {
@@ -113,7 +110,7 @@ body.shift-held .pcp-line.is-line-selected {
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(22, 29, 44, 0.06);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    user-select: none;
+
 }
 
 .pcp-axes-btn:hover {
@@ -154,7 +151,7 @@ body.shift-held .pcp-line.is-line-selected {
     font-size: 0.82rem;
     color: var(--color-ink);
     transition: background 0.1s ease;
-    user-select: none;
+
 }
 
 .pcp-axis-item:hover {

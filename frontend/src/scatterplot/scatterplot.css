@@ -73,7 +73,7 @@ body.shift-held .scatter-point-label.is-point-selected {
     font-size: 0.72rem;
     fill: var(--color-text-secondary);
     pointer-events: none;
-    user-select: none;
+
     transition: opacity 0.15s ease;
 }
 
@@ -86,7 +86,7 @@ body.shift-held .scatter-point-label.is-point-selected {
     font-size: 0.68rem;
     fill: var(--color-text-muted);
     pointer-events: none;
-    user-select: none;
+
 }
 
 .scatter-point.is-benchmark {
@@ -98,7 +98,7 @@ body.shift-held .scatter-point-label.is-point-selected {
     font-size: 11px;
     fill: var(--color-text-secondary);
     pointer-events: none;
-    user-select: none;
+
 }
 
 .scatter-dim-warning {
@@ -117,7 +117,7 @@ body.shift-held .scatter-point-label.is-point-selected {
     justify-content: center;
     cursor: default;
     z-index: 10;
-    user-select: none;
+
 }
 
 .scatter-warn-tooltip {

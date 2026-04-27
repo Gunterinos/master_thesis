@@ -6,7 +6,6 @@ table {
 
 th,
 td {
-    user-select: none;
     border-right: 1px solid var(--color-table-border);
     border-bottom: 1px solid var(--color-table-border);
     padding: 0.52rem 0.62rem;
@@ -32,7 +31,6 @@ th {
     color: var(--color-table-header-text);
     font-weight: 600;
     cursor: pointer;
-    user-select: none;
     white-space: nowrap;
 }
 

@@ -68,7 +68,6 @@ body.shift-held .bar-chart-segment.is-point-selected {
     white-space: nowrap;
     font-size: 0.75rem;
     color: var(--color-bar-muted);
-    user-select: none;
 }
 
 .bar-legend-item.is-active .bar-legend-text {
