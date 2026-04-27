@@ -35,7 +35,7 @@ function applyTableSelection(rowIndexSet) {
 
 subscribe('hover-change',    applyTableHighlight);
 subscribe('selection-change', applyTableSelection);
-subscribe('filters-clear',    () => _columnFilters.clear());
+subscribe('filters-clear',    () => _columnFilters.forEach(m => m.clear()));
 
 // ── Group helpers ─────────────────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ function getCellValue(row, col, isGroupCol, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {} } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, disableBrush = false } = options;
 
     const container = d3.select(containerSelector);
     const containerNode = container.node();
@@ -134,7 +134,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     }
 
     const existingTable = container.select("table");
-    const isUpdate = animate && !existingTable.empty();
+    const isUpdate = false; // always full redraw so histograms stay in sync with data
 
     const formatCell = (value, cellIndex) => {
         if (cellIndex === 0) {
@@ -248,32 +248,34 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                 .attr("text-anchor", (d, i) => i === 0 ? "start" : i === 2 ? "end" : "middle")
                 .attr("dx", 0);
 
-            const brush = d3.brushX()
-                .extent([[0, 0], [innerW, innerH]])
-                .on("end", event => {
-                    if (!event.sourceEvent) return; // programmatic brush.move(), ignore
-                    const filters = _columnFilters.get(containerSelector);
-                    if (!event.selection) {
-                        filters.delete(col);
-                    } else {
-                        const [lo, hi] = event.selection.map(xScale.invert);
-                        filters.set(col, [lo, hi]);
-                    }
+            if (!disableBrush) {
+                const brush = d3.brushX()
+                    .extent([[0, 0], [innerW, innerH]])
+                    .on("end", event => {
+                        if (!event.sourceEvent) return; // programmatic brush.move(), ignore
+                        const filters = _columnFilters.get(containerSelector);
+                        if (!event.selection) {
+                            filters.delete(col);
+                        } else {
+                            const [lo, hi] = event.selection.map(xScale.invert);
+                            filters.set(col, [lo, hi]);
+                        }
+                        applyColumnFilters();
+                    });
+
+                const brushG = g.append("g").attr("class", "hist-brush").call(brush);
+
+                if (colFilters.has(col)) {
+                    const [fLo, fHi] = colFilters.get(col);
+                    brush.move(brushG, [xScale(fLo), xScale(fHi)]);
+                }
+
+                svg.on("dblclick", () => {
+                    brush.move(brushG, null);
+                    _columnFilters.get(containerSelector).delete(col);
                     applyColumnFilters();
                 });
-
-            const brushG = g.append("g").attr("class", "hist-brush").call(brush);
-
-            if (colFilters.has(col)) {
-                const [fLo, fHi] = colFilters.get(col);
-                brush.move(brushG, [xScale(fLo), xScale(fHi)]);
             }
-
-            svg.on("dblclick", () => {
-                brush.move(brushG, null);
-                _columnFilters.get(containerSelector).delete(col);
-                applyColumnFilters();
-            });
         });
     }
 
