@@ -60,6 +60,9 @@ function buildEffectiveColumns(columns, groups, expandedSet) {
             }
         }
     }
+    for (const col of columns) {
+        if (!groups[col]) effective.push(col);
+    }
     return { effective, isGroupCol, isVarCol, groupOrder, groupMembersMap };
 }
 
