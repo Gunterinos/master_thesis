@@ -6,6 +6,7 @@ table {
 
 th,
 td {
+    user-select: none;
     border-right: 1px solid var(--color-table-border);
     border-bottom: 1px solid var(--color-table-border);
     padding: 0.52rem 0.62rem;
@@ -60,6 +61,14 @@ tbody tr {
 
 tbody tr.is-linked-highlight td {
     background: var(--color-table-positive-bg);
+}
+
+body.shift-held tbody tr.is-point-selected td {
+    background: var(--color-selection-tint-soft);
+}
+
+body.shift-held tbody tr.is-point-selected td:first-child {
+    border-left: 3px solid var(--color-selection);
 }
 
 tbody tr.is-linked-dim {

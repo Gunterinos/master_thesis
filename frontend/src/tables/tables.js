@@ -22,9 +22,14 @@ function applyTableHighlight(rowIndex) {
 }
 
 function applyTableSelection(rowIndexSet) {
-    d3.selectAll('tr[data-row-index]').classed('is-selection-dim', function () {
-        return rowIndexSet !== null && !rowIndexSet.has(Number(this.dataset.rowIndex));
-    });
+    const hasSelection = rowIndexSet !== null && rowIndexSet.size > 0;
+    d3.selectAll('tr[data-row-index]')
+        .classed('is-selection-dim', function () {
+            return hasSelection && !rowIndexSet.has(Number(this.dataset.rowIndex));
+        })
+        .classed('is-point-selected', function () {
+            return hasSelection && rowIndexSet.has(Number(this.dataset.rowIndex));
+        });
 }
 
 subscribe('hover-change', applyTableHighlight);
@@ -68,7 +73,7 @@ function getCellValue(row, col, isGroupCol, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, animate = false, groups = {} } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, animate = false, groups = {} } = options;
 
     const container = d3.select(containerSelector);
     const containerNode = container.node();
@@ -138,7 +143,12 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     const attachRowEvents = (rowSelection) => {
         rowSelection
             .on("mouseenter", (event, row) => onHoverStart(row.__rowIndex))
-            .on("mouseleave", () => onHoverEnd());
+            .on("mouseleave", () => onHoverEnd())
+            .on("click", (event, row) => {
+                if (!event.shiftKey) return;
+                event.stopPropagation();
+                onShiftClick(row.__rowIndex);
+            });
     };
 
     function buildHeaders(thead) {
@@ -220,6 +230,8 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             .enter()
             .append("td")
             .html(formatCell);
+        applyTableHighlight(getActiveRowIndex());
+        applyTableSelection(getEffectiveSelection());
         return;
     }
 
