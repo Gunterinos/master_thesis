@@ -95,3 +95,58 @@ th.var-sub-header {
     font-size: 0.80rem;
     padding-left: 1.1rem;
 }
+
+/* ── Histogram row ───────────────────────────────────────── */
+
+.histogram-row th {
+    padding: 0;
+    cursor: default;
+    vertical-align: bottom;
+}
+
+.histogram-row th:hover {
+    background: var(--color-table-header-bg);
+}
+
+.table-label-row th {
+    top: 50px; /* ← update if HIST_BAR_H or HIST_M_BOT change: HIST_BAR_H + HIST_M + HIST_M_BOT + 1px border-top + 1px border-bottom */
+    border-top: none;
+}
+
+.col-histogram {
+    display: block;
+}
+
+.hist-bar {
+    fill: var(--color-text-muted);
+    opacity: 0.5;
+}
+
+.hist-brush .overlay {
+    cursor: ew-resize;
+    fill: transparent;
+    pointer-events: all;
+}
+
+.hist-brush .selection {
+    fill: var(--color-selection-tint);
+    stroke: var(--color-selection);
+    stroke-width: 1;
+    cursor: ew-resize;
+}
+
+.hist-brush .handle--w,
+.hist-brush .handle--e {
+    fill: var(--color-selection);
+    width: 3px;
+}
+
+.hist-axis .tick text {
+    font-size: 0.50rem;
+    fill: var(--color-text-muted);
+}
+
+.hist-axis .tick line {
+    stroke: var(--color-text-muted);
+    stroke-opacity: 0.5;
+}

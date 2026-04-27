@@ -12,6 +12,9 @@ let groups = {};
 let chartRegistry = null;
 let appInitialized = false;
 
+let _externalFilter = null;       // passing row indices from PCP / lasso / etc.
+const _tableFilters = new Map(); // containerSelector → passing row indices (one entry per table)
+
 function getCurrentData() {
     const filteredRowIndices = getFilteredRowIndexSet();
     return filteredRowIndices
@@ -41,10 +44,11 @@ function renderAllPanels(options = {}) {
 
 function updateSelectionButtons() {
     const hasSelection = getSelectedRowIndexSet() !== null;
+    const zoomLabel = getIsZoomed() ? "Zoom Out" : "Zoom In";
     d3.select("#objectives-clear-selection").classed("hidden", !hasSelection);
-    d3.select("#objectives-zoom-toggle")
-        .classed("hidden", !hasSelection)
-        .text(getIsZoomed() ? "Zoom Out" : "Zoom In");
+    d3.select("#objectives-zoom-toggle").classed("hidden", !hasSelection).text(zoomLabel);
+    d3.select("#decision-clear-selection").classed("hidden", !hasSelection);
+    d3.select("#decision-zoom-toggle").classed("hidden", !hasSelection).text(zoomLabel);
 }
 
 function applySelectionFilter(rowIndices) {
@@ -71,7 +75,33 @@ function toggleZoom() {
     updateSelectionButtons();
 }
 
+function applyIntersectedFilter() {
+    clearActiveRowIndex();
+    // intersect all active per-table filters into one set
+    const activeTables = [..._tableFilters.values()].filter(v => v !== null);
+    let tableFilter = null;
+    if (activeTables.length > 0) {
+        tableFilter = activeTables.reduce((acc, rows) => {
+            const s = new Set(rows);
+            return acc.filter(i => s.has(i));
+        });
+    }
+    let result = null;
+    if (_externalFilter !== null && tableFilter !== null) {
+        const tableSet = new Set(tableFilter);
+        result = new Set(_externalFilter.filter(i => tableSet.has(i)));
+    } else if (_externalFilter !== null) {
+        result = new Set(_externalFilter);
+    } else if (tableFilter !== null) {
+        result = new Set(tableFilter);
+    }
+    setSelectionState({ selected: result, filtered: null, zoomed: false });
+    updateSelectionButtons();
+}
+
 function clearSelectionFilter() {
+    _externalFilter = null;
+    _tableFilters.clear();
     clearActiveRowIndex();
     clearSelectionState();
     renderAllPanels({ animate: true });
@@ -88,13 +118,12 @@ function initializeApp() {
         onSelectionChange: applySelectionFilter,
         get disableBrush() { return getIsZoomed(); },
         onBrushFilterChange: (passingRowIndices) => {
-            clearActiveRowIndex();
-            if (passingRowIndices === null) {
-                setSelectionState({ selected: null, filtered: null, zoomed: false });
-            } else {
-                setSelectionState({ selected: new Set(passingRowIndices), filtered: null, zoomed: false });
-            }
-            updateSelectionButtons();
+            _externalFilter = passingRowIndices;
+            applyIntersectedFilter();
+        },
+        onTableBrushFilterChange: (containerSelector, passingRowIndices) => {
+            _tableFilters.set(containerSelector, passingRowIndices);
+            applyIntersectedFilter();
         },
         onShiftClick: (rowIndex) => {
             const current = getSelectedRowIndexSet();
@@ -117,6 +146,8 @@ function initializeApp() {
 
     d3.select("#objectives-clear-selection").on("click", clearSelectionFilter);
     d3.select("#objectives-zoom-toggle").on("click", toggleZoom);
+    d3.select("#decision-clear-selection").on("click", clearSelectionFilter);
+    d3.select("#decision-zoom-toggle").on("click", toggleZoom);
 
     d3.select(window)
         .on("keydown.shifthold", (event) => {
