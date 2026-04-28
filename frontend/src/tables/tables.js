@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import './tables.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { getGroupBaseColor, getVariableColor, getGroupOrder, getGroupMembers } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 // ── Per-container persistent state ───────────────────────────────────────────
 
@@ -302,15 +303,15 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                         const indicator = col === sortState.col
                             ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                             : `<span class="sort-indicator">↕</span>`;
-                        return `${col}${indicator}`;
+                        return `${formatLabel(col)}${indicator}`;
                     }
                     const isExpanded = expandedSet.has(col);
-                    return `${col} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>`;
+                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>`;
                 }
                 const indicator = col === sortState.col
                     ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                     : `<span class="sort-indicator">↕</span>`;
-                return `${col}${indicator}`;
+                return `${formatLabel(col)}${indicator}`;
             })
             .on("click", (event, col) => {
                 const rerender = () => {

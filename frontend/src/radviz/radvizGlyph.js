@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { CB_PALETTE, getGroupBaseColor, getVariableColor, getGroupOrder, getGroupMembers } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 export const DEC_COLORS = CB_PALETTE;
 export const MINI_R     = 8;
@@ -124,7 +125,7 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
                 .style('cursor', 'pointer')
                 .on('mouseenter', event => {
                     tooltip.classed('visible', true)
-                        .html(`<b>${slice.data.grp}</b><br>${(+slice.data.val).toFixed(3)}`)
+                        .html(`<b>${formatLabel(slice.data.grp)}</b><br>${(+slice.data.val).toFixed(3)}`)
                         .style('left', `${event.pageX + 12}px`)
                         .style('top',  `${event.pageY - 36}px`);
                 })
@@ -164,7 +165,7 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
                         .attr('fill', getVariableColor(gi, vi, members.length))
                         .on('mouseenter', event => {
                             tooltip.classed('visible', true)
-                                .html(`<b>${col}</b><br>${val.toFixed(3)}`)
+                                .html(`<b>${formatLabel(col)}</b><br>${val.toFixed(3)}`)
                                 .style('left', `${event.pageX + 12}px`)
                                 .style('top',  `${event.pageY - 36}px`);
                         })
@@ -189,7 +190,7 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
                 .attr('fill', slice.data.color)
                 .on('mouseenter', event => {
                     tooltip.classed('visible', true)
-                        .html(`<b>${slice.data.col}</b><br>${(+point.row[slice.data.col]).toFixed(3)}`)
+                        .html(`<b>${formatLabel(slice.data.col)}</b><br>${(+point.row[slice.data.col]).toFixed(3)}`)
                         .style('left', `${event.pageX + 12}px`)
                         .style('top',  `${event.pageY - 36}px`);
                 })
@@ -213,7 +214,7 @@ export function renderGlyph(glyphG, point, decisionColumns, expandedRowIndex, to
             .attr('x', 0)
             .attr('y', -totalH / 2 + i * lineH + lineH * 0.75)
             .attr('text-anchor', 'middle')
-            .text(`${col} ${(+point.row[col]).toFixed(2)}`);
+            .text(`${formatLabel(col)} ${(+point.row[col]).toFixed(2)}`);
     });
 
     glyphG.append('circle').attr('class', 'radviz-selection-ring').attr('r', dynOuter + 3);

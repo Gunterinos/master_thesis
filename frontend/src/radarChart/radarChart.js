@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import './radarChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { POINT_COLOR_BENCHMARK, getGroupBaseColor, getGroupOrder, getColumnColor, computeDominantGroups } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 // ── Step 3: Cross-chart hover highlight ─────────────────────────────────────
 function applyRadarHighlight(rowIndex) {
@@ -150,7 +151,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                 state.dropdownOpen = true;
                 rerender(true);
             });
-        item.append('span').text(col);
+        item.append('span').text(formatLabel(col));
     });
 
     const bodyEventKey = `click.radar-dd-${containerSelector.replace(/\W/g, '')}`;
@@ -269,7 +270,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         const hasGroups = groups && Object.keys(groups).length > 0;
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
-            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+            : decisionColumns.map((col, i) => ({ label: formatLabel(col), color: getColumnColor(i) }));
         _renderRadarLegend(legendItems, hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable');
     }
 
@@ -335,7 +336,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             onHoverStart(rowIndex);
             const row = this.__dataRow;
             if (row) {
-                const lines = activeAxes.map((col) => `${col}: ${(+row[col]).toFixed(3)}`).join('<br>');
+                const lines = activeAxes.map((col) => `${formatLabel(col)}: ${(+row[col]).toFixed(3)}`).join('<br>');
                 const frontier = row.__frontier;
                 const header = row.__isBenchmark ? 'Benchmark' : `Point: ${rowIndex}${frontier ? `<br>${frontier}` : ''}`;
                 tooltip.classed('visible', true)
@@ -544,9 +545,10 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             .attr('dominant-baseline', 'middle')
             .text(() => {
                 const dir = objectiveDirections[axis];
-                if (dir === 'max') return `${axis} ↑`;
-                if (dir === 'min') return `${axis} ↓`;
-                return axis;
+                const label = formatLabel(axis);
+                if (dir === 'max') return `${label} ↑`;
+                if (dir === 'min') return `${label} ↓`;
+                return label;
             });
     });
 
