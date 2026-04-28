@@ -107,24 +107,6 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
             .style('top',  `${Math.max(12, top)}px`);
     };
 
-    // ── Geometry ──────────────────────────────────────────────────────────────
-
-    const containerWidth  = Math.max(440, containerNode.clientWidth  || 0);
-    const containerHeight = Math.max(300, containerNode.clientHeight || 0);
-
-    const legendExpandedSet = _legendExpandedGroups.get(containerSelector) ?? new Set();
-
-    const LEGEND_ROW_H = 28;
-    const LEGEND_PAD   = 6;
-    const LEGEND_H     = hasGroups
-        ? LEGEND_PAD + LEGEND_ROW_H + 4 + LEGEND_ROW_H + LEGEND_PAD
-        : LEGEND_PAD + LEGEND_ROW_H + LEGEND_PAD;
-
-    const svgHeight = containerHeight - LEGEND_H;
-    const margin    = { top: 24, right: 24, bottom: 56, left: 56 };
-    const width     = containerWidth - margin.left - margin.right;
-    const height    = svgHeight - margin.top - margin.bottom;
-
     // ── Row data ──────────────────────────────────────────────────────────────
 
     let rows;
@@ -155,6 +137,40 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
         container.append('p').text('No valid non-negative numeric bar chart data.');
         return;
     }
+
+    // ── Frontier spans (for bracket annotations) ──────────────────────────────
+
+    const frontierSpans = [];
+    rows.forEach(r => {
+        const f = r.isBenchmark ? null : (frontierByIndex.get(r.rowIndex) ?? null);
+        if (!f) return;
+        const last = frontierSpans[frontierSpans.length - 1];
+        if (last && last.frontier === f) {
+            last.endRow = r;
+        } else {
+            frontierSpans.push({ frontier: f, startRow: r, endRow: r });
+        }
+    });
+    const uniqueFrontierCount = new Set(frontierSpans.map(s => s.frontier)).size;
+    const showBrackets = uniqueFrontierCount >= 2;
+
+    // ── Geometry ──────────────────────────────────────────────────────────────
+
+    const containerWidth  = Math.max(440, containerNode.clientWidth  || 0);
+    const containerHeight = Math.max(300, containerNode.clientHeight || 0);
+
+    const legendExpandedSet = _legendExpandedGroups.get(containerSelector) ?? new Set();
+
+    const LEGEND_ROW_H = 28;
+    const LEGEND_PAD   = 6;
+    const LEGEND_H     = hasGroups
+        ? LEGEND_PAD + LEGEND_ROW_H + 4 + LEGEND_ROW_H + LEGEND_PAD
+        : LEGEND_PAD + LEGEND_ROW_H + LEGEND_PAD;
+
+    const svgHeight = containerHeight - LEGEND_H;
+    const margin    = { top: showBrackets ? 24 : 24, right: 24, bottom: 56, left: 56 };
+    const width     = containerWidth - margin.left - margin.right;
+    const height    = svgHeight - margin.top - margin.bottom;
 
     // ── Scales ────────────────────────────────────────────────────────────────
 
@@ -406,6 +422,30 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 .attr('x', 0).attr('width', xScale.bandwidth())
                 .attr('y', yScale(1))
                 .attr('height', yScale(0) - yScale(1));
+        }
+
+        // ── Frontier brackets ─────────────────────────────────────────────────
+        if (showBrackets) {
+            const BRACKET_Y = -8;
+            const TICK_H    = 6;
+            const bracketsG = svg.append('g').attr('class', 'frontier-brackets');
+
+            frontierSpans.forEach(({ frontier, startRow, endRow }) => {
+                const x1 = xScale(startRow.pointLabel);
+                const x2 = xScale(endRow.pointLabel) + xScale.bandwidth();
+                const cx = (x1 + x2) / 2;
+
+                bracketsG.append('path')
+                    .attr('class', 'frontier-bracket-line')
+                    .attr('d', `M${x1},${BRACKET_Y + TICK_H} L${x1},${BRACKET_Y} L${x2},${BRACKET_Y} L${x2},${BRACKET_Y + TICK_H}`);
+
+                bracketsG.append('text')
+                    .attr('class', 'frontier-bracket-label')
+                    .attr('x', cx)
+                    .attr('y', BRACKET_Y - 4)
+                    .attr('text-anchor', 'middle')
+                    .text(frontier);
+            });
         }
 
         applyBarChartHighlight(getActiveRowIndex());

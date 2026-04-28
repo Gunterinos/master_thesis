@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { makeTextSprite, makeCircleSprite } from './textureHelpers.js';
 import { COLOR_BLACK, COLOR_WHITE, COLOR_INK, COLOR_BOUNDING_BOX } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 // tick count per axis
 const TICK_COUNT = 4;
@@ -52,9 +53,9 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     scene.add(boxLine);
 
     const AXIS_CFG = [
-        { color: COLOR_INK, from: [0,0,0], to: [1,0,0], label: xKey, scale: xScale },
-        { color: COLOR_INK, from: [0,0,0], to: [0,1,0], label: yKey, scale: yScale },
-        { color: COLOR_INK, from: [0,0,0], to: [0,0,1], label: zKey, scale: zScale },
+        { color: COLOR_INK, from: [0,0,0], to: [1,0,0], label: formatLabel(xKey), scale: xScale },
+        { color: COLOR_INK, from: [0,0,0], to: [0,1,0], label: formatLabel(yKey), scale: yScale },
+        { color: COLOR_INK, from: [0,0,0], to: [0,0,1], label: formatLabel(zKey), scale: zScale },
     ];
 
     AXIS_CFG.forEach(a => {

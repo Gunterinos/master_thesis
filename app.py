@@ -133,7 +133,10 @@ def pca():
     ]
 
     def label(prefix, v):
-        terms = " + ".join(f"{c:.2f}·{col}" for c, col in zip(v, columns))
+        import re
+        def fmt_col(col):
+            return re.sub(r'^(obj|dec)_', '', col, flags=re.IGNORECASE).replace('_', ' ')
+        terms = " + ".join(f"{c:.2f}·{fmt_col(col)}" for c, col in zip(v, columns))
         terms = terms.replace("+ -", "− ")
         return f"{prefix}: {terms}"
 

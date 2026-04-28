@@ -13,6 +13,7 @@ import { buildSurfaceMesh } from './surfaceMesh.js';
 import { createCircleTexture, createRingTexture, makeTextSprite } from './textureHelpers.js';
 import { buildScene } from './sceneSetup.js';
 import { buildBrushFilter } from './brushFilter.js';
+import { formatLabel } from '../formatLabel.js';
 import { buildOrbitControls } from './orbitControls.js';
 import { buildPointVisuals } from './pointVisuals.js';
 import {
@@ -404,5 +405,5 @@ export function populateAxisSelect3dGL(select, columns) {
         .enter()
         .append('option')
         .attr('value', c => c)
-        .text(c => c);
+        .text(c => formatLabel(c));
 }
