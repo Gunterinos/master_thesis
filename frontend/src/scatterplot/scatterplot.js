@@ -46,8 +46,8 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         frontierLegendItems = [],
     } = options;
 
-    const xAxisLabel = pcaLabels?.x ?? formatLabel(xKey);
-    const yAxisLabel = pcaLabels?.y ?? formatLabel(yKey);
+    const xAxisLabel = pcaLabels ? formatLabel(pcaLabels.x) : formatLabel(xKey);
+    const yAxisLabel = pcaLabels ? formatLabel(pcaLabels.y) : formatLabel(yKey);
     const xTooltipLabel = pcaLabels ? 'PC1' : formatLabel(xKey);
     const yTooltipLabel = pcaLabels ? 'PC2' : formatLabel(yKey);
     const container = d3.select(containerSelector);
