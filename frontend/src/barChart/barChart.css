@@ -138,3 +138,17 @@ body.shift-held .bar-chart-segment.is-point-selected {
 .bar-group-area.is-expanded .bar-var-layer {
     display: block;
 }
+
+/* ── Frontier brackets ────────────────────────────────────────────────────── */
+
+.frontier-bracket-line {
+    fill: none;
+    stroke: var(--color-axis-dark, #555);
+    stroke-width: 1.5px;
+}
+
+.frontier-bracket-label {
+    font-size: 10px;
+    fill: var(--color-axis-dark, #555);
+    dominant-baseline: auto;
+}
