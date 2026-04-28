@@ -23,7 +23,6 @@
     font-size: 0.68rem;
     color: var(--color-text-muted);
     pointer-events: none;
-    user-select: none;
     white-space: nowrap;
 }
 
@@ -32,7 +31,6 @@
     top: 12px;
     left: 12px;
     pointer-events: none;
-    user-select: none;
 }
 
 .scatter3dgl-legend-title {

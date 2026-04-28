@@ -16,9 +16,13 @@ function applyBarChartHighlight(rowIndex) {
 }
 
 function applyBarChartSelection(rowIndexSet) {
+    const hasSelection = rowIndexSet !== null && rowIndexSet.size > 0;
     d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]')
         .classed('is-selection-dim', function () {
-            return rowIndexSet !== null && !rowIndexSet.has(Number(this.dataset.rowIndex));
+            return hasSelection && !rowIndexSet.has(Number(this.dataset.rowIndex));
+        })
+        .classed('is-point-selected', function () {
+            return hasSelection && rowIndexSet.has(Number(this.dataset.rowIndex));
         });
 }
 
@@ -71,7 +75,7 @@ function computeGroupedRows(data, groupOrder, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderBarChart(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, groups = {} } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, groups = {} } = options;
 
     const container     = d3.select(containerSelector);
     const containerNode = container.node();
@@ -294,7 +298,8 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     const groupArea = barG.append('g')
                         .attr('class', isSegExpanded ? 'bar-group-area is-expanded' : 'bar-group-area')
                         .attr('data-group', seg.grp)
-                        .on('click', () => {
+                        .on('click', (event) => {
+                            if (event.shiftKey) { event.stopPropagation(); onShiftClick(row.rowIndex); return; }
                             if ((groupMembersMap[seg.grp] || []).length <= 1) return;
                             const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
                             next.has(seg.grp) ? next.delete(seg.grp) : next.add(seg.grp);
@@ -373,6 +378,11 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 .attr('width', xScale.bandwidth())
                 .attr('height', seg => yScale(seg.y0) - yScale(seg.y1))
                 .attr('fill', seg => colorScale(seg.key))
+                .on('click', (event, seg) => {
+                    if (!event.shiftKey) return;
+                    event.stopPropagation();
+                    onShiftClick(seg.rowIndex);
+                })
                 .on('mouseenter', (event, seg) => {
                     onHoverStart(seg.rowIndex);
                     const lines = seg.allSegments

@@ -21,6 +21,8 @@ export function createChartRegistry(interactionOptions) {
                 );
                 renderTable(containerSelector, columns, data, {
                     ...interactionOptions,
+                    onBrushFilterChange: (passingRowIndices) =>
+                        interactionOptions.onTableBrushFilterChange(containerSelector, passingRowIndices),
                     animate,
                     columnColors,
                     groups,

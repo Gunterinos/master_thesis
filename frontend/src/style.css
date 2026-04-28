@@ -69,6 +69,8 @@ body {
     overflow: hidden;
     color: var(--color-ink);
     background: linear-gradient(180deg, var(--color-page-bg-start) 0%, var(--color-page-bg-end) 100%);
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .page {

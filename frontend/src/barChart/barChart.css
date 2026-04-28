@@ -12,6 +12,11 @@
     opacity: 0.2;
 }
 
+body.shift-held .bar-chart-segment.is-point-selected {
+    stroke: var(--color-ink);
+    stroke-width: 2;
+}
+
 .bar-chart-tooltip {
     position: fixed;
     z-index: 999;
@@ -63,7 +68,6 @@
     white-space: nowrap;
     font-size: 0.75rem;
     color: var(--color-bar-muted);
-    user-select: none;
 }
 
 .bar-legend-item.is-active .bar-legend-text {
