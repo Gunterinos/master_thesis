@@ -88,26 +88,31 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
 
     const matrix = buildMatrix(rows, variables);
 
-    const width = Math.max(440, containerNode.clientWidth || 0);
-    const height = Math.max(300, containerNode.clientHeight || 0);
+    const containerW = Math.max(440, containerNode.clientWidth || 0);
+    const containerH = Math.max(300, containerNode.clientHeight || 0);
 
     const charPx = 6;
-    const longestLabel = d3.max(variables, (v) => v.length) || 1;
+    const longestLabel = d3.max(variables, (v) => formatLabel(v).length) || 1;
     const leftPad = Math.min(140, Math.max(60, longestLabel * charPx + 8));
     const topPad = Math.min(140, Math.max(60, longestLabel * charPx * 0.75 + 8));
     const legendWidth = 56;
     const rightPad = 16;
-    const bottomPad = topPad;
+    const bottomPad = 12;
 
-    const gridW = Math.max(50, width - leftPad - legendWidth - rightPad);
-    const gridH = Math.max(50, height - topPad - bottomPad);
+    const gridW = Math.max(50, containerW - leftPad - legendWidth - rightPad);
+    const gridH = Math.max(50, containerH - topPad - bottomPad);
     const cellSize = Math.max(8, Math.min(gridW / variables.length, gridH / variables.length));
     const actualGridSize = cellSize * variables.length;
 
+    const svgW = leftPad + actualGridSize + legendWidth + rightPad;
+    const svgH = topPad + actualGridSize + bottomPad;
+
     container.selectAll('*').remove();
     const svg = container.append('svg')
-        .attr('width', width)
-        .attr('height', height)
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('viewBox', `0 0 ${svgW} ${svgH}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
         .attr('class', 'corr-heatmap');
 
     const tipId = `corr-tip-${Math.abs([...containerSelector].reduce((a, c) => a + c.charCodeAt(0), 0))}`;
@@ -138,7 +143,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
                     .on('mousemove', (event) => {
                         tooltip
                             .classed('visible', true)
-                            .html(`<strong>${variables[i]}</strong> × <strong>${variables[j]}</strong><br/>${Number.isFinite(r) ? r.toFixed(3) : 'n/a'}`)
+                            .html(`<strong>${formatLabel(variables[i])}</strong> × <strong>${formatLabel(variables[j])}</strong><br/>${Number.isFinite(r) ? r.toFixed(3) : 'n/a'}`)
                             .style('left', `${event.clientX + 14}px`)
                             .style('top', `${event.clientY - 28}px`);
                     })
@@ -167,24 +172,25 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         .attr('transform', (_d, i) => `translate(0, ${i * cellSize + cellSize / 2}) rotate(-45)`)
         .attr('dy', '0.35em')
         .attr('text-anchor', 'end')
-        .text((d) => d);
+        .text((d) => formatLabel(d));
 
     const colLabels = svg.append('g')
-        .attr('transform', `translate(${leftPad}, ${topPad + actualGridSize + 12})`);
+        .attr('transform', `translate(${leftPad}, ${topPad})`);
     colLabels.selectAll('text')
         .data(variables)
         .enter().append('text')
         .attr('class', 'corr-heatmap-axis-label')
-        .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2 + 10}, 0) rotate(-45)`)
-        .attr('text-anchor', 'end')
+        .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2}, -6) rotate(-45)`)
+        .attr('text-anchor', 'start')
         .text((d) => formatLabel(d));
-
-    const legendG = svg.append('g')
-        .attr('class', 'corr-heatmap-legend')
-        .attr('transform', `translate(${leftPad + actualGridSize + 12}, ${topPad})`);
 
     const legendBarW = 14;
     const legendBarH = Math.min(actualGridSize, 260);
+    const legendOffsetY = topPad + (actualGridSize - legendBarH) / 2;
+
+    const legendG = svg.append('g')
+        .attr('class', 'corr-heatmap-legend')
+        .attr('transform', `translate(${leftPad + actualGridSize + 12}, ${legendOffsetY})`);
     const gradId = `corr-grad-${Math.abs([...containerSelector].reduce((a, c) => a + c.charCodeAt(0), 0))}`;
     const defs = svg.append('defs');
     const gradient = defs.append('linearGradient')
