@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import './barChart.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { CB_PALETTE, POINT_COLOR_BENCHMARK, getGroupBaseColor, getVariableColor, getGroupOrder, getGroupMembers } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 // ── Per-container persistent state ───────────────────────────────────────────
 
@@ -218,14 +219,14 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     });
                 }
                 item.append('span').attr('class', 'bar-legend-swatch').style('background', getGroupBaseColor(gi));
-                item.append('span').attr('class', 'bar-legend-text').text(grp);
+                item.append('span').attr('class', 'bar-legend-text').text(formatLabel(grp));
                 if (canExpand) item.append('span').attr('class', 'bar-legend-arrow').text(isExp ? '▾' : '▸');
             });
         } else {
             columns.forEach((col, i) => {
                 const item = row1.append('div').attr('class', 'bar-legend-item');
                 item.append('span').attr('class', 'bar-legend-swatch').style('background', colorScale(col));
-                item.append('span').attr('class', 'bar-legend-text').text(col);
+                item.append('span').attr('class', 'bar-legend-text').text(formatLabel(col));
             });
         }
 
@@ -242,7 +243,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 members.forEach((col, vi) => {
                     const item = row2.append('div').attr('class', 'bar-legend-item bar-legend-item--var');
                     item.append('span').attr('class', 'bar-legend-swatch bar-legend-swatch--sm').style('background', getVariableColor(gi, vi, members.length));
-                    item.append('span').attr('class', 'bar-legend-text').text(col);
+                    item.append('span').attr('class', 'bar-legend-text').text(formatLabel(col));
                 });
             });
         }
@@ -273,14 +274,14 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                     const isExpanded = seg.grp === expandedGrp;
                     const pct = `${(seg.share * 100).toFixed(1)}%`;
                     const groupLine  = isHovered
-                        ? `<b>${seg.grp}: ${pct}</b>`
-                        : `${seg.grp}: ${pct}`;
+                        ? `<b>${formatLabel(seg.grp)}: ${pct}</b>`
+                        : `${formatLabel(seg.grp)}: ${pct}`;
                     if (isExpanded) {
                         const varLines = seg.varSegs.map(v => {
                             const vPct = `${(v.shareOfTotal * 100).toFixed(2)}%`;
                             return v.col === activeVar
-                                ? `&nbsp;&nbsp;<b>${v.col}: ${vPct}</b>`
-                                : `&nbsp;&nbsp;${v.col}: ${vPct}`;
+                                ? `&nbsp;&nbsp;<b>${formatLabel(v.col)}: ${vPct}</b>`
+                                : `&nbsp;&nbsp;${formatLabel(v.col)}: ${vPct}`;
                         }).join('<br>');
                         return `${groupLine}<br>${varLines}`;
                     }
@@ -386,7 +387,7 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 .on('mouseenter', (event, seg) => {
                     onHoverStart(seg.rowIndex);
                     const lines = seg.allSegments
-                        .map(s => `${s.key}: ${(s.share * 100).toFixed(2)}%`).join('<br>');
+                        .map(s => `${formatLabel(s.key)}: ${(s.share * 100).toFixed(2)}%`).join('<br>');
                     const frontier = frontierByIndex.get(seg.rowIndex);
                     const header = seg.isBenchmark
                         ? 'Benchmark'

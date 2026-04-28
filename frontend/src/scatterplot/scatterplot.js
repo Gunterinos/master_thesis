@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import './scatterplot.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { POINT_COLOR_REGULAR, POINT_COLOR_BENCHMARK, getColumnColor, getGroupBaseColor, getGroupOrder } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 function applyScatterHighlight(rowIndex) {
     d3.selectAll('circle[data-row-index]')
@@ -45,10 +46,10 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         frontierLegendItems = [],
     } = options;
 
-    const xAxisLabel = pcaLabels?.x ?? xKey;
-    const yAxisLabel = pcaLabels?.y ?? yKey;
-    const xTooltipLabel = pcaLabels ? 'PC1' : xKey;
-    const yTooltipLabel = pcaLabels ? 'PC2' : yKey;
+    const xAxisLabel = pcaLabels?.x ?? formatLabel(xKey);
+    const yAxisLabel = pcaLabels?.y ?? formatLabel(yKey);
+    const xTooltipLabel = pcaLabels ? 'PC1' : formatLabel(xKey);
+    const yTooltipLabel = pcaLabels ? 'PC2' : formatLabel(yKey);
     const container = d3.select(containerSelector);
     const containerNode = container.node();
     if (!containerNode) {
@@ -430,5 +431,5 @@ export function populateAxisSelect(select, columns) {
         .enter()
         .append("option")
         .attr("value", (column) => column)
-        .text((column) => column);
+        .text((column) => formatLabel(column));
 }

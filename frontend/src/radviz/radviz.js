@@ -4,6 +4,7 @@ import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/ap
 import { computeRadvizPoints, computeEquilibrium, getTransform } from './radvizLayout.js';
 import { renderGlyph, DEC_COLORS, MINI_R } from './radvizGlyph.js';
 import { POINT_COLOR_BENCHMARK, getGroupBaseColor, getGroupOrder, getGroupMembers } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 const LEGEND_W = 120;
 
@@ -138,7 +139,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             .attr('y', ay * labelR)
             .attr('text-anchor', Math.abs(ax) < 0.1 ? 'middle' : ax > 0 ? 'start' : 'end')
             .attr('dominant-baseline', ay > 0.1 ? 'hanging' : ay < -0.1 ? 'auto' : 'middle')
-            .text(col);
+            .text(formatLabel(col));
     });
 
     g.append('text')
@@ -159,7 +160,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
                 label: grp, color: getGroupBaseColor(gi), bold: true,
             }))
             : decisionColumns.map((col, i) => ({
-                label: col, color: DEC_COLORS[i % DEC_COLORS.length], bold: false,
+                label: formatLabel(col), color: DEC_COLORS[i % DEC_COLORS.length], bold: false,
             }));
 
         const ringItems = frontierColorOverrides && frontierLegendItems.length > 0
@@ -329,7 +330,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             onHoverStart(p.rowIndex);
             const frontier = p.row.__frontier;
             const header = p.row.__isBenchmark ? 'Benchmark' : `Point ${p.rowIndex}${frontier ? `<br>${frontier}` : ''}`;
-            const objLines = columns.map(col => `${col}: ${(+p.row[col]).toFixed(2)}`).join('<br>');
+            const objLines = columns.map(col => `${formatLabel(col)}: ${(+p.row[col]).toFixed(2)}`).join('<br>');
             tooltip.classed('visible', true)
                 .html(`<b>${header}</b><br>${objLines}`)
                 .style('left', `${event.pageX + 12}px`)

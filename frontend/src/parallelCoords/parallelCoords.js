@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import './parallelCoords.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
 import { POINT_COLOR_BENCHMARK, getGroupBaseColor, getGroupOrder, getColumnColor, computeDominantGroups } from '../colors.js';
+import { formatLabel } from '../formatLabel.js';
 
 function applyPcpHighlight(rowIndex) {
     d3.selectAll('.pcp-line[data-row-index]')
@@ -166,7 +167,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
                 rerender(true);
             });
 
-        item.append("span").text(col);
+        item.append("span").text(formatLabel(col));
     });
 
     // Close dropdown on outside click
@@ -236,7 +237,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         const hasGroups = groups && Object.keys(groups).length > 0;
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
-            : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
+            : decisionColumns.map((col, i) => ({ label: formatLabel(col), color: getColumnColor(i) }));
         _renderPcpLegend(legendItems, hasGroups ? "Dominant Dec. Group" : "Dominant Dec. Variable");
     }
 
@@ -303,7 +304,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
             onHoverStart(rowIndex);
             const row = this.__dataRow;
             if (row) {
-                const lines = activeAxes.map((col) => `${col}: ${(+row[col]).toFixed(3)}`).join("<br>");
+                const lines = activeAxes.map((col) => `${formatLabel(col)}: ${(+row[col]).toFixed(3)}`).join("<br>");
                 const frontier = row.__frontier;
                 const header = row.__isBenchmark ? "Benchmark" : `Point: ${rowIndex}${frontier ? `<br>${frontier}` : ''}`;
                 tooltip.classed("visible", true)
@@ -420,9 +421,10 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .attr("y", -14)
         .text((axis) => {
             const dir = objectiveDirections[axis];
-            if (dir === 'max') return `${axis} ↑`;
-            if (dir === 'min') return `${axis} ↓`;
-            return axis;
+            const label = formatLabel(axis);
+            if (dir === 'max') return `${label} ↑`;
+            if (dir === 'min') return `${label} ↓`;
+            return label;
         });
 
     // Drag handle — covers only the label area at the top

@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import './correlationHeatmap.css';
+import { formatLabel } from '../formatLabel.js';
 
 function pearson(xs, ys) {
     let n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
@@ -176,7 +177,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         .attr('class', 'corr-heatmap-axis-label')
         .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2 + 10}, 0) rotate(-45)`)
         .attr('text-anchor', 'end')
-        .text((d) => d);
+        .text((d) => formatLabel(d));
 
     const legendG = svg.append('g')
         .attr('class', 'corr-heatmap-legend')
