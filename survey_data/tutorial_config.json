@@ -3,20 +3,114 @@
     {
       "id": "t1",
       "highlight": ".header-panel",
-      "bubblePosition": "bottom-right",
-      "text": "Welcome! This dashboard lets you explore Pareto-optimal portfolios. The header shows which frontiers are loaded."
+      "text": "Welcome! This dashboard lets you explore Pareto-optimal portfolios. The header will walk you through the tutorial and questions you will have to answer. Furthermore, on the left you can choose which frontiers to put into view."
     },
     {
       "id": "t2",
-      "highlight": "#objectives-container",
-      "bubblePosition": "bottom-right",
-      "text": "This is the Objectives Space. Each point is a portfolio solution. Points on the frontier represent optimal trade-offs between objectives."
+      "highlight": ".table-panel:first-of-type",
+      "text": "This is the Objectives Space. Each point is a portfolio solution. Points on the frontier representing optimal trade-offs between objectives."
     },
     {
       "id": "t3",
-      "highlight": "#decision-container",
-      "bubblePosition": "bottom-left",
-      "text": "This is the Decision Space. It shows the same solutions mapped to their decision variables (e.g. asset allocations)."
+      "highlight": ".table-panel:last-of-type",
+      "text": "This is the Decision Space. It shows the same solutions mapped to their decision variables their allocations."
+    },
+    {
+      "id": "t4",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "text": "Every chart supports some form of hovering, selection or filtering. Hover over a point for more details and to see it in both spaces. Hold Shift and click a point to select it, the selection is synchronised across both panels. In charts with axes you can also brush along them to filter the visible set. Each chart type has its own interaction, which we will point out as we go."
+    },
+    {
+      "id": "t5",
+      "highlight": "#objectives-chart-select",
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
+      "text": "In the Objective Space we have different chart types available. The default is the 2D scatter plot, but you can open the dropdown to see the other options. We will go through explaining their functionality."
+    },
+    {
+      "id": "t6",
+      "highlight": ".table-panel:first-of-type",  
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
+      "text": "The 2D scatter plot is the default view. It shows the relationship between two selected objectives. You can change the objectives on the axes using the dropdowns in the chart controls. Besides shift+click you can also select an area to zoom in."
+    },
+    {
+      "id": "t7",
+      "highlight": ".options-dropdown-menu:first-of-type",  
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "Most charts feature an Options dropdown menu for customization. In the 2D scatter plot, for instance, you can toggle PCA-based dimensionality reduction, display point labels, visualize their dominant decision group, or color-code portfolios based on their originating frontiers."
+    },
+    {
+      "id": "t8",
+      "highlight": ".table-panel:first-of-type",
+      "setChart": { "select": "#objectives-chart-select", "value": "radar" },
+      "text": "The Radar Chart maps each objective onto its own axis originating from the centre. Each portfolio is drawn as a polygon. Besides shift+click you can also filter on the axes by brushing over them."
+    },
+    {
+      "id": "t9",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "radar" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The Radar Chart options let you colour portfolios by their dominant decision group, or switch to frontier colours to distinguish where solutions came from."
+    },
+    {
+      "id": "t10",
+      "highlight": ".table-panel:first-of-type",
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
+      "text": "The 3D Scatterplot adds a third objective axis. Rotate the view by clicking and dragging. Use the X, Y, Z dropdowns to choose which objectives to plot. Besides shift+click you can also brush on the axes to filter the view."
+    },
+    {
+      "id": "t11",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The 3D options extend the 2D ones: Surface renders the Pareto frontier as a mesh, Dominated reveals non-optimal solutions in a muted colour, and Ideal Point marks the theoretical best across all objectives. Dec. Groups and Frontier Colours work the same as in 2D."
+    },
+    {
+      "id": "t12",
+      "highlight": ".table-panel:first-of-type",
+      "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
+      "text": "The Parallel Coordinates Plot draws each objective as a vertical axis and represents every portfolio as a line crossing all of them. This makes trade-offs immediately visible — a line that is high on Return but low on Liquidity stands out at a glance. Besides shift+click you can brush along any axis to filter the set to only portfolios passing through that range."
+    },
+    {
+      "id": "t13",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The Parallel Coordinates options let you colour lines by dominant decision group to spot clusters of similar allocations, or by frontier to see how different algorithms distribute across the objective space."
+    },
+    {
+      "id": "t14",
+      "highlight": ".table-panel:first-of-type",
+      "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
+      "text": "RadViz places each objective as an anchor on a circle and positions every portfolio based on its weighted attraction towards those anchors. Portfolios that balance all objectives land near the centre, while those that excel in one objective are pulled towards its anchor. Besides shift+click you can use the Spread option to pull anchors apart and reduce overlap."
+    },
+    {
+      "id": "t15",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The RadViz options include a Spread toggle that redistributes points outward to reduce clutter, and Frontier Colours to distinguish solutions by their originating algorithm."
+    },
+    {
+      "id": "t17",
+      "highlight": ".table-panel:first-of-type",
+      "setChart": { "select": "#objectives-chart-select", "value": "correlationHeatmap" },
+      "text": "The Correlation Heatmap shows the pairwise correlation between all objectives. Each cell is colour-coded by strength — dark means a strong relationship, light means weak. This helps you quickly identify which objectives move together and which pull in opposite directions."
+    },
+    {
+      "id": "t16",
+      "highlight": ".table-panel:last-of-type",
+      "setChart": { "select": "#decisions-chart-select", "value": "barChart" },
+      "text": "The Column Chart shows each objective as a grouped set of bars, one per portfolio. This makes it straightforward to compare the absolute value of a single objective across all solutions. Besides shift+click you can also brush on the chart to filter the visible set."
+    },
+    {
+      "id": "t18",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "setChart": [
+        { "select": "#objectives-chart-select", "value": "table" },
+        { "select": "#decision-chart-select", "value": "table" }
+      ],
+      "text": "The Table view lists every portfolio with its raw objective and decision values. You can sort by any column and brush rows to filter the selection across all other charts. It is useful for inspecting exact values once you have identified a region of interest in one of the visual charts."
     }
   ]
 }

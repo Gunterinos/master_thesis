@@ -441,7 +441,7 @@ body.survey-active #tutorial-zone {
 
 /* ── Tutorial overlay ───────────────────────────────────────────── */
 
-#tutorial-mask-spotlight,
+.tutorial-mask-spotlight,
 #tutorial-mask-zone {
     transition: x 0.6s ease, y 0.6s ease, width 0.6s ease, height 0.6s ease;
 }
