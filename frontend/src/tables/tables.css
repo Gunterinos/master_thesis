@@ -73,6 +73,14 @@ tbody tr.is-linked-dim {
     opacity: 0.35;
 }
 
+tbody tr.is-linked-dim.is-point-selected {
+    opacity: 1;
+}
+
+tbody tr.is-linked-dim.is-point-selected td:first-child {
+    border-left: 3px solid var(--color-selection);
+}
+
 tbody tr.is-benchmark td:first-child {
     color: var(--color-benchmark);
     font-weight: 700;

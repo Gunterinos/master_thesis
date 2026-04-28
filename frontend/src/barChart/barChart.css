@@ -12,6 +12,12 @@
     opacity: 0.2;
 }
 
+.bar-chart-segment.is-linked-dim.is-point-selected {
+    opacity: 0.7;
+    stroke: var(--color-selection);
+    stroke-width: 2;
+}
+
 body.shift-held .bar-chart-segment.is-point-selected {
     stroke: var(--color-ink);
     stroke-width: 2;
