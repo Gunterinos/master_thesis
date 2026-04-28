@@ -5,6 +5,8 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
+import { loadTutorialConfig } from './survey/surveyConfig.js';
+import { startTutorial } from './survey/tutorialController.js';
 
 let fullData = [];
 let objectiveDirections = {};
@@ -212,6 +214,11 @@ function getActiveFiles() {
     return d3.selectAll("#frontier-buttons button.active").nodes()
         .map((el) => el.dataset.file);
 }
+
+document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
+    const steps = await loadTutorialConfig();
+    startTutorial(steps);
+});
 
 d3.json("/api/data-files")
     .then(({ files }) => {
