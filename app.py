@@ -1,5 +1,8 @@
 from pathlib import Path
 import csv
+import json
+import uuid
+from datetime import datetime
 
 from sklearn.decomposition import PCA
 from flask import Flask, jsonify, render_template, request
@@ -13,6 +16,7 @@ app = Flask(
 )
 DATA_DIR = Path(__file__).resolve().parent / "data"
 BENCHMARK_PATH = DATA_DIR / "benchmark.csv"
+SURVEY_DATA_DIR = Path(__file__).resolve().parent / "survey_data"
 
 
 def _is_numeric(val):
@@ -145,6 +149,13 @@ def pca():
         "pc1Label": label("PC1", v1),
         "pc2Label": label("PC2", v2),
     })
+
+
+@app.get("/api/tutorial-config")
+def tutorial_config():
+    with (SURVEY_DATA_DIR / "tutorial_config.json").open(encoding="utf-8") as f:
+        config = json.load(f)
+    return jsonify(config)
 
 
 if __name__ == "__main__":

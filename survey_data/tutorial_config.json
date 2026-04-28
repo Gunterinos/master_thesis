@@ -1,0 +1,22 @@
+{
+  "tutorial": [
+    {
+      "id": "t1",
+      "highlight": ".header-panel",
+      "bubblePosition": "bottom-right",
+      "text": "Welcome! This dashboard lets you explore Pareto-optimal portfolios. The header shows which frontiers are loaded."
+    },
+    {
+      "id": "t2",
+      "highlight": "#objectives-container",
+      "bubblePosition": "bottom-right",
+      "text": "This is the Objectives Space. Each point is a portfolio solution. Points on the frontier represent optimal trade-offs between objectives."
+    },
+    {
+      "id": "t3",
+      "highlight": "#decision-container",
+      "bubblePosition": "bottom-left",
+      "text": "This is the Decision Space. It shows the same solutions mapped to their decision variables (e.g. asset allocations)."
+    }
+  ]
+}
