@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "dataset": "portfolio_3D.csv",
+      "type": "value_retrieval",
+      "prompt": "Select the point with the highest Return value.",
+      "correctAnswer": null
+    },
+    {
+      "id": "q2",
+      "dataset": "portfolio_3D.csv",
+      "type": "correlation",
+      "prompt": "Which objective appears most strongly correlated with Risk?",
+      "options": ["obj_Return", "obj_Liquidity"],
+      "correctAnswer": "obj_Return"
+    },
+    {
+      "id": "q3",
+      "dataset": "portfolio_3D.csv",
+      "type": "decision",
+      "prompt": "Select the single portfolio you would choose if minimising Risk were your top priority.",
+      "correctAnswer": null
+    }
+  ]
+}

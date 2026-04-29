@@ -1,0 +1,135 @@
+{
+  "tutorial": [
+    {
+      "id": "t1",
+      "highlight": ".header-panel",
+      "text": "Welcome! This dashboard lets you explore Pareto-optimal portfolios. The header will walk you through the tutorial and tasks you will have to complete. Furthermore, on the left you can choose which frontiers to put into view."
+    },
+    {
+      "id": "t2",
+      "highlight": ".table-panel:first-of-type",
+      "text": "This is the Objectives Space. Each point is a portfolio solution on the frontier representing optimal trade-offs between objectives."
+    },
+    {
+      "id": "t3",
+      "highlight": ".table-panel:last-of-type",
+      "text": "This is the Decision Space. It shows the same solutions mapped to their decision variables, i.e. their allocations."
+    },
+    {
+      "id": "t4",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "text": "Every chart supports some form of hovering, selection, or filtering. Generally, you can hover over a point for more details and hold Shift + click a point to select it, this interaction is synchronized between both spaces. Each chart type has its own custom interactions, which we will show as we go."
+    },
+    {
+      "id": "t5",
+      "highlight": ["#objectives-chart-select", "#decision-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
+      "text": "Both the objective space and the decision space have several visualisation options available. We will go through each, explaining their functionality."
+    },
+    {
+      "id": "t6",
+      "highlight": ".table-panel:first-of-type",  
+      "focus": ["#objectives-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
+      "text": "The 2D scatterplot shows the relationship between two selected objectives. You can change the objectives on the axes using the dropdowns in the chart controls. Besides shift+click you can also select an area with the Lasso Tool and then you can zoom in."
+    },
+    {
+      "id": "t7",
+      "highlight": ".options-dropdown-menu:first-of-type",  
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "Most charts feature an Options dropdown menu for customization. In the 2D scatterplot, you can toggle PCA-based dimensionality reduction, display point labels, visualize their dominant decision group, or color-code points based on their originating frontiers."
+    },
+    {
+      "id": "t8",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
+      "text": "The 3D Scatterplot adds a third objective axis. Rotate the view by clicking and dragging. Use the X, Y, Z dropdowns to choose which objectives to plot. Besides shift+click you can also brush on the axes to filter the view."
+    },
+    {
+      "id": "t9",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The 3D options extend the 2D ones: Surface renders the Pareto frontier as a mesh, Dominated reveals non-optimal solutions in a muted colour, and Ideal Point marks the theoretical best across all objectives. Dec. Groups and Frontier Colours work the same as in 2D."
+    },
+    {
+      "id": "t10",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
+      "text": "The Parallel Coordinates Plot draws each objective as a vertical axis and represents every portfolio as a line crossing all of them. Besides shift+click you can brush along any axis to filter the set to only portfolios passing through that range."
+    },
+    {
+      "id": "t11",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The Parallel Coordinates options let you colour lines by dominant decision group, or by frontier."
+    },
+    {
+      "id": "12",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "radar" },
+      "text": "The Radar Chart maps each objective onto its own axis originating from the centre. Each portfolio is drawn as a polygon. Besides shift+click you can also filter on the axes by brushing over them."
+    },
+    {
+      "id": "t13",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "radar" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The Radar Chart options let you colour lines by dominant decision group, or by frontier."
+    },
+    {
+      "id": "t14",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
+      "text": "RadViz places each objective as an anchor on a circle and positions every portfolio based on its attraction towards those anchors. Portfolios that balance all objectives land near the centre, while those that excel in one objective are pulled towards its anchor. Besides shift+click you can also select an area with the Lasso Tool and then you can zoom in."
+    },
+    {
+      "id": "t15",
+      "highlight": "#objectives-options-dropdown .options-dropdown-menu",
+      "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The RadViz options include a Spread toggle that redistributes points in a nice grid in the form of the poligon formed by the objectives, and Frontier Colours to distinguish solutions by their originating frontier."
+    },
+    {
+      "id": "t16",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-select"],
+      "setChart": { "select": "#objectives-chart-select", "value": "correlationHeatmap" },
+      "text": "The Correlation Heatmap shows the pairwise correlation between all objectives. Each cell is colour-coded: dark means a negative correlation, light means a positive correlation. This shows which objectives move together and which pull in opposite directions."
+    },
+    {
+      "id": "t17",
+      "highlight": ".table-panel:last-of-type",
+      "focus": ["#decision-chart-select"],
+      "setChart": { "select": "#decisions-chart-select", "value": "barChart" },
+      "text": "The Column Chart shows each objective as a grouped set of bars, one per portfolio. This makes it straightforward to compare the absolute value of a single objective across all solutions."
+    },
+    {
+      "id": "t18",
+      "highlight": ".bar-chart-bar",
+      "setChart": { "select": "#decisions-chart-select", "value": "barChart" },
+      "text": "Groups withing the column that are formed of multiple assets, such as Equities, can be expanded to show the individual assets that compose them."
+    },
+    {
+      "id": "t19",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "focus": ["#objectives-chart-select", "#decision-chart-select"],
+      "setChart": [
+        { "select": "#objectives-chart-select", "value": "table" },
+        { "select": "#decision-chart-select", "value": "table" }
+      ],
+      "text": "The Table view lists every portfolio with its raw objective and decision values. You can sort by any column and brush the little bars at the top to filter."
+    },
+    {
+      "id": "t20",
+      "highlight": ".group-header",
+      "text": "Groups within the columns that are formed of multiple assets, such as Equities, can be expanded to show the individual assets that compose them."
+    }
+  ]
+}

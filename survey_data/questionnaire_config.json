@@ -1,0 +1,27 @@
+{
+  "questionnaire": [
+    {
+      "id": "ux1",
+      "type": "likert",
+      "prompt": "How easy was it to identify the best portfolio for your goal?",
+      "scale": 7
+    },
+    {
+      "id": "ux2",
+      "type": "likert",
+      "prompt": "How confident are you in the answer you selected?",
+      "scale": 7
+    },
+    {
+      "id": "ux3",
+      "type": "likert",
+      "prompt": "How visually clear was the chart?",
+      "scale": 7
+    },
+    {
+      "id": "ux4",
+      "type": "free_text",
+      "prompt": "Any other comments or observations?"
+    }
+  ]
+}
