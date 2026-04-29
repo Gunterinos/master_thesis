@@ -70,6 +70,27 @@ function ensurePoolSize(count, mask) {
     }
 }
 
+function clearFocusBorders() {
+    document.querySelectorAll('.tutorial-focus-border').forEach(el => el.remove());
+}
+
+function renderFocusBorders(step) {
+    if (!step.focus) return;
+    const selectors = Array.isArray(step.focus) ? step.focus : [step.focus];
+    selectors.forEach(selector => {
+        const target = document.querySelector(selector);
+        if (!target) return;
+        const r = target.getBoundingClientRect();
+        const div = document.createElement('div');
+        div.classList.add('tutorial-focus-border');
+        div.style.left   = `${r.left}px`;
+        div.style.top    = `${r.top}px`;
+        div.style.width  = `${r.width}px`;
+        div.style.height = `${r.height}px`;
+        document.body.appendChild(div);
+    });
+}
+
 function updatePositions() {
     const step   = steps[currentIndex];
     const zoneEl = document.getElementById('tutorial-zone');
@@ -92,6 +113,9 @@ function updatePositions() {
     }
 
     setRect(document.getElementById('tutorial-mask-zone'), rectAttrs(zoneEl, 4));
+
+    clearFocusBorders();
+    renderFocusBorders(step);
 }
 
 function closeAllStepMenus() {
@@ -163,6 +187,7 @@ export function startTutorial(tutorialSteps) {
 
 function endTutorial() {
     closeAllStepMenus();
+    clearFocusBorders();
     document.getElementById('tutorial-overlay')?.remove();
     document.getElementById('tutorial-zone').innerHTML = '';
     document.body.classList.remove('survey-active');
