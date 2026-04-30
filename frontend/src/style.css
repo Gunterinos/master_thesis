@@ -80,13 +80,87 @@ body {
     min-height: 0;
 }
 
+.panel-controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    width: 100%;
+}
+
+.chart-buttons-row {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.chart-buttons-row button {
+    width: 52px;
+    height: 52px;
+    padding: 4px;
+    border: 1px solid rgba(194, 202, 214, 0.9);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(22, 29, 44, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-buttons-row button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 3px;
+    display: block;
+}
+
+.chart-buttons-row button:hover {
+    border-color: var(--color-border);
+    box-shadow: 0 2px 8px rgba(33, 40, 56, 0.09);
+}
+
+.chart-buttons-row button.active {
+    background: var(--color-selection);
+    border-color: var(--color-selection);
+    color: var(--color-white);
+    box-shadow: 0 1px 4px var(--color-selection-shadow);
+}
+
+.chart-buttons-row button[data-tooltip] {
+    position: relative;
+}
+
+.chart-buttons-row button[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: auto;
+    background: #1e2433;
+    color: #fff;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 400;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 300;
+}
+
 .panel-controls {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
     color: var(--color-text-secondary);
-    font-size: 0.86rem;
+    font-size: 0.8rem;
 }
 
 .panel-controls label {
@@ -97,8 +171,8 @@ body {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    min-height: 36px;
-    padding: 0.4rem 2rem 0.4rem 0.78rem;
+    min-height: 28px;
+    padding: 0.25rem 2rem 0.25rem 0.65rem;
     border: 1px solid rgba(194, 202, 214, 0.8);
     border-radius: 999px;
     background-color: var(--color-surface);
@@ -131,13 +205,13 @@ body {
 }
 
 .panel-controls button {
-    min-height: 36px;
-    padding: 0.4rem 0.85rem;
+    min-height: 28px;
+    padding: 0.25rem 0.7rem;
     border: 1px solid rgba(194, 202, 214, 0.9);
     border-radius: 999px;
     background: var(--color-surface);
     color: var(--color-ink);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 500;
     line-height: 1.2;
     cursor: pointer;
@@ -173,8 +247,8 @@ body {
 }
 
 .options-dropdown-btn {
-    min-height: 36px;
-    padding: 0.4rem 0.85rem;
+    min-height: 28px;
+    padding: 0.25rem 0.7rem;
     border: 1px solid rgba(194, 202, 214, 0.8);
     border-radius: 999px;
     background-color: var(--color-surface);
@@ -400,19 +474,25 @@ body.survey-active #tutorial-zone {
 }
 
 .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
     margin-bottom: 0.5rem;
+}
+
+.chart-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
 }
 
 .table-panel h2 {
     margin: 0;
     flex-shrink: 0;
-    font-size: 1.02rem;
-    letter-spacing: 0.01em;
-    color: var(--color-ink);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
 }
 
 .panel-content {

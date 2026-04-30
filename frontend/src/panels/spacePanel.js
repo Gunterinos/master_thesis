@@ -4,6 +4,7 @@ import { populateAxisSelect } from '../scatterplot/scatterplot.js';
 import { populateAxisSelect3dGL } from '../scatterplot3dGL/scatterplot3dGL.js';
 import { setRadvizSpread } from '../radviz/radviz.js';
 import { computeDominantGroups, computeFrontierColors } from '../colors.js';
+import { chartIconMap } from './chartRegistry.js';
 
 const _observers = new Map(); // containerSelector → ResizeObserver
 
@@ -11,6 +12,7 @@ export function initializeSpacePanel(config) {
     const {
         containerSelector,
         chartSelectSelector,
+        chartButtonsSelector = null,
         xAxisSelector,
         yAxisSelector,
         zAxisSelector = null,
@@ -40,10 +42,7 @@ export function initializeSpacePanel(config) {
     } = config;
 
     const chartSelect = d3.select(chartSelectSelector);
-    const chartSelectId = chartSelectSelector.startsWith("#")
-        ? chartSelectSelector.slice(1)
-        : chartSelectSelector;
-    const chartLabel = d3.select(`label[for="${chartSelectId}"]`);
+    const chartButtons = chartButtonsSelector ? d3.select(chartButtonsSelector) : null;
     const xAxisSelect = d3.select(xAxisSelector);
     const yAxisSelect = d3.select(yAxisSelector);
     const zAxisSelect = zAxisSelector ? d3.select(zAxisSelector) : null;
@@ -97,9 +96,49 @@ export function initializeSpacePanel(config) {
     );
     chartSelect.property("value", selectedChart);
 
+    const syncButtonActiveState = () => {
+        if (!chartButtons) return;
+        const current = chartSelect.property("value");
+        chartButtons.selectAll("button")
+            .classed("active", function () {
+                return d3.select(this).attr("data-chart-key") === current;
+            });
+    };
+
+    if (chartButtons) {
+        chartButtons.selectAll("*").remove();
+        chartButtons
+            .selectAll("button")
+            .data(charts)
+            .enter()
+            .append("button")
+            .attr("type", "button")
+            .attr("data-chart-key", (chart) => chart.key)
+            .attr("data-tooltip", (chart) => chart.description ? `${chart.label}: ${chart.description}` : chart.label)
+            .classed("active", (chart) => chart.key === selectedChart)
+            .on("click", function (event, chart) {
+                chartSelect.property("value", chart.key);
+                chartSelect.dispatch("change");
+            })
+            .each(function (chart) {
+                const btn = d3.select(this);
+                const iconSrc = chartIconMap[chart.key];
+                if (iconSrc) {
+                    btn.append("img")
+                        .attr("src", iconSrc)
+                        .attr("alt", chart.label);
+                } else {
+                    btn.text(chart.label);
+                }
+            });
+    }
+
     const hasChartChoice = charts.length > 1;
-    chartSelect.classed("hidden", !hasChartChoice);
-    chartLabel.classed("hidden", !hasChartChoice);
+    if (chartButtons) {
+        chartButtons.classed("hidden", !hasChartChoice);
+    } else {
+        chartSelect.classed("hidden", !hasChartChoice);
+    }
 
     const scatterEnabled = charts.some((chart) => chart.key === "scatter" || chart.key === "scatter3dGL");
     if (scatterEnabled) {
@@ -297,7 +336,10 @@ export function initializeSpacePanel(config) {
         });
     }
 
-    chartSelect.on("change", () => updatePanel(true));
+    chartSelect.on("change", () => {
+        syncButtonActiveState();
+        updatePanel(true);
+    });
     xAxisSelect.on("change", () => updatePanel(true));
     yAxisSelect.on("change", () => updatePanel(true));
     if (zAxisSelect) zAxisSelect.on("change", () => updatePanel(true));

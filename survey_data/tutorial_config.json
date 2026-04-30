@@ -22,14 +22,14 @@
     },
     {
       "id": "t5",
-      "highlight": ["#objectives-chart-select", "#decision-chart-select"],
+      "highlight": ["#objectives-chart-buttons", "#decision-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
       "text": "Both the objective space and the decision space have several visualisation options available. We will go through each, explaining their functionality."
     },
     {
       "id": "t6",
       "highlight": ".table-panel:first-of-type",  
-      "focus": ["#objectives-chart-select"],
+      "focus": ["#objectives-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "scatter" }, 
       "text": "The 2D scatterplot shows the relationship between two selected objectives. You can change the objectives on the axes using the dropdowns in the chart controls. Besides shift+click you can also select an area with the Lasso Tool and then you can zoom in."
     },
@@ -43,7 +43,7 @@
     {
       "id": "t8",
       "highlight": ".table-panel:first-of-type",
-      "focus": ["#objectives-chart-select"],
+      "focus": ["#objectives-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
       "text": "The 3D Scatterplot adds a third objective axis. Rotate the view by clicking and dragging. Use the X, Y, Z dropdowns to choose which objectives to plot. Besides shift+click you can also brush on the axes to filter the view."
     },
@@ -57,7 +57,7 @@
     {
       "id": "t10",
       "highlight": ".table-panel:first-of-type",
-      "focus": ["#objectives-chart-select"],
+      "focus": ["#objectives-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
       "text": "The Parallel Coordinates Plot draws each objective as a vertical axis and represents every portfolio as a line crossing all of them. Besides shift+click you can brush along any axis to filter the set to only portfolios passing through that range."
     },
@@ -71,7 +71,7 @@
     {
       "id": "12",
       "highlight": ".table-panel:first-of-type",
-      "focus": ["#objectives-chart-select"],
+      "focus": ["#objectives-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "radar" },
       "text": "The Radar Chart maps each objective onto its own axis originating from the centre. Each portfolio is drawn as a polygon. Besides shift+click you can also filter on the axes by brushing over them."
     },
@@ -85,7 +85,7 @@
     {
       "id": "t14",
       "highlight": ".table-panel:first-of-type",
-      "focus": ["#objectives-chart-select"],
+      "focus": ["#objectives-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
       "text": "RadViz places each objective as an anchor on a circle and positions every portfolio based on its attraction towards those anchors. Portfolios that balance all objectives land near the centre, while those that excel in one objective are pulled towards its anchor. Besides shift+click you can also select an area with the Lasso Tool and then you can zoom in."
     },
@@ -99,14 +99,14 @@
     {
       "id": "t16",
       "highlight": ".table-panel:first-of-type",
-      "focus": ["#objectives-chart-select"],
+      "focus": ["#objectives-chart-buttons"],
       "setChart": { "select": "#objectives-chart-select", "value": "correlationHeatmap" },
       "text": "The Correlation Heatmap shows the pairwise correlation between all objectives. Each cell is colour-coded: dark means a negative correlation, light means a positive correlation. This shows which objectives move together and which pull in opposite directions."
     },
     {
       "id": "t17",
       "highlight": ".table-panel:last-of-type",
-      "focus": ["#decision-chart-select"],
+      "focus": ["#decision-chart-buttons"],
       "setChart": { "select": "#decisions-chart-select", "value": "barChart" },
       "text": "The Column Chart shows each objective as a grouped set of bars, one per portfolio. This makes it straightforward to compare the absolute value of a single objective across all solutions."
     },
@@ -119,7 +119,7 @@
     {
       "id": "t19",
       "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
-      "focus": ["#objectives-chart-select", "#decision-chart-select"],
+      "focus": ["#objectives-chart-buttons", "#decision-chart-buttons"],
       "setChart": [
         { "select": "#objectives-chart-select", "value": "table" },
         { "select": "#decision-chart-select", "value": "table" }
