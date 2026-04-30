@@ -9,6 +9,7 @@ export function initializeObjectivesSpacePanel(config) {
     initializeSpacePanel({
         containerSelector: "#objectives-container",
         chartSelectSelector: "#objectives-chart-select",
+        chartButtonsSelector: "#objectives-chart-buttons",
         xAxisSelector: "#objectives-x-axis",
         yAxisSelector: "#objectives-y-axis",
         zAxisSelector: "#objectives-z-axis",

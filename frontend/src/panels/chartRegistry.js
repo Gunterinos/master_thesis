@@ -8,11 +8,23 @@ import { renderRadarChart } from '../radarChart/radarChart.js';
 import { renderCorrelationHeatmap } from '../correlationHeatmap/correlationHeatmap.js';
 import { getColumnColor } from '../colors.js';
 
+export const chartIconMap = {
+    table:              '/icons/Table.svg',
+    scatter:            '/icons/2D_Scatter.svg',
+    scatter3dGL:        '/icons/3D_ScatterPlot.svg',
+    pcp:                '/icons/PCP.svg',
+    radar:              '/icons/radarChart.svg',
+    radviz:             '/icons/RadViz.svg',
+    correlationHeatmap: '/icons/Heatmap.svg',
+    barChart:           '/icons/BarChart.svg',
+};
+
 export function createChartRegistry(interactionOptions) {
     return {
         table: {
             key: "table",
             label: "Table",
+            description: "View raw data in sortable, filterable rows",
             needsAxes: false,
             canRender: () => true,
             render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
@@ -32,6 +44,7 @@ export function createChartRegistry(interactionOptions) {
         scatter: {
             key: "scatter",
             label: "2D Scatterplot",
+            description: "Plot two objectives on X and Y axes",
             needsAxes: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
             render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
@@ -51,6 +64,7 @@ export function createChartRegistry(interactionOptions) {
         scatter3dGL: {
             key: "scatter3dGL",
             label: "3D Scatterplot",
+            description: "Plot three objectives in 3D space",
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
@@ -74,6 +88,7 @@ export function createChartRegistry(interactionOptions) {
         barChart: {
             key: "barChart",
             label: "Column Chart",
+            description: "Compare allocations as grouped bars",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 1,
             render: ({ containerSelector, columns, data, groups = {} }) => {
@@ -86,6 +101,7 @@ export function createChartRegistry(interactionOptions) {
         pcp: {
             key: "pcp",
             label: "Parallel Coordinates",
+            description: "Compare all objectives as parallel vertical axes",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
             render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
@@ -104,6 +120,7 @@ export function createChartRegistry(interactionOptions) {
         radar: {
             key: "radar",
             label: "Radar Chart",
+            description: "Compare objectives on radial axes from center",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
             render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
@@ -122,6 +139,7 @@ export function createChartRegistry(interactionOptions) {
         radviz: {
             key: "radviz",
             label: "RadViz",
+            description: "Position points by attraction to objective anchors",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
             render: ({ containerSelector, columns, data, animate = false, groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
@@ -137,6 +155,7 @@ export function createChartRegistry(interactionOptions) {
         correlationHeatmap: {
             key: "correlationHeatmap",
             label: "Correlation Heatmap",
+            description: "Show pairwise correlations between objectives",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
             render: ({ containerSelector, columns, data, decisionColumns = [], animate = false }) => {

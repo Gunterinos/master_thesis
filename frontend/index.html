@@ -19,48 +19,52 @@
             <div class="table-panel">
                 <div class="panel-header">
                     <h2>Objectives Space</h2>
-                    <div class="panel-controls">
-                        <label for="objectives-chart-select">Chart:</label>
-                        <select id="objectives-chart-select"></select>
-                        <button id="objectives-clear-selection" class="hidden" type="button">Clear Selection</button>
-                        <button id="objectives-zoom-toggle" class="hidden" type="button">Zoom In</button>
-                        <div class="options-dropdown hidden" id="objectives-options-dropdown">
-                            <button type="button" class="options-dropdown-btn">Options ▾</button>
-                            <div class="options-dropdown-menu">
-                                <button id="objectives-pca-toggle" type="button" class="options-dropdown-item">Dim. Reduction</button>
-                                <button id="objectives-labels-toggle" type="button" class="options-dropdown-item">Labels</button>
-                                <button id="objectives-dec-groups-toggle" type="button" class="options-dropdown-item">Dec. Groups</button>
-                                <button id="objectives-frontier-colors-toggle" type="button" class="options-dropdown-item">Frontier Colours</button>
-                                <button id="objectives-surface-toggle" type="button" class="options-dropdown-item">Surface</button>
-                                <button id="objectives-ideal-toggle" type="button" class="options-dropdown-item">Ideal Point</button>
-                                <button id="objectives-dominated-toggle" type="button" class="options-dropdown-item">Dominated</button>
-                                <button id="objectives-spread" type="button" class="options-dropdown-item">Spread</button>
+                    <div class="panel-controls-wrapper">
+                        <div id="objectives-chart-buttons" class="chart-buttons-row"></div>
+                        <div class="panel-controls">
+                            <button id="objectives-clear-selection" class="hidden" type="button">Clear Selection</button>
+                            <button id="objectives-zoom-toggle" class="hidden" type="button">Zoom In</button>
+                            <div class="options-dropdown hidden" id="objectives-options-dropdown">
+                                <button type="button" class="options-dropdown-btn">Options ▾</button>
+                                <div class="options-dropdown-menu">
+                                    <button id="objectives-pca-toggle" type="button" class="options-dropdown-item">Dim. Reduction</button>
+                                    <button id="objectives-labels-toggle" type="button" class="options-dropdown-item">Labels</button>
+                                    <button id="objectives-dec-groups-toggle" type="button" class="options-dropdown-item">Dec. Groups</button>
+                                    <button id="objectives-frontier-colors-toggle" type="button" class="options-dropdown-item">Frontier Colours</button>
+                                    <button id="objectives-surface-toggle" type="button" class="options-dropdown-item">Surface</button>
+                                    <button id="objectives-ideal-toggle" type="button" class="options-dropdown-item">Ideal Point</button>
+                                    <button id="objectives-dominated-toggle" type="button" class="options-dropdown-item">Dominated</button>
+                                    <button id="objectives-spread" type="button" class="options-dropdown-item">Spread</button>
+                                </div>
                             </div>
+                            <label for="objectives-x-axis" class="axis-label hidden">X:</label>
+                            <select id="objectives-x-axis" class="hidden"></select>
+                            <label for="objectives-y-axis" class="axis-label hidden">Y:</label>
+                            <select id="objectives-y-axis" class="hidden"></select>
+                            <label for="objectives-z-axis" class="axis-label hidden">Z:</label>
+                            <select id="objectives-z-axis" class="hidden"></select>
                         </div>
-                        <label for="objectives-x-axis" class="axis-label hidden">X:</label>
-                        <select id="objectives-x-axis" class="hidden"></select>
-                        <label for="objectives-y-axis" class="axis-label hidden">Y:</label>
-                        <select id="objectives-y-axis" class="hidden"></select>
-                        <label for="objectives-z-axis" class="axis-label hidden">Z:</label>
-                        <select id="objectives-z-axis" class="hidden"></select>
                     </div>
                 </div>
+                <select id="objectives-chart-select" class="hidden"></select>
                 <div id="objectives-container" class="panel-content"></div>
             </div>
             <div class="table-panel">
                 <div class="panel-header">
                     <h2>Decision Space</h2>
-                    <div class="panel-controls">
-                        <label for="decision-chart-select">Chart:</label>
-                        <select id="decision-chart-select"></select>
-                        <button id="decision-clear-selection" class="hidden" type="button">Clear Selection</button>
-                        <button id="decision-zoom-toggle" class="hidden" type="button">Zoom In</button>
-                        <label for="decision-x-axis" class="axis-label hidden">X:</label>
-                        <select id="decision-x-axis" class="hidden"></select>
-                        <label for="decision-y-axis" class="axis-label hidden">Y:</label>
-                        <select id="decision-y-axis" class="hidden"></select>
+                    <div class="panel-controls-wrapper">
+                        <div id="decision-chart-buttons" class="chart-buttons-row"></div>
+                        <div class="panel-controls">
+                            <button id="decision-clear-selection" class="hidden" type="button">Clear Selection</button>
+                            <button id="decision-zoom-toggle" class="hidden" type="button">Zoom In</button>
+                            <label for="decision-x-axis" class="axis-label hidden">X:</label>
+                            <select id="decision-x-axis" class="hidden"></select>
+                            <label for="decision-y-axis" class="axis-label hidden">Y:</label>
+                            <select id="decision-y-axis" class="hidden"></select>
+                        </div>
                     </div>
                 </div>
+                <select id="decision-chart-select" class="hidden"></select>
                 <div id="decision-container" class="panel-content"></div>
             </div>
         </div>

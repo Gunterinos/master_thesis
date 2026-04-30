@@ -8,6 +8,7 @@ export function initializeDecisionSpacePanel(config) {
     initializeSpacePanel({
         containerSelector: "#decision-container",
         chartSelectSelector: "#decision-chart-select",
+        chartButtonsSelector: "#decision-chart-buttons",
         xAxisSelector: "#decision-x-axis",
         yAxisSelector: "#decision-y-axis",
         xLabelSelector: 'label[for="decision-x-axis"]',
