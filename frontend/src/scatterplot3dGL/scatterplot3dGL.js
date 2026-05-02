@@ -278,7 +278,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
             : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
         legendDiv.html(
-            `<span class="scatter3dgl-legend-title">${hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable'}</span>` +
+            `<span class="scatter3dgl-legend-title">${"Dominant Allocation"}</span>` +
             _buildLegendRows(legendItems) +
             benchmarkRow +
             surfaceSection
