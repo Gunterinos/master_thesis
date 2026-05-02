@@ -327,7 +327,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
             : decisionColumns.map((col, i) => ({ label: col, color: getColumnColor(i) }));
-        _renderScatterLegend(legendItems, hasGroups ? "Dec. Group" : "Dec. Variable");
+        _renderScatterLegend(legendItems, "Dominant Allocation");
     }
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));

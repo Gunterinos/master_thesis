@@ -271,7 +271,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
             : decisionColumns.map((col, i) => ({ label: formatLabel(col), color: getColumnColor(i) }));
-        _renderRadarLegend(legendItems, hasGroups ? 'Dominant Dec. Group' : 'Dominant Dec. Variable');
+        _renderRadarLegend(legendItems, "Dominant Allocation");
     }
 
     // ── Grid rings ────────────────────────────────────────────────────────────

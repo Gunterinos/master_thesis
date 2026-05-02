@@ -238,7 +238,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         const legendItems = hasGroups
             ? getGroupOrder(decisionColumns, groups).map((grp, gi) => ({ label: grp, color: getGroupBaseColor(gi) }))
             : decisionColumns.map((col, i) => ({ label: formatLabel(col), color: getColumnColor(i) }));
-        _renderPcpLegend(legendItems, hasGroups ? "Dominant Dec. Group" : "Dominant Dec. Variable");
+        _renderPcpLegend(legendItems, "Dominant Allocation");
     }
 
     // ── Y scales ─────────────────────────────────────────────────

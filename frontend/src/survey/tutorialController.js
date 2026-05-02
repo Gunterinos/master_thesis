@@ -129,7 +129,7 @@ function renderStep(index) {
 
     closeAllStepMenus();
 
-    document.getElementById('tutorial-bubble-text').textContent = step.text;
+    document.getElementById('tutorial-bubble-text').innerHTML = step.text;
     document.getElementById('tutorial-step-counter').textContent = `${index + 1} / ${steps.length}`;
     document.getElementById('tutorial-prev-btn').disabled = index === 0;
     document.getElementById('tutorial-next-btn').textContent =
