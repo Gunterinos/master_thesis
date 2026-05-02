@@ -202,9 +202,9 @@ body.shift-held .pcp-line.is-line-selected {
     rx: 2px;
 }
 
-/* Lines dimmed by an active brush filter */
+
 .pcp-line.is-brush-filtered {
-    stroke-opacity: 0.8;
+    stroke-opacity: 0.12;
     stroke-width: 1.5;
 }
 

@@ -17,7 +17,7 @@ function applyBarChartHighlight(rowIndex) {
 }
 
 function applyBarChartSelection(rowIndexSet) {
-    const hasSelection = rowIndexSet !== null && rowIndexSet.size > 0;
+    const hasSelection = rowIndexSet !== null;
     d3.selectAll('.bar-chart-segment[data-row-index], .bar-benchmark-outline[data-row-index]')
         .classed('is-selection-dim', function () {
             return hasSelection && !rowIndexSet.has(Number(this.dataset.rowIndex));

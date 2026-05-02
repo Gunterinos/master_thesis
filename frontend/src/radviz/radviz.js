@@ -344,7 +344,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
     // ── Selection state ──────────────────────────────────────────────────
 
     function setSelection(rowIndexSet) {
-        const hasSel = rowIndexSet !== null && rowIndexSet.size > 0;
+        const hasSel = rowIndexSet !== null;
         container.selectAll('g.radviz-point[data-row-index]')
             .classed('is-selection-dim', function () { return hasSel && !rowIndexSet.has(Number(this.dataset.rowIndex)); })
             .classed('is-point-selected', function () { return hasSel && rowIndexSet.has(Number(this.dataset.rowIndex)); });

@@ -377,7 +377,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         .text("Shift+click to select points");
 
     function setSelection(rowIndexSet) {
-        const hasSelection = rowIndexSet !== null && rowIndexSet.size > 0;
+        const hasSelection = rowIndexSet !== null;
         container.selectAll("circle[data-row-index]")
             .classed("is-selection-dim", function () {
                 return hasSelection && !rowIndexSet.has(Number(this.dataset.rowIndex));
