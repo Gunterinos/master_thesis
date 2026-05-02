@@ -68,11 +68,11 @@ export function computeEquilibrium(points, R, vertices) {
 
     const sim = d3.forceSimulation(nodes)
         .force('collide', d3.forceCollide(nodeRadius).iterations(4))
-        .force('cx', d3.forceX(d => d.tx).strength(1))
-        .force('cy', d3.forceY(d => d.ty).strength(1))
+        .force('cx', d3.forceX(d => d.tx).strength(0.4))
+        .force('cy', d3.forceY(d => d.ty).strength(0.4))
         .stop();
 
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < 200; i++) {
         sim.tick();
         // Soft polygon wall: push escaped nodes back inside with velocity dampening
         nodes.forEach(n => {
