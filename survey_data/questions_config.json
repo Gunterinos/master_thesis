@@ -83,5 +83,48 @@
       ]
     }
   ],
-  "postQuestionnaire": null
+  "postQuestionnaire": {
+    "title": "Experience Questionnaire",
+    "subtitle": "Please take a moment to answer these questions about your experience. All fields are optional.",
+    "questions": [
+      {
+        "id": "pq1",
+        "type": "multiple_choice",
+        "prompt": "How easy was it to identify the portfolio with the best overall performance?",
+        "options": ["Very easy", "Easy", "Neutral", "Difficult", "Very difficult"]
+      },
+      {
+        "id": "pq2",
+        "type": "likert",
+        "prompt": "The visualizations helped me understand the trade-offs between objectives.",
+        "scale": 7,
+        "labels": { "min": "Strongly disagree", "max": "Strongly agree" }
+      },
+      {
+        "id": "pq3",
+        "type": "multiple_choice",
+        "prompt": "Which visualization type did you find most useful for comparing portfolios?",
+        "options": ["2D Scatterplot", "3D Scatterplot", "Parallel Coordinates", "Radar Chart", "RadViz", "Correlation Heatmap", "Column Chart", "Table"]
+      },
+      {
+        "id": "pq4",
+        "type": "likert",
+        "prompt": "Overall, I found the tool easy to use.",
+        "scale": 5,
+        "labels": { "min": "Strongly disagree", "max": "Strongly agree" }
+      },
+      {
+        "id": "pq5",
+        "type": "open",
+        "prompt": "What aspects of the tool did you find most useful or interesting?",
+        "placeholder": "Type your answer here…"
+      },
+      {
+        "id": "pq6",
+        "type": "open",
+        "prompt": "Do you have any suggestions for improving the tool?",
+        "placeholder": "Type your answer here…"
+      }
+    ]
+  }
 }

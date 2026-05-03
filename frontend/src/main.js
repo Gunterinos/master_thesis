@@ -8,6 +8,7 @@ import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelecti
 import { loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
 import { startQuestions } from './survey/questionController.js';
+import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
 
 let fullData = [];
@@ -273,21 +274,26 @@ function showQuestionsIntroScreen() {
 }
 
 async function finishSurvey(responses, sessionId) {
-    try {
-        await fetch('/api/save-responses', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionId, responses }),
-        });
-    } catch { /* non-critical */ }
+    const config = await loadQuestionsConfig().catch(() => null);
+    const pqConfig = config?.postQuestionnaire ?? null;
 
-    document.getElementById('tutorial-zone').innerHTML = '';
-    document.body.classList.remove('survey-active');
-    document.getElementById('start-tutorial-btn').style.display = '';
-    document.getElementById('chart-guide-btn').style.display = '';
+    showPostQuestionnaire(pqConfig, {
+        onComplete: async (postQuestionnaire) => {
+            try {
+                await fetch('/api/save-responses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId, responses, postQuestionnaire }),
+                });
+            } catch { /* non-critical */ }
 
-    // Resync charts with whatever frontier buttons are currently active
-    loadActiveFiles(getActiveFiles());
+            document.getElementById('tutorial-zone').innerHTML = '';
+            document.body.classList.remove('survey-active');
+            document.getElementById('start-tutorial-btn').style.display = '';
+            document.getElementById('chart-guide-btn').style.display = '';
+            loadActiveFiles(getActiveFiles());
+        },
+    });
 }
 
 d3.json("/api/data-files")
