@@ -34,6 +34,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        onAfterRender: updateSelectionButtons,
     });
 
     initializeDecisionSpacePanel({
@@ -54,8 +55,10 @@ function updateSelectionButtons() {
     const hasSelection = sel !== null;
     const hasZoomableSelection = hasSelection && sel.size > 0;
     const zoomLabel = getIsZoomed() ? "Zoom Out" : "Zoom In";
-    d3.select("#objectives-clear-selection").classed("hidden", !hasSelection);
-    d3.select("#objectives-zoom-toggle").classed("hidden", !hasZoomableSelection).text(zoomLabel);
+    const objChart = d3.select("#objectives-chart-select").property("value");
+    const objNoSelection = objChart === "correlationHeatmap";
+    d3.select("#objectives-clear-selection").classed("hidden", !hasSelection || objNoSelection);
+    d3.select("#objectives-zoom-toggle").classed("hidden", !hasZoomableSelection || objNoSelection).text(zoomLabel);
     d3.select("#decision-clear-selection").classed("hidden", !hasSelection);
     d3.select("#decision-zoom-toggle").classed("hidden", !hasZoomableSelection).text(zoomLabel);
 }

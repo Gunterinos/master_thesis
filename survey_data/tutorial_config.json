@@ -114,7 +114,7 @@
       "highlight": ".table-panel:last-of-type",
       "focus": ["#decision-chart-buttons button[data-chart-key='barChart']"],
       "setChart": { "select": "#decision-chart-select", "value": "barChart" },
-      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per portfolio. Useful for comparing <strong>absolute allocations</strong> across all solutions."
+      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per portfolio. Useful for comparing <strong>absolute allocations</strong> across all solutions. <strong>Shift + click</strong> a bar to select that portfolio."
     },
     {
       "id": "t18",
