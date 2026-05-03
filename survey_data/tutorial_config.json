@@ -13,7 +13,7 @@
     {
       "id": "t3",
       "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
-      "text": "Every chart supports <strong>hovering</strong>, <strong>selection</strong>, and <strong>filtering</strong>. Hold <strong>Shift + click</strong> a point to select it; selections are <strong>synchronized</strong> between both spaces. <strong>Click</strong> the <strong>zoom in/out</strong> button to zoom in/out. Use <strong>Clear Selection</strong> to reset any active filter. Each chart type adds its own custom interactions, shown as we go."
+      "text": "Every chart supports <strong>hovering</strong>, <strong>selection</strong>, and <strong>filtering</strong>. Hold <strong>Shift + click</strong> a point to select it; selections are <strong>synchronized</strong> between both spaces. <strong>Click</strong> the <strong>zoom in/out</strong> button to zoom in/out. Use <strong>Clear Selection</strong> to reset any active filter. Each chart type adds its own custom interactions, explained later in the tutorial or available anytime in the <strong>Chart Guide</strong>."
     },
     {
       "id": "t4",

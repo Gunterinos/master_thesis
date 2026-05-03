@@ -156,14 +156,18 @@ export function startTutorial(tutorialSteps) {
     currentIndex = 0;
 
     document.body.classList.add('survey-active');
+    document.getElementById('chart-guide-btn').style.display = 'none';
 
     const zone = document.getElementById('tutorial-zone');
     zone.innerHTML = `
         <p id="tutorial-bubble-text"></p>
-        <div id="tutorial-bubble-nav">
-            <button id="tutorial-prev-btn" type="button">← Back</button>
-            <span id="tutorial-step-counter"></span>
-            <button id="tutorial-next-btn" type="button">Next →</button>
+        <div id="tutorial-bubble-controls">
+            <div id="tutorial-bubble-nav">
+                <button id="tutorial-prev-btn" type="button">← Back</button>
+                <span id="tutorial-step-counter"></span>
+                <button id="tutorial-next-btn" type="button">Next →</button>
+            </div>
+            <button id="tutorial-chart-guide-btn" type="button">Chart Guide</button>
         </div>
     `;
 
@@ -197,6 +201,7 @@ function endTutorial() {
     spotlightPool = [];
 
     document.getElementById('start-tutorial-btn').style.display = '';
+    document.getElementById('chart-guide-btn').style.display = '';
     steps = [];
     currentIndex = 0;
 }
