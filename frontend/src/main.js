@@ -34,6 +34,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        onAfterRender: updateSelectionButtons,
     });
 
     initializeDecisionSpacePanel({
@@ -44,13 +45,22 @@ function renderAllPanels(options = {}) {
     });
 }
 
+function setEmptyFilterWarning(visible) {
+    d3.select('#objectives-empty-filter-warning').classed('hidden', !visible);
+    d3.select('#decision-empty-filter-warning').classed('hidden', !visible);
+}
+
 function updateSelectionButtons() {
-    const hasSelection = getSelectedRowIndexSet() !== null;
+    const sel = getSelectedRowIndexSet();
+    const hasSelection = sel !== null;
+    const hasZoomableSelection = hasSelection && sel.size > 0;
     const zoomLabel = getIsZoomed() ? "Zoom Out" : "Zoom In";
-    d3.select("#objectives-clear-selection").classed("hidden", !hasSelection);
-    d3.select("#objectives-zoom-toggle").classed("hidden", !hasSelection).text(zoomLabel);
+    const objChart = d3.select("#objectives-chart-select").property("value");
+    const objNoSelection = objChart === "correlationHeatmap";
+    d3.select("#objectives-clear-selection").classed("hidden", !hasSelection || objNoSelection);
+    d3.select("#objectives-zoom-toggle").classed("hidden", !hasZoomableSelection || objNoSelection).text(zoomLabel);
     d3.select("#decision-clear-selection").classed("hidden", !hasSelection);
-    d3.select("#decision-zoom-toggle").classed("hidden", !hasSelection).text(zoomLabel);
+    d3.select("#decision-zoom-toggle").classed("hidden", !hasZoomableSelection).text(zoomLabel);
 }
 
 function applySelectionFilter(rowIndices) {
@@ -98,6 +108,7 @@ function applyIntersectedFilter() {
         result = new Set(tableFilter);
     }
     setSelectionState({ selected: result, filtered: null, zoomed: false });
+    setEmptyFilterWarning(result !== null && result.size === 0);
     updateSelectionButtons();
 }
 
@@ -106,6 +117,7 @@ function clearSelectionFilter() {
     _tableFilters.clear();
     clearActiveRowIndex();
     clearSelectionState();
+    setEmptyFilterWarning(false);
     renderAllPanels({ animate: true });
     updateSelectionButtons();
 }

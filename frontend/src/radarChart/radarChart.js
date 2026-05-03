@@ -616,7 +616,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
 
     // ── Step 4: Selection state ───────────────────────────────────────────────
     function setSelection(rowIndexSet) {
-        const hasSel = rowIndexSet !== null && rowIndexSet.size > 0;
+        const hasSel = rowIndexSet !== null;
         pathsG.selectAll('path.radar-path')
             .classed('is-selection-dim', function () {
                 return hasSel && !rowIndexSet.has(Number(this.dataset.rowIndex));

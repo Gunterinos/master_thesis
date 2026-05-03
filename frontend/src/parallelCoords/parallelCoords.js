@@ -596,7 +596,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
 
     // ── Selection state ───────────────────────────────────────────
     function setSelection(rowIndexSet) {
-        const hasSel = rowIndexSet !== null && rowIndexSet.size > 0;
+        const hasSel = rowIndexSet !== null;
         linesGroup
             .selectAll("path.pcp-line")
             .classed("is-selection-dim", function () {

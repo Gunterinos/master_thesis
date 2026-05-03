@@ -55,7 +55,11 @@ export function computeEquilibrium(points, R, vertices) {
     const N = points.length;
     if (N === 0) return { nodes: [], nodeRadius: MINI_R };
 
-    const nodes = points.map(p => ({ rowIndex: p.rowIndex, x: p.x * R, y: p.y * R }));
+    const nodes = points.map(p => ({
+        rowIndex: p.rowIndex,
+        x: p.x * R, y: p.y * R,
+        tx: p.x * R, ty: p.y * R,
+    }));
 
     // Collision radius derived from polygon area: each node "owns" area/N of space.
     // Factor 0.55 leaves visible gaps between glyphs.
@@ -64,11 +68,11 @@ export function computeEquilibrium(points, R, vertices) {
 
     const sim = d3.forceSimulation(nodes)
         .force('collide', d3.forceCollide(nodeRadius).iterations(4))
-        .force('cx', d3.forceX(0).strength(0.08))
-        .force('cy', d3.forceY(0).strength(0.08))
+        .force('cx', d3.forceX(d => d.tx).strength(0.4))
+        .force('cy', d3.forceY(d => d.ty).strength(0.4))
         .stop();
 
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < 200; i++) {
         sim.tick();
         // Soft polygon wall: push escaped nodes back inside with velocity dampening
         nodes.forEach(n => {

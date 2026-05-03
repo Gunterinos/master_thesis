@@ -17,7 +17,7 @@ export function buildPointVisuals(ctx) {
         const active    = Object.entries(filterState.axisFilters)
             .filter(([k]) => !filterState.hiddenFilters.has(k));
         const hasBrush     = active.length > 0;
-        const hasSelection = selected !== null && selected.size > 0;
+        const hasSelection = selected !== null;
         const hasHover     = hovered !== null;
         const shiftHeld    = document.body.classList.contains('shift-held');
 
