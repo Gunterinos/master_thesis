@@ -675,6 +675,14 @@ body.survey-active #tutorial-zone {
     line-height: 1.4;
 }
 
+#question-controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
 #question-controls {
     display: flex;
     align-items: center;
@@ -709,10 +717,41 @@ body.survey-active #tutorial-zone {
     opacity: 0.85;
 }
 
-#frontier-buttons button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    pointer-events: none;
+.question-dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    min-height: 28px;
+    padding: 0.25rem 2rem 0.25rem 0.65rem;
+    border: 1px solid rgba(194, 202, 214, 0.8);
+    border-radius: 999px;
+    background-color: var(--color-surface);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--color-text-soft) 50%),
+        linear-gradient(135deg, var(--color-text-soft) 50%, transparent 50%);
+    background-position:
+        calc(100% - 14px) calc(50% - 3px),
+        calc(100% - 9px) calc(50% - 3px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    color: var(--color-ink);
+    font-size: 0.85rem;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(22, 29, 44, 0.06);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.question-dropdown:hover {
+    border-color: var(--color-border);
+    box-shadow: 0 2px 8px rgba(33, 40, 56, 0.09);
+}
+
+.question-dropdown:focus {
+    outline: none;
+    border-color: var(--color-selection);
+    box-shadow: 0 0 0 3px var(--color-selection-tint), 0 2px 8px rgba(33, 40, 56, 0.08);
 }
 
 /* ── Chart Guide ──────────────────────────────────────────────────── */

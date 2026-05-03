@@ -20,11 +20,12 @@
           "interactionType": "select_option",
           "dataset": { "frontiers": ["portfolio_3D.csv"] },
           "prompt": "Which objective is most strongly correlated with Return?",
-          "options": ["obj_Risk", "obj_Liquidity"],
+          "options": [],
+          "optionSource": "objectives",
           "answerSpec": {
             "type": "strongest_correlation",
             "targetColumn": "obj_Return",
-            "candidateColumns": ["obj_Risk", "obj_Liquidity"]
+            "candidateColumns": []
           }
         },
         {

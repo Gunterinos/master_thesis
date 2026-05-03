@@ -6,6 +6,8 @@ let _startTime = 0;
 let _responses = [];
 let _sessionId = '';
 let _onComplete = null;
+let _availableColumns = { objectives: [], decisions: [] };
+let _dynamicCandidates = null;
 
 function generateSessionId() {
     return crypto.randomUUID
@@ -17,13 +19,31 @@ function formatOptionLabel(val) {
     return val.replace(/^(obj_|dec_)/, '').replace(/_/g, ' ');
 }
 
+function buildCandidates(question) {
+    const source = question.optionSource;
+    const target = question.answerSpec?.targetColumn ?? null;
+
+    let cols = [];
+    if (source === 'objectives') {
+        cols = _availableColumns.objectives.slice();
+    } else if (source === 'decisions') {
+        cols = _availableColumns.decisions.slice();
+    } else if (source === 'all') {
+        cols = [..._availableColumns.objectives, ..._availableColumns.decisions];
+    } else {
+        return question.options.slice();
+    }
+
+    if (target) cols = cols.filter(c => c !== target);
+    return cols;
+}
+
 export function startQuestions(questions, { onComplete } = {}) {
     _questions = questions;
     _currentIndex = 0;
     _responses = [];
     _sessionId = generateSessionId();
     _onComplete = onComplete ?? null;
-
     loadAndRender(0);
 }
 
@@ -32,7 +52,12 @@ function loadAndRender(index) {
     const zone = document.getElementById('tutorial-zone');
     zone.innerHTML = '<p class="question-loading">Loading data…</p>';
 
-    window.addEventListener('survey:data-ready', function handler() {
+    window.addEventListener('survey:data-ready', function handler(event) {
+        const detail = event.detail ?? {};
+        _availableColumns = {
+            objectives: detail.objectiveColumns ?? [],
+            decisions: detail.decisionColumns ?? [],
+        };
         clearSelectionState();
         renderQuestion(index);
     }, { once: true });
@@ -46,9 +71,19 @@ function renderQuestion(index) {
     const question = _questions[index];
     const zone = document.getElementById('tutorial-zone');
     const total = _questions.length;
+    _dynamicCandidates = null;
 
     let middleHTML;
-    if (question.interactionType === 'select_option') {
+    const useDropdown = question.type === 'correlation' && question.optionSource;
+
+    if (useDropdown) {
+        const candidates = buildCandidates(question);
+        _dynamicCandidates = candidates;
+        const opts = candidates.map(c =>
+            `<option value="${c}">${formatOptionLabel(c)}</option>`
+        ).join('');
+        middleHTML = `<select id="question-dropdown" class="question-dropdown">${opts}</select>`;
+    } else if (question.interactionType === 'select_option') {
         const radios = question.options.map((opt, i) => `
             <label class="question-option">
                 <input type="radio" name="q-option" value="${opt}"${i === 0 ? ' checked' : ''}>
@@ -63,9 +98,12 @@ function renderQuestion(index) {
     zone.innerHTML = `
         <p id="question-prompt">${question.prompt}</p>
         ${middleHTML}
-        <div id="question-controls">
-            <span id="question-counter">Task ${index + 1} / ${total}</span>
-            <button id="question-submit-btn" type="button">Submit →</button>
+        <div id="question-controls-wrapper">
+            <div id="question-controls">
+                <span id="question-counter">Task ${index + 1} / ${total}</span>
+                <button id="question-submit-btn" type="button">Submit →</button>
+            </div>
+            <button id="tutorial-chart-guide-btn" type="button">Chart Guide</button>
         </div>
     `;
 
@@ -78,12 +116,20 @@ async function submitAnswer(index) {
     const timeToAnswerMs = Math.round(performance.now() - _startTime);
 
     let answer;
-    if (question.interactionType === 'select_option') {
+    if (_dynamicCandidates !== null) {
+        const sel = document.getElementById('question-dropdown');
+        answer = sel ? sel.value : null;
+    } else if (question.interactionType === 'select_option') {
         const checked = document.querySelector('input[name="q-option"]:checked');
         answer = checked ? checked.value : null;
     } else {
         const sel = getSelectedRowIndexSet();
         answer = sel ? [...sel] : [];
+    }
+
+    let answerSpec = question.answerSpec;
+    if (_dynamicCandidates && answerSpec.type === 'strongest_correlation') {
+        answerSpec = { ...answerSpec, candidateColumns: _dynamicCandidates };
     }
 
     let computed;
@@ -92,7 +138,7 @@ async function submitAnswer(index) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                answerSpec: question.answerSpec,
+                answerSpec,
                 frontiers: question.dataset.frontiers,
             }),
         });

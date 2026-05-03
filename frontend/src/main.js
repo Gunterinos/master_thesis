@@ -234,8 +234,19 @@ function getActiveFiles() {
 
 // ── Survey event bridge ──────────────────────────────────────────────────
 window.addEventListener('survey:load-data', ({ detail }) => {
+    d3.selectAll('#frontier-buttons button').each(function() {
+        d3.select(this).classed('active', detail.files.includes(d3.select(this).attr('data-file')));
+    });
     loadActiveFiles(detail.files, {
-        onDone: () => window.dispatchEvent(new CustomEvent('survey:data-ready')),
+        onDone: () => {
+            const objCols = Object.keys(objectiveDirections);
+            const decCols = fullData.length > 0
+                ? Object.keys(fullData[0]).filter(k => k.startsWith('dec_'))
+                : [];
+            window.dispatchEvent(new CustomEvent('survey:data-ready', {
+                detail: { objectiveColumns: objCols, decisionColumns: decCols },
+            }));
+        },
     });
 });
 
@@ -249,19 +260,19 @@ function showQuestionsIntroScreen() {
     const zone = document.getElementById('tutorial-zone');
     zone.innerHTML = `
         <p id="question-intro-text">Tutorial complete. You will now complete a short set of tasks using the visualization.</p>
-        <button id="start-questions-btn" type="button">Start Tasks →</button>
+        <div id="question-controls-wrapper">
+            <button id="start-questions-btn" type="button">Start Tasks →</button>
+            <button id="tutorial-chart-guide-btn" type="button">Chart Guide</button>
+        </div>
     `;
     document.getElementById('start-questions-btn').addEventListener('click', async () => {
         const config = await loadQuestionsConfig();
         const allQuestions = config.questionnaires.flatMap(q => q.questions);
-        d3.selectAll('#frontier-buttons button').attr('disabled', true);
         startQuestions(allQuestions, { onComplete: finishSurvey });
     });
 }
 
 async function finishSurvey(responses, sessionId) {
-    d3.selectAll('#frontier-buttons button').attr('disabled', null);
-
     try {
         await fetch('/api/save-responses', {
             method: 'POST',
