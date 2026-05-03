@@ -2,6 +2,7 @@ let steps = [];
 let currentIndex = 0;
 let resizeObserver = null;
 let spotlightPool = [];
+let _onTutorialComplete = null;
 
 const PADDING = 8;
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -151,9 +152,10 @@ function renderStep(index) {
     }, 0);
 }
 
-export function startTutorial(tutorialSteps) {
+export function startTutorial(tutorialSteps, { onComplete } = {}) {
     steps = tutorialSteps;
     currentIndex = 0;
+    _onTutorialComplete = onComplete ?? null;
 
     document.body.classList.add('survey-active');
     document.getElementById('chart-guide-btn').style.display = 'none';
@@ -193,15 +195,21 @@ function endTutorial() {
     closeAllStepMenus();
     clearFocusBorders();
     document.getElementById('tutorial-overlay')?.remove();
-    document.getElementById('tutorial-zone').innerHTML = '';
-    document.body.classList.remove('survey-active');
-
     resizeObserver?.disconnect();
     resizeObserver = null;
     spotlightPool = [];
-
-    document.getElementById('start-tutorial-btn').style.display = '';
-    document.getElementById('chart-guide-btn').style.display = '';
     steps = [];
     currentIndex = 0;
+
+    if (_onTutorialComplete) {
+        const cb = _onTutorialComplete;
+        _onTutorialComplete = null;
+        document.getElementById('tutorial-zone').innerHTML = '';
+        cb();
+    } else {
+        document.getElementById('tutorial-zone').innerHTML = '';
+        document.body.classList.remove('survey-active');
+        document.getElementById('start-tutorial-btn').style.display = '';
+        document.getElementById('chart-guide-btn').style.display = '';
+    }
 }

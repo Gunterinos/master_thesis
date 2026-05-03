@@ -631,6 +631,90 @@ body.survey-active #tutorial-zone {
     box-shadow: 0 1px 4px var(--color-selection-shadow);
 }
 
+/* ── Questions ──────────────────────────────────────────────────────── */
+
+#question-prompt,
+#question-intro-text {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--color-ink);
+    flex: 1;
+    min-width: 0;
+}
+
+.question-loading {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.question-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.question-option {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    color: var(--color-ink);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.question-instruction {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    max-width: 220px;
+    line-height: 1.4;
+}
+
+#question-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+#question-counter {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+#question-submit-btn,
+#start-questions-btn {
+    min-height: 32px;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--color-selection);
+    border-radius: 999px;
+    background: var(--color-selection);
+    color: var(--color-white);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 4px var(--color-selection-shadow);
+    flex-shrink: 0;
+    transition: opacity 0.15s ease;
+}
+
+#question-submit-btn:hover,
+#start-questions-btn:hover {
+    opacity: 0.85;
+}
+
+#frontier-buttons button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* ── Chart Guide ──────────────────────────────────────────────────── */
 
 #cheatsheet-backdrop {

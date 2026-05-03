@@ -5,8 +5,9 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
-import { loadTutorialConfig } from './survey/surveyConfig.js';
+import { loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
+import { startQuestions } from './survey/questionController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
 
 let fullData = [];
@@ -175,7 +176,7 @@ function initializeApp() {
     initCheatsheet();
 }
 
-function loadActiveFiles(activeFiles) {
+function loadActiveFiles(activeFiles, { onDone } = {}) {
     const errorEl = d3.select("#load-error-msg");
     errorEl.classed("hidden", true).text("");
 
@@ -219,6 +220,7 @@ function loadActiveFiles(activeFiles) {
             initializeApp();
             renderAllPanels({ animate: true });
             updateSelectionButtons();
+            onDone?.();
         })
         .catch(() => {
             errorEl.classed("hidden", false).text("Network error: could not reach the server.");
@@ -230,10 +232,52 @@ function getActiveFiles() {
         .map((el) => el.dataset.file);
 }
 
+// ── Survey event bridge ──────────────────────────────────────────────────
+window.addEventListener('survey:load-data', ({ detail }) => {
+    loadActiveFiles(detail.files, {
+        onDone: () => window.dispatchEvent(new CustomEvent('survey:data-ready')),
+    });
+});
+
+// ── Survey flow ──────────────────────────────────────────────────────────
 document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
     const steps = await loadTutorialConfig();
-    startTutorial(steps);
+    startTutorial(steps, { onComplete: showQuestionsIntroScreen });
 });
+
+function showQuestionsIntroScreen() {
+    const zone = document.getElementById('tutorial-zone');
+    zone.innerHTML = `
+        <p id="question-intro-text">Tutorial complete. You will now complete a short set of tasks using the visualization.</p>
+        <button id="start-questions-btn" type="button">Start Tasks →</button>
+    `;
+    document.getElementById('start-questions-btn').addEventListener('click', async () => {
+        const config = await loadQuestionsConfig();
+        const allQuestions = config.questionnaires.flatMap(q => q.questions);
+        d3.selectAll('#frontier-buttons button').attr('disabled', true);
+        startQuestions(allQuestions, { onComplete: finishSurvey });
+    });
+}
+
+async function finishSurvey(responses, sessionId) {
+    d3.selectAll('#frontier-buttons button').attr('disabled', null);
+
+    try {
+        await fetch('/api/save-responses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId, responses }),
+        });
+    } catch { /* non-critical */ }
+
+    document.getElementById('tutorial-zone').innerHTML = '';
+    document.body.classList.remove('survey-active');
+    document.getElementById('start-tutorial-btn').style.display = '';
+    document.getElementById('chart-guide-btn').style.display = '';
+
+    // Resync charts with whatever frontier buttons are currently active
+    loadActiveFiles(getActiveFiles());
+}
 
 d3.json("/api/data-files")
     .then(({ files }) => {

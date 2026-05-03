@@ -1,26 +1,86 @@
 {
-  "questions": [
+  "questionnaires": [
     {
-      "id": "q1",
-      "dataset": "portfolio_3D.csv",
-      "type": "value_retrieval",
-      "prompt": "Select the point with the highest Return value.",
-      "correctAnswer": null
+      "id": "single_frontier",
+      "type": "single_frontier",
+      "title": "Single Frontier Tasks",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["portfolio_3D.csv"] },
+          "prompt": "Select the portfolio with the highest Return value.",
+          "options": [],
+          "answerSpec": { "type": "highest_value", "column": "obj_Return" }
+        },
+        {
+          "id": "q2",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["portfolio_3D.csv"] },
+          "prompt": "Which objective is most strongly correlated with Return?",
+          "options": ["obj_Risk", "obj_Liquidity"],
+          "answerSpec": {
+            "type": "strongest_correlation",
+            "targetColumn": "obj_Return",
+            "candidateColumns": ["obj_Risk", "obj_Liquidity"]
+          }
+        },
+        {
+          "id": "q3",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["portfolio_3D.csv"] },
+          "prompt": "Select the portfolio that best balances all three objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        },
+        {
+          "id": "q4",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["portfolio_3D.csv"] },
+          "prompt": "Select all portfolios where Liquidity is above 0.7.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.7, "max": null }
+        }
+      ]
     },
     {
-      "id": "q2",
-      "dataset": "portfolio_3D.csv",
-      "type": "correlation",
-      "prompt": "Which objective appears most strongly correlated with Risk?",
-      "options": ["obj_Return", "obj_Liquidity"],
-      "correctAnswer": "obj_Return"
-    },
-    {
-      "id": "q3",
-      "dataset": "portfolio_3D.csv",
-      "type": "decision",
-      "prompt": "Select the single portfolio you would choose if minimising Risk were your top priority.",
-      "correctAnswer": null
+      "id": "comparison",
+      "type": "comparison",
+      "title": "Frontier Comparison Tasks",
+      "questions": [
+        {
+          "id": "q5",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+          "prompt": "Which frontier has a higher average Return value?",
+          "options": ["portfolio 3D", "portfolio 3D copy"],
+          "answerSpec": { "type": "higher_average", "column": "obj_Return" }
+        },
+        {
+          "id": "q6",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+          "prompt": "Which frontier allocates less to Cash on average?",
+          "options": ["portfolio 3D", "portfolio 3D copy"],
+          "answerSpec": { "type": "lower_average", "column": "dec_Cash" }
+        },
+        {
+          "id": "q7",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+          "prompt": "Which frontier dominates the other across all objectives?",
+          "options": ["portfolio 3D", "portfolio 3D copy", "Neither dominates"],
+          "answerSpec": { "type": "dominance" }
+        }
+      ]
     }
-  ]
+  ],
+  "postQuestionnaire": null
 }

@@ -158,5 +158,172 @@ def tutorial_config():
     return jsonify(config)
 
 
+@app.get("/api/questions-config")
+def questions_config():
+    with (SURVEY_DATA_DIR / "questions_config.json").open(encoding="utf-8") as f:
+        config = json.load(f)
+    return jsonify(config)
+
+
+def _frontier_display_name(fname):
+    return fname.removesuffix(".csv").replace("_", " ")
+
+
+def _load_frontier_rows(frontiers):
+    """Load rows for the given frontier filenames.
+    Returns (all_rows, directions) where all_rows excludes the benchmark and
+    each row has a '__frontier' key set to the display name of its source file.
+    Row order matches /api/load-data: benchmark at index 0, then frontier rows
+    in the order given, so the correct __rowIndex for a frontier row at position
+    i in all_rows is i + 1.
+    """
+    all_rows = []
+    directions = {}
+    for fname in frontiers:
+        path = (DATA_DIR / fname).resolve()
+        rows, file_directions, _ = load_csv(path)
+        if not directions:
+            directions = file_directions
+        display = _frontier_display_name(fname)
+        for row in rows:
+            all_rows.append({**row, "__frontier": display})
+    return all_rows, directions
+
+
+@app.post("/api/compute-answer")
+def compute_answer():
+    body = request.get_json(force=True)
+    spec = body["answerSpec"]
+    frontiers = body["frontiers"]
+
+    rows, directions = _load_frontier_rows(frontiers)
+    if not rows:
+        return jsonify({"error": "No data found"}), 400
+
+    spec_type = spec["type"]
+
+    # ── Row-selection answers ──────────────────────────────────────────────
+    if spec_type == "highest_value":
+        col = spec["column"]
+        idx = max(range(len(rows)), key=lambda i: float(rows[i][col]))
+        return jsonify({"rowIndices": [idx + 1]})
+
+    if spec_type == "lowest_value":
+        col = spec["column"]
+        idx = min(range(len(rows)), key=lambda i: float(rows[i][col]))
+        return jsonify({"rowIndices": [idx + 1]})
+
+    if spec_type == "range":
+        col = spec["column"]
+        lo = spec.get("min")
+        hi = spec.get("max")
+        indices = [
+            i + 1
+            for i, row in enumerate(rows)
+            if (lo is None or float(row[col]) >= lo)
+            and (hi is None or float(row[col]) <= hi)
+        ]
+        return jsonify({"rowIndices": indices})
+
+    if spec_type == "knee_point":
+        obj_cols = [c for c in rows[0] if c.startswith("obj_")]
+        col_mins = {c: min(float(r[c]) for r in rows) for c in obj_cols}
+        col_maxs = {c: max(float(r[c]) for r in rows) for c in obj_cols}
+
+        def norm(row, col):
+            lo, hi = col_mins[col], col_maxs[col]
+            v = (float(row[col]) - lo) / (hi - lo) if hi != lo else 0.5
+            return 1 - v if directions.get(col) == "min" else v
+
+        def dist(row):
+            return sum((1 - norm(row, c)) ** 2 for c in obj_cols) ** 0.5
+
+        idx = min(range(len(rows)), key=lambda i: dist(rows[i]))
+        return jsonify({"rowIndices": [idx + 1]})
+
+    # ── Option answers ─────────────────────────────────────────────────────
+    if spec_type == "multiple_choice":
+        return jsonify({"option": spec["correctOption"]})
+
+    if spec_type == "strongest_correlation":
+        target_col = spec["targetColumn"]
+        candidates = spec["candidateColumns"]
+        target_vals = [float(r[target_col]) for r in rows]
+        n = len(target_vals)
+        mean_t = sum(target_vals) / n
+        std_t = (sum((v - mean_t) ** 2 for v in target_vals) / n) ** 0.5
+
+        best_col, best_corr = None, -1.0
+        for col in candidates:
+            vals = [float(r[col]) for r in rows]
+            mean_c = sum(vals) / n
+            std_c = (sum((v - mean_c) ** 2 for v in vals) / n) ** 0.5
+            if std_t == 0 or std_c == 0:
+                corr = 0.0
+            else:
+                cov = sum((target_vals[i] - mean_t) * (vals[i] - mean_c) for i in range(n)) / n
+                corr = abs(cov / (std_t * std_c))
+            if corr > best_corr:
+                best_corr, best_col = corr, col
+        return jsonify({"option": best_col})
+
+    if spec_type in ("higher_average", "lower_average"):
+        col = spec["column"]
+        sums, counts = {}, {}
+        for row in rows:
+            f = row["__frontier"]
+            sums[f] = sums.get(f, 0.0) + float(row[col])
+            counts[f] = counts.get(f, 0) + 1
+        avgs = {f: sums[f] / counts[f] for f in sums}
+        if spec_type == "higher_average":
+            winner = max(avgs, key=avgs.get)
+        else:
+            winner = min(avgs, key=avgs.get)
+        return jsonify({"option": winner})
+
+    if spec_type == "dominance":
+        frontier_names = list(dict.fromkeys(r["__frontier"] for r in rows))
+        if len(frontier_names) < 2:
+            return jsonify({"option": "Neither dominates"})
+        f1, f2 = frontier_names[0], frontier_names[1]
+        f1_rows = [r for r in rows if r["__frontier"] == f1]
+        f2_rows = [r for r in rows if r["__frontier"] == f2]
+        obj_cols = [c for c in rows[0] if c.startswith("obj_")]
+
+        def dominates(a, b):
+            better_on_any = False
+            for col in obj_cols:
+                av, bv = float(a[col]), float(b[col])
+                is_max = directions.get(col, "max") == "max"
+                if (is_max and av < bv) or (not is_max and av > bv):
+                    return False
+                if (is_max and av > bv) or (not is_max and av < bv):
+                    better_on_any = True
+            return better_on_any
+
+        f1_undom = sum(1 for r in f1_rows if not any(dominates(o, r) for o in f2_rows))
+        f2_undom = sum(1 for r in f2_rows if not any(dominates(o, r) for o in f1_rows))
+
+        if f1_undom > f2_undom:
+            return jsonify({"option": f1})
+        if f2_undom > f1_undom:
+            return jsonify({"option": f2})
+        return jsonify({"option": "Neither dominates"})
+
+    return jsonify({"error": f"Unknown answerSpec type: {spec_type}"}), 400
+
+
+@app.post("/api/save-responses")
+def save_responses():
+    body = request.get_json(force=True)
+    session_id = body.get("sessionId", "unknown")
+    responses_dir = SURVEY_DATA_DIR / "responses"
+    responses_dir.mkdir(exist_ok=True)
+    out_path = responses_dir / f"responses_{session_id}.json"
+    with out_path.open("w", encoding="utf-8") as f:
+        json.dump(body, f, indent=2)
+    return jsonify({"ok": True})
+
+
 if __name__ == "__main__":
     app.run(debug=True)
