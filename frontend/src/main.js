@@ -7,6 +7,7 @@ import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelecti
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
 import { loadTutorialConfig } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
+import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
 
 let fullData = [];
 let objectiveDirections = {};
@@ -170,6 +171,8 @@ function initializeApp() {
         .on("keyup.shifthold", (event) => {
             if (event.key === "Shift") { document.body.classList.remove("shift-held"); }
         });
+
+    initCheatsheet();
 }
 
 function loadActiveFiles(activeFiles) {
