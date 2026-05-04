@@ -679,7 +679,7 @@ body.survey-active #tutorial-zone {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.4rem;
+    gap: 0.1rem;
     flex-shrink: 0;
 }
 
