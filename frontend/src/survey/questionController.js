@@ -74,7 +74,7 @@ function renderQuestion(index) {
     _dynamicCandidates = null;
 
     let middleHTML;
-    const useDropdown = question.type === 'correlation' && question.optionSource;
+    const useDropdown = (question.type === 'correlation' || question.type === 'most_distinct_objective') && question.optionSource;
 
     if (useDropdown) {
         const candidates = buildCandidates(question);
@@ -140,6 +140,7 @@ async function submitAnswer(index) {
             body: JSON.stringify({
                 answerSpec,
                 frontiers: question.dataset.frontiers,
+                userAnswer: answer,
             }),
         });
         computed = await res.json();
@@ -147,21 +148,8 @@ async function submitAnswer(index) {
         computed = {};
     }
 
-    let isCorrect = false;
-    let correctAnswer;
-
-    if (computed.rowIndices !== undefined) {
-        correctAnswer = computed.rowIndices;
-        const correctSet = new Set(computed.rowIndices);
-        if (question.answerSpec.type === 'range') {
-            isCorrect = answer.length > 0 && answer.every(idx => correctSet.has(idx));
-        } else {
-            isCorrect = answer.some(idx => correctSet.has(idx));
-        }
-    } else {
-        correctAnswer = computed.option ?? null;
-        isCorrect = answer !== null && answer === computed.option;
-    }
+    const score = computed.score ?? 0;
+    const correctAnswer = computed.rowIndices ?? computed.option ?? null;
 
     _responses.push({
         questionId: question.id,
@@ -169,7 +157,8 @@ async function submitAnswer(index) {
         interactionType: question.interactionType,
         answer,
         correctAnswer,
-        isCorrect,
+        score,
+        isCorrect: score >= 1.0,
         timeToAnswerMs,
     });
 

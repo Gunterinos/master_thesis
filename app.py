@@ -32,6 +32,35 @@ def _is_constraint_val(val):
     return bool(re.match(r'^[<>]=?\d', val.strip())) if val else False
 
 
+def _spearman(x, y):
+    n = len(x)
+    if n == 0:
+        return 0.0
+
+    def _rank(vals):
+        order = sorted(range(n), key=lambda i: vals[i])
+        ranks = [0.0] * n
+        i = 0
+        while i < n:
+            j = i
+            while j < n and vals[order[j]] == vals[order[i]]:
+                j += 1
+            avg = (i + j + 1) / 2.0
+            for k in range(i, j):
+                ranks[order[k]] = avg
+            i = j
+        return ranks
+
+    rx, ry = _rank(x), _rank(y)
+    mx, my = sum(rx) / n, sum(ry) / n
+    cov = sum((rx[i] - mx) * (ry[i] - my) for i in range(n)) / n
+    sx = (sum((v - mx) ** 2 for v in rx) / n) ** 0.5
+    sy = (sum((v - my) ** 2 for v in ry) / n) ** 0.5
+    if sx == 0 or sy == 0:
+        return 0.0
+    return cov / (sx * sy)
+
+
 def load_csv(path):
     with path.open(mode="r", newline="", encoding="utf-8") as csv_file:
         reader = csv.DictReader(csv_file)
@@ -200,7 +229,7 @@ def _load_frontier_rows(frontiers):
     directions = {}
     for fname in frontiers:
         path = (DATA_DIR / fname).resolve()
-        rows, file_directions, _ = load_csv(path)
+        rows, file_directions, *_ = load_csv(path)
         if not directions:
             directions = file_directions
         display = _frontier_display_name(fname)
@@ -214,6 +243,7 @@ def compute_answer():
     body = request.get_json(force=True)
     spec = body["answerSpec"]
     frontiers = body["frontiers"]
+    user_answer = body.get("userAnswer")
 
     rows, directions = _load_frontier_rows(frontiers)
     if not rows:
@@ -225,24 +255,30 @@ def compute_answer():
     if spec_type == "highest_value":
         col = spec["column"]
         idx = max(range(len(rows)), key=lambda i: float(rows[i][col]))
-        return jsonify({"rowIndices": [idx + 1]})
+        correct = [idx + 1]
+        score = 1.0 if user_answer and any(i in correct for i in user_answer) else 0.0
+        return jsonify({"rowIndices": correct, "score": score})
 
     if spec_type == "lowest_value":
         col = spec["column"]
         idx = min(range(len(rows)), key=lambda i: float(rows[i][col]))
-        return jsonify({"rowIndices": [idx + 1]})
+        correct = [idx + 1]
+        score = 1.0 if user_answer and any(i in correct for i in user_answer) else 0.0
+        return jsonify({"rowIndices": correct, "score": score})
 
     if spec_type == "range":
         col = spec["column"]
         lo = spec.get("min")
         hi = spec.get("max")
-        indices = [
+        correct = [
             i + 1
             for i, row in enumerate(rows)
             if (lo is None or float(row[col]) >= lo)
             and (hi is None or float(row[col]) <= hi)
         ]
-        return jsonify({"rowIndices": indices})
+        correct_set = set(correct)
+        score = 1.0 if user_answer and all(i in correct_set for i in user_answer) else 0.0
+        return jsonify({"rowIndices": correct, "score": score})
 
     if spec_type == "knee_point":
         obj_cols = [c for c in rows[0] if c.startswith("obj_")]
@@ -257,34 +293,48 @@ def compute_answer():
         def dist(row):
             return sum((1 - norm(row, c)) ** 2 for c in obj_cols) ** 0.5
 
-        idx = min(range(len(rows)), key=lambda i: dist(rows[i]))
-        return jsonify({"rowIndices": [idx + 1]})
+        n = len(rows)
+        distances = [dist(rows[i]) for i in range(n)]
+        sorted_indices = sorted(range(n), key=lambda i: distances[i])
+        # 0-indexed rank: rank 0 = closest = best
+        rank_of = {sorted_indices[r]: r for r in range(n)}
+
+        correct = [sorted_indices[0] + 1]
+
+        if user_answer and len(user_answer) > 0:
+            user_0 = [i - 1 for i in user_answer if 0 <= i - 1 < n]
+            if user_0:
+                point_scores = [1.0 - rank_of[i] / (n - 1) if n > 1 else 1.0 for i in user_0]
+                score = sum(point_scores) / len(point_scores)
+            else:
+                score = 0.0
+        else:
+            score = 0.0
+        return jsonify({"rowIndices": correct, "score": round(score, 4)})
 
     # ── Option answers ─────────────────────────────────────────────────────
     if spec_type == "multiple_choice":
-        return jsonify({"option": spec["correctOption"]})
+        correct = spec["correctOption"]
+        score = 1.0 if user_answer == correct else 0.0
+        return jsonify({"option": correct, "score": score})
 
     if spec_type == "strongest_correlation":
         target_col = spec["targetColumn"]
         candidates = spec["candidateColumns"]
         target_vals = [float(r[target_col]) for r in rows]
-        n = len(target_vals)
-        mean_t = sum(target_vals) / n
-        std_t = (sum((v - mean_t) ** 2 for v in target_vals) / n) ** 0.5
 
-        best_col, best_corr = None, -1.0
+        corr_map = {}
         for col in candidates:
             vals = [float(r[col]) for r in rows]
-            mean_c = sum(vals) / n
-            std_c = (sum((v - mean_c) ** 2 for v in vals) / n) ** 0.5
-            if std_t == 0 or std_c == 0:
-                corr = 0.0
-            else:
-                cov = sum((target_vals[i] - mean_t) * (vals[i] - mean_c) for i in range(n)) / n
-                corr = abs(cov / (std_t * std_c))
-            if corr > best_corr:
-                best_corr, best_col = corr, col
-        return jsonify({"option": best_col})
+            corr_map[col] = abs(_spearman(target_vals, vals))
+
+        best_col = max(corr_map, key=corr_map.get)
+
+        if user_answer and user_answer in corr_map:
+            score = 1.0 - abs(corr_map[best_col] - corr_map[user_answer])
+        else:
+            score = 0.0
+        return jsonify({"option": best_col, "score": round(score, 4)})
 
     if spec_type in ("higher_average", "lower_average"):
         col = spec["column"]
@@ -294,40 +344,67 @@ def compute_answer():
             sums[f] = sums.get(f, 0.0) + float(row[col])
             counts[f] = counts.get(f, 0) + 1
         avgs = {f: sums[f] / counts[f] for f in sums}
-        if spec_type == "higher_average":
-            winner = max(avgs, key=avgs.get)
-        else:
-            winner = min(avgs, key=avgs.get)
-        return jsonify({"option": winner})
+        winner = max(avgs, key=avgs.get) if spec_type == "higher_average" else min(avgs, key=avgs.get)
+        score = 1.0 if user_answer == winner else 0.0
+        return jsonify({"option": winner, "score": score})
 
-    if spec_type == "dominance":
+    if spec_type == "most_distinct_objective":
         frontier_names = list(dict.fromkeys(r["__frontier"] for r in rows))
         if len(frontier_names) < 2:
-            return jsonify({"option": "Neither dominates"})
+            return jsonify({"error": "Need at least 2 frontiers"}), 400
         f1, f2 = frontier_names[0], frontier_names[1]
+        obj_cols = [c for c in rows[0] if c.startswith("obj_")]
+        col_mins = {c: min(float(r[c]) for r in rows) for c in obj_cols}
+        col_maxs = {c: max(float(r[c]) for r in rows) for c in obj_cols}
+
+        def norm_val(val, col):
+            lo, hi = col_mins[col], col_maxs[col]
+            return (float(val) - lo) / (hi - lo) if hi != lo else 0.5
+
         f1_rows = [r for r in rows if r["__frontier"] == f1]
         f2_rows = [r for r in rows if r["__frontier"] == f2]
+        distinction = {
+            col: abs(
+                sum(norm_val(r[col], col) for r in f1_rows) / len(f1_rows)
+                - sum(norm_val(r[col], col) for r in f2_rows) / len(f2_rows)
+            )
+            for col in obj_cols
+        }
+        sorted_cols = sorted(obj_cols, key=lambda c: distinction[c], reverse=True)
+        best_col = sorted_cols[0]
+        n_obj = len(obj_cols)
+
+        if user_answer and user_answer in distinction:
+            rank = sorted_cols.index(user_answer)
+            score = 1.0 - rank / (n_obj - 1) if n_obj > 1 else 1.0
+        else:
+            score = 0.0
+        return jsonify({"option": best_col, "score": round(score, 4)})
+
+    if spec_type == "best_average":
+        frontier_names = list(dict.fromkeys(r["__frontier"] for r in rows))
+        if len(frontier_names) < 2:
+            return jsonify({"error": "Need at least 2 frontiers"}), 400
         obj_cols = [c for c in rows[0] if c.startswith("obj_")]
+        col_mins = {c: min(float(r[c]) for r in rows) for c in obj_cols}
+        col_maxs = {c: max(float(r[c]) for r in rows) for c in obj_cols}
 
-        def dominates(a, b):
-            better_on_any = False
-            for col in obj_cols:
-                av, bv = float(a[col]), float(b[col])
-                is_max = directions.get(col, "max") == "max"
-                if (is_max and av < bv) or (not is_max and av > bv):
-                    return False
-                if (is_max and av > bv) or (not is_max and av < bv):
-                    better_on_any = True
-            return better_on_any
+        def norm_obj(val, col):
+            lo, hi = col_mins[col], col_maxs[col]
+            v = (float(val) - lo) / (hi - lo) if hi != lo else 0.5
+            return 1 - v if directions.get(col) == "min" else v
 
-        f1_undom = sum(1 for r in f1_rows if not any(dominates(o, r) for o in f2_rows))
-        f2_undom = sum(1 for r in f2_rows if not any(dominates(o, r) for o in f1_rows))
+        frontier_scores = {}
+        for fname in frontier_names:
+            f_rows = [r for r in rows if r["__frontier"] == fname]
+            frontier_scores[fname] = sum(
+                sum(norm_obj(r[c], c) for c in obj_cols) / len(obj_cols)
+                for r in f_rows
+            ) / len(f_rows)
 
-        if f1_undom > f2_undom:
-            return jsonify({"option": f1})
-        if f2_undom > f1_undom:
-            return jsonify({"option": f2})
-        return jsonify({"option": "Neither dominates"})
+        winner = max(frontier_scores, key=frontier_scores.get)
+        score = 1.0 if user_answer == winner else 0.0
+        return jsonify({"option": winner, "score": score})
 
     return jsonify({"error": f"Unknown answerSpec type: {spec_type}"}), 400
 

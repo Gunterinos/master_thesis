@@ -76,9 +76,19 @@
           "type": "decide_on_frontier",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
-          "prompt": "Which frontier dominates the other across all objectives?",
-          "options": ["portfolio 3D", "portfolio 3D copy", "Neither dominates"],
-          "answerSpec": { "type": "dominance" }
+          "prompt": "Which frontier performs better overall across all objectives?",
+          "options": ["portfolio 3D", "portfolio 3D copy"],
+          "answerSpec": { "type": "best_average" }
+        },
+        {
+          "id": "q8",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+          "prompt": "In which objective do the two frontiers differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" }
         }
       ]
     }
