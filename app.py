@@ -1,6 +1,7 @@
 from pathlib import Path
 import csv
 import json
+import re
 import uuid
 from datetime import datetime
 
@@ -27,26 +28,41 @@ def _is_numeric(val):
         return False
 
 
+def _is_constraint_val(val):
+    return bool(re.match(r'^[<>]=?\d', val.strip())) if val else False
+
+
 def load_csv(path):
     with path.open(mode="r", newline="", encoding="utf-8") as csv_file:
         reader = csv.DictReader(csv_file)
         rows = list(reader)
 
     if not rows:
-        return [], {}, {}
+        return [], {}, {}, {}
 
-    # Row 0: direction metadata (1=max, -1=min, empty=decision)
-    meta_row = rows[0]
+    idx = 0
 
-    # Row 1: group metadata or first data row (benchmark).
-    # Group rows have at least one non-empty, non-numeric value.
+    # Optional constraints row: values like <0.3, >=0.5, etc.
+    constraints = {}
+    if any(_is_constraint_val(v) for v in rows[idx].values()):
+        constraints = {col: val for col, val in rows[idx].items() if val}
+        idx += 1
+
+    if idx >= len(rows):
+        return [], {}, {}, constraints
+
+    # Direction metadata row (1=max, -1=min, empty=decision)
+    meta_row = rows[idx]
+    idx += 1
+
+    # Optional group metadata row: non-empty, non-numeric, non-constraint values.
     groups = {}
-    data_start = 1
-    if len(rows) > 1:
-        candidate_vals = [v for v in rows[1].values() if v]
+    data_start = idx
+    if len(rows) > idx:
+        candidate_vals = [v for v in rows[idx].values() if v]
         if candidate_vals and any(not _is_numeric(v) for v in candidate_vals):
-            groups = {col: val for col, val in rows[1].items() if val}
-            data_start = 2
+            groups = {col: val for col, val in rows[idx].items() if val}
+            data_start = idx + 1
 
     data_rows = rows[data_start:]
 
@@ -57,7 +73,7 @@ def load_csv(path):
         elif val == "-1":
             directions[col] = "min"
 
-    return data_rows, directions, groups
+    return data_rows, directions, groups, constraints
 
 
 @app.get("/")
@@ -68,17 +84,18 @@ def index():
 @app.get("/api/data-files")
 def data_files():
     # Only return files whose obj_/dec_ columns match the benchmark
-    bm_rows, _, _ = load_csv(BENCHMARK_PATH)
+    bm_rows, _, _, _ = load_csv(BENCHMARK_PATH)
     bm_cols = frozenset(
         k for k in (bm_rows[0] if bm_rows else {})
         if k.startswith("obj_") or k.startswith("dec_")
     )
 
     compatible = []
+    file_constraints = {}
     for p in sorted(DATA_DIR.glob("*.csv")):
         if p.name.lower() == "benchmark.csv":
             continue
-        rows, _, _ = load_csv(p)
+        rows, _, _, constraints = load_csv(p)
         if rows:
             file_cols = frozenset(
                 k for k in rows[0]
@@ -86,8 +103,10 @@ def data_files():
             )
             if file_cols == bm_cols:
                 compatible.append(p.name)
+                if constraints:
+                    file_constraints[p.name] = constraints
 
-    return jsonify({"files": compatible})
+    return jsonify({"files": compatible, "fileConstraints": file_constraints})
 
 
 @app.post("/api/load-data")
@@ -95,7 +114,7 @@ def load_data():
     body = request.get_json(force=True)
     filenames = body.get("files", [])
 
-    bm_rows, _, _ = load_csv(BENCHMARK_PATH)
+    bm_rows, _, _, _ = load_csv(BENCHMARK_PATH)
     benchmark_row = bm_rows[0]
 
     all_frontier_rows = []
@@ -105,7 +124,7 @@ def load_data():
     for fname in filenames:
         path = (DATA_DIR / fname).resolve()
 
-        rows, file_directions, file_groups = load_csv(path)
+        rows, file_directions, file_groups, _ = load_csv(path)
 
         if not all_frontier_rows:
             directions = file_directions

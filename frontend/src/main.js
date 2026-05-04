@@ -10,6 +10,7 @@ import { startTutorial } from './survey/tutorialController.js';
 import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
+import { formatLabel } from './formatLabel.js';
 
 let fullData = [];
 let objectiveDirections = {};
@@ -297,14 +298,33 @@ async function finishSurvey(responses, sessionId) {
 }
 
 d3.json("/api/data-files")
-    .then(({ files }) => {
+    .then(({ files, fileConstraints = {} }) => {
         const container = d3.select("#frontier-buttons");
+
+        function formatConstraintVal(val) {
+            return val.replace(/([<>]=?)(\d+(?:\.\d+)?)/g, (_, op, num) => {
+                const pct = parseFloat((parseFloat(num) * 100).toPrecision(4));
+                return `${op}${pct}%`;
+            });
+        }
+
         files.forEach((fname, i) => {
-            container.append("button")
+            const constraints = fileConstraints[fname] ?? {};
+            const constraintEntries = Object.entries(constraints);
+            const label = fname.replace(/\.csv$/i, '').replace(/_/g, ' ');
+
+            const tooltipText = constraintEntries.length > 0
+                ? constraintEntries.map(([col, val]) => `${formatLabel(col)} ${formatConstraintVal(val)}`).join(' · ')
+                : null;
+
+            const group = container.append("div")
+                .attr("class", "frontier-btn-group");
+
+            const btn = group.append("button")
                 .attr("type", "button")
                 .attr("data-file", fname)
                 .classed("active", i === 0)
-                .text(fname.replace(/\.csv$/i, ""))
+                .text(label)
                 .on("click", function () {
                     const isActive = d3.select(this).classed("active");
                     // Prevent deselecting the last active button
@@ -312,6 +332,10 @@ d3.json("/api/data-files")
                     d3.select(this).classed("active", !isActive);
                     loadActiveFiles(getActiveFiles());
                 });
+
+            if (tooltipText) {
+                btn.attr("data-tooltip", tooltipText);
+            }
         });
         if (files.length > 0) { loadActiveFiles([files[0]]); }
     })

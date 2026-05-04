@@ -385,7 +385,7 @@ body.shift-held .is-selection-dim {
     display: flex;
     flex-direction: row;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 16px;
     padding: 10px;
     background: var(--color-overlay-light);
@@ -485,6 +485,31 @@ body.survey-active #tutorial-zone {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
+}
+
+.frontier-btn-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.frontier-btn-group button[data-tooltip] {
+    position: relative;
+}
+
+.frontier-btn-group button[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    background: #1e2433;
+    color: #fff;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 400;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 .frontier-label {
