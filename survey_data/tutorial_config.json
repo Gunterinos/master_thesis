@@ -3,12 +3,12 @@
     {
       "id": "t1",
       "highlight": ".header-panel",
-      "text": "Welcome! This tool helps you <strong>explore Pareto-optimal portfolios</strong>, compare trade-offs, and make an <strong>informed choice</strong>. Multiple frontiers can exist, each generated with different <strong>constraints on allocations or objectives</strong>. The header guides you through the tutorial and tasks. Use the sidebar to toggle between frontiers."
+      "text": "Welcome! This tool helps you <strong>explore Pareto-optimal solutions</strong>, compare trade-offs, and make an <strong>informed choice</strong>. Multiple frontiers can exist, each generated with different <strong>constraints on decision variables or objectives</strong>. The header guides you through the tutorial and tasks. Use the sidebar to toggle between frontiers."
     },
     {
       "id": "t2",
       "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
-      "text": "The tool has two linked spaces. The <strong>Objectives Space</strong> shows your output metrics (<strong>y = f(x)</strong>), such as return and risk. The <strong>Decision Space</strong> shows the asset allocations (<strong>x</strong>) that produce them. Each point is a portfolio on the Pareto frontier, representing an optimal trade-off."
+      "text": "The tool has two linked spaces. The <strong>Objectives Space</strong> shows your output metrics (<strong>y = f(x)</strong>). The <strong>Decision Space</strong> shows the allocations (<strong>x</strong>) that produce them. Each point is a solution on the Pareto frontier, representing an optimal trade-off."
     },
     {
       "id": "t3",
@@ -33,14 +33,14 @@
       "focus": ["#objectives-options-dropdown .options-dropdown-btn"],
       "setChart": { "select": "#objectives-chart-select", "value": "scatter" },
       "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
-      "text": "Click <strong>Options</strong> to customise the scatterplot. <strong>Dim. Reduction</strong> projects all objectives into 2D via PCA. <strong>Labels</strong> shows portfolio IDs on each point. <strong>Dominant Allocation</strong> colours points by their largest asset group. <strong>Frontier Colours</strong> colours points by which frontier they belong to."
+      "text": "Click <strong>Options</strong> to customise the scatterplot. <strong>Dim. Reduction</strong> projects all objectives into 2D via PCA. <strong>Labels</strong> shows solution IDs on each point. <strong>Dominant Allocation</strong> colours points by their largest allocation group. <strong>Frontier Colours</strong> colours points by which frontier they belong to."
     },
     {
       "id": "t7",
       "highlight": ".table-panel:first-of-type",
       "focus": ["#objectives-chart-buttons button[data-chart-key='scatter3dGL']"],
       "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
-      "text": "The <strong>3D Scatterplot</strong> adds a third axis. Click and drag to rotate. <strong>Brush</strong> (click and drag) along any axis to filter portfolios to a range. Deselect by <strong>double-clicking</strong> the axis or using <strong>Clear Selection</strong>."
+      "text": "The <strong>3D Scatterplot</strong> adds a third axis. Click and drag to rotate. <strong>Brush</strong> (click and drag) along any axis to filter solutions to a range. Deselect by <strong>double-clicking</strong> the axis or using <strong>Clear Selection</strong>."
     },
     {
       "id": "t8",
@@ -55,7 +55,7 @@
       "highlight": ".table-panel:first-of-type",
       "focus": ["#objectives-chart-buttons button[data-chart-key='pcp']"],
       "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
-      "text": "The <strong>Parallel Coordinates Plot</strong> draws each objective as a vertical axis; each portfolio is a line crossing all axes. <strong>Brush</strong> (click and drag) an axis to filter to a range. Deselect by <strong>double-clicking</strong> the axis or using <strong>Clear Selection</strong>."
+      "text": "The <strong>Parallel Coordinates Plot</strong> draws each objective as a vertical axis; each solution is a line crossing all axes. <strong>Brush</strong> (click and drag) an axis to filter to a range. Deselect by <strong>double-clicking</strong> the axis or using <strong>Clear Selection</strong>."
     },
     {
       "id": "t10",
@@ -70,7 +70,7 @@
       "highlight": ".table-panel:first-of-type",
       "focus": ["#objectives-chart-buttons button[data-chart-key='radar']"],
       "setChart": { "select": "#objectives-chart-select", "value": "radar" },
-      "text": "The <strong>Radar Chart</strong> maps each objective onto a radial axis; each portfolio is drawn as a polygon. <strong>Brush</strong> (click and drag) an axis to filter portfolios. Deselect by <strong>double-clicking</strong> the axis or using <strong>Clear Selection</strong>."
+      "text": "The <strong>Radar Chart</strong> maps each objective onto a radial axis; each solution is drawn as a polygon. <strong>Brush</strong> (click and drag) an axis to filter solutions. Deselect by <strong>double-clicking</strong> the axis or using <strong>Clear Selection</strong>."
     },
     {
       "id": "t12",
@@ -85,14 +85,14 @@
       "highlight": ".table-panel:first-of-type",
       "focus": ["#objectives-chart-buttons button[data-chart-key='radviz']"],
       "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
-      "text": "<strong>RadViz</strong> positions each portfolio based on its pull towards objective anchors around the circle. Balanced portfolios land near the centre; those excelling in one objective are pulled to its anchor. <strong>Shift + click</strong> or use the <strong>Lasso Tool</strong> to select."
+      "text": "<strong>RadViz</strong> positions each solution based on its pull towards objective anchors around the circle. Balanced solutions land near the centre; those excelling in one objective are pulled to its anchor. <strong>Shift + click</strong> or use the <strong>Lasso Tool</strong> to select."
     },
     {
       "id": "t14",
       "highlight": ".table-panel:first-of-type",
       "focus": ["g.radviz-point"],
       "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
-      "text": "Each portfolio is shown as a <strong>mini pie glyph</strong>. Click it to expand into a full <strong>donut chart</strong> of asset composition. Click a <strong>group arc</strong> to drill into individual assets in the inner ring. Click the <strong>middle empty area</strong> in the centre to close."
+      "text": "Each solution is shown as a <strong>mini pie glyph</strong>. Click it to expand into a full <strong>donut chart</strong> of allocation composition. Click a <strong>group arc</strong> to drill into individual allocations in the inner ring. Click the <strong>middle empty area</strong> in the centre to close."
     },
     {
       "id": "t15",
@@ -107,21 +107,21 @@
       "highlight": ".table-panel:first-of-type",
       "focus": ["#objectives-chart-buttons button[data-chart-key='correlationHeatmap']"],
       "setChart": { "select": "#objectives-chart-select", "value": "correlationHeatmap" },
-      "text": "The <strong>Correlation Heatmap</strong> shows pairwise correlations between objectives. <strong>Dark</strong> = negative correlation; <strong>light</strong> = positive. Use it to identify which objectives/decision variables move together or pull against each other."
+      "text": "The <strong>Correlation Heatmap</strong> shows pairwise correlations between objectives. <strong>Dark</strong> = negative correlation; <strong>light</strong> = positive. Use it to identify which objectives or decision variables move together or pull against each other."
     },
     {
       "id": "t17",
       "highlight": ".table-panel:last-of-type",
       "focus": ["#decision-chart-buttons button[data-chart-key='barChart']"],
       "setChart": { "select": "#decision-chart-select", "value": "barChart" },
-      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per portfolio. Useful for comparing <strong>absolute allocations</strong> across all solutions. <strong>Shift + click</strong> a bar to select that portfolio."
+      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per solution. Useful for comparing <strong>absolute allocations</strong> across all solutions. <strong>Shift + click</strong> a bar to select that solution."
     },
     {
       "id": "t18",
       "highlight": ".table-panel:last-of-type",
       "focus": [".bar-chart-bar:nth-of-type(10)"],
       "setChart": { "select": "#decision-chart-select", "value": "barChart" },
-      "text": "Some categories represent <strong>asset groups</strong> containing multiple assets, such as <strong>Real Assets</strong>. Click a <strong>group bar</strong> to <strong>expand</strong> it and see <strong>individual asset allocations</strong>. This will also expand the section in the <strong>tooltip</strong>."
+      "text": "Some categories represent <strong>allocation groups</strong> containing multiple variables. Click a <strong>group bar</strong> to <strong>expand</strong> it and see <strong>individual allocations</strong>. This will also expand the section in the <strong>tooltip</strong>."
     },
     {
       "id": "t19",
@@ -131,13 +131,13 @@
         { "select": "#objectives-chart-select", "value": "table" },
         { "select": "#decision-chart-select", "value": "table" }
       ],
-      "text": "The <strong>Table</strong> lists every portfolio with its raw objective and decision values. <strong>Sort</strong> by any column. <strong>Brush</strong> (click and drag) the mini bars at the top to filter portfolios to a range, deselect by using <strong>Clear Selection</strong> or by double-cliking the filter."
+      "text": "The <strong>Table</strong> lists every solution with its raw objective and decision values. <strong>Sort</strong> by any column. <strong>Brush</strong> (click and drag) the mini bars at the top to filter solutions to a range, deselect by using <strong>Clear Selection</strong> or by double-clicking the filter."
     },
     {
       "id": "t20",
       "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
       "focus": [".group-header"],
-      "text": "Groups like <strong>Fixed Income</strong> in the table columns can be <strong>expanded</strong> to show individual assets."
+      "text": "Allocation groups in the table columns can be <strong>expanded</strong> to show individual allocations."
     }
   ]
 }
