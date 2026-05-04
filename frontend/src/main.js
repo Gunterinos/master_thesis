@@ -178,7 +178,7 @@ function initializeApp() {
     initCheatsheet();
 }
 
-function loadActiveFiles(activeFiles, { onDone } = {}) {
+function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
     const errorEl = d3.select("#load-error-msg");
     errorEl.classed("hidden", true).text("");
 
@@ -192,10 +192,13 @@ function loadActiveFiles(activeFiles, { onDone } = {}) {
         return;
     }
 
+    const body = { files: activeFiles };
+    if (benchmark) body.benchmark = benchmark;
+
     fetch("/api/load-data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ files: activeFiles }),
+        body: JSON.stringify(body),
     })
         .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
         .then(({ ok, data }) => {
@@ -240,6 +243,7 @@ window.addEventListener('survey:load-data', ({ detail }) => {
         d3.select(this).classed('active', detail.files.includes(d3.select(this).attr('data-file')));
     });
     loadActiveFiles(detail.files, {
+        benchmark: detail.benchmark,
         onDone: () => {
             const objCols = Object.keys(objectiveDirections);
             const decCols = fullData.length > 0

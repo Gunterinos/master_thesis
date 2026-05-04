@@ -63,7 +63,10 @@ function loadAndRender(index) {
     }, { once: true });
 
     window.dispatchEvent(new CustomEvent('survey:load-data', {
-        detail: { files: question.dataset.frontiers },
+        detail: {
+            files: question.dataset.frontiers,
+            benchmark: question.dataset.benchmark ?? null,
+        },
     }));
 }
 
@@ -140,6 +143,7 @@ async function submitAnswer(index) {
             body: JSON.stringify({
                 answerSpec,
                 frontiers: question.dataset.frontiers,
+                benchmark: question.dataset.benchmark ?? null,
                 userAnswer: answer,
             }),
         });

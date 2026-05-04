@@ -142,8 +142,10 @@ def data_files():
 def load_data():
     body = request.get_json(force=True)
     filenames = body.get("files", [])
+    benchmark_file = body.get("benchmark")
 
-    bm_rows, _, _, _ = load_csv(BENCHMARK_PATH)
+    bm_path = _resolve_data_file(benchmark_file) if benchmark_file else BENCHMARK_PATH
+    bm_rows, _, _, _ = load_csv(bm_path)
     benchmark_row = bm_rows[0]
 
     all_frontier_rows = []
@@ -151,7 +153,7 @@ def load_data():
     groups = {}
 
     for fname in filenames:
-        path = (DATA_DIR / fname).resolve()
+        path = _resolve_data_file(fname)
 
         rows, file_directions, file_groups, _ = load_csv(path)
 
@@ -159,7 +161,7 @@ def load_data():
             directions = file_directions
             groups = file_groups
 
-        frontier_name = fname.removesuffix(".csv")
+        frontier_name = _frontier_display_name(fname)
         all_frontier_rows.extend({**r, "__frontier": frontier_name} for r in rows)
 
     benchmark_row = {**benchmark_row, "__frontier": "Benchmark"}
@@ -214,10 +216,21 @@ def questions_config():
 
 
 def _frontier_display_name(fname):
-    return fname.removesuffix(".csv").replace("_", " ")
+    return Path(fname).stem.replace("_", " ")
 
 
-def _load_frontier_rows(frontiers):
+def _resolve_data_file(fname):
+    """Resolve a frontier filename to an absolute path.
+    Bare filenames (no directory component) resolve to DATA_DIR.
+    Relative paths resolve to the project root (directory of app.py).
+    """
+    p = Path(fname)
+    if p.parent == Path("."):
+        return (DATA_DIR / p).resolve()
+    return (Path(__file__).resolve().parent / p).resolve()
+
+
+def _load_frontier_rows(frontiers, benchmark=None):
     """Load rows for the given frontier filenames.
     Returns (all_rows, directions) where all_rows excludes the benchmark and
     each row has a '__frontier' key set to the display name of its source file.
@@ -228,7 +241,7 @@ def _load_frontier_rows(frontiers):
     all_rows = []
     directions = {}
     for fname in frontiers:
-        path = (DATA_DIR / fname).resolve()
+        path = _resolve_data_file(fname)
         rows, file_directions, *_ = load_csv(path)
         if not directions:
             directions = file_directions
@@ -244,8 +257,9 @@ def compute_answer():
     spec = body["answerSpec"]
     frontiers = body["frontiers"]
     user_answer = body.get("userAnswer")
+    benchmark_file = body.get("benchmark")
 
-    rows, directions = _load_frontier_rows(frontiers)
+    rows, directions = _load_frontier_rows(frontiers, benchmark_file)
     if not rows:
         return jsonify({"error": "No data found"}), 400
 

@@ -1,5 +1,9 @@
 {
   "description": "One canonical example per question type. Use these as templates when authoring new questionnaires.",
+  "dataset_notes": {
+    "frontiers": "Bare filenames (e.g. 'portfolio_3D.csv') resolve to the data/ folder. Relative paths (e.g. 'other_study/file.csv') resolve relative to the project root.",
+    "benchmark": "Optional. Bare filename or relative path. Omit to use the default data/benchmark.csv."
+  },
   "examples": [
     {
       "type": "value_retrieval",
@@ -10,7 +14,10 @@
         "id": "ex1",
         "type": "value_retrieval",
         "interactionType": "record_selection",
-        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "dataset": {
+          "frontiers": ["portfolio_3D.csv"],
+          "benchmark": "data/benchmark.csv"
+        },
         "prompt": "Select the portfolio with the highest Return value.",
         "options": [],
         "answerSpec": { "type": "highest_value", "column": "obj_Return" }
