@@ -12,6 +12,7 @@
           "dataset": { "frontiers": ["portfolio_3D.csv"] },
           "prompt": "Select the portfolio with the highest Return value.",
           "options": [],
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "answerSpec": { "type": "highest_value", "column": "obj_Return" }
         },
         {

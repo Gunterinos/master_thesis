@@ -20,6 +20,7 @@ let appInitialized = false;
 
 let _externalFilter = null;       // passing row indices from PCP / lasso / etc.
 const _tableFilters = new Map(); // containerSelector → passing row indices (one entry per table)
+let _surveyDisabledCharts = null;
 
 function getCurrentData() {
     const filteredRowIndices = getFilteredRowIndexSet();
@@ -38,6 +39,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
     });
 
@@ -46,6 +48,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        disabledCharts: _surveyDisabledCharts,
     });
 }
 
@@ -239,6 +242,7 @@ function getActiveFiles() {
 
 // ── Survey event bridge ──────────────────────────────────────────────────
 window.addEventListener('survey:load-data', ({ detail }) => {
+    _surveyDisabledCharts = detail.disabledCharts ?? null;
     d3.selectAll('#frontier-buttons button').each(function() {
         d3.select(this).classed('active', detail.files.includes(d3.select(this).attr('data-file')));
     });
@@ -296,6 +300,7 @@ async function finishSurvey(responses, sessionId) {
             document.body.classList.remove('survey-active');
             document.getElementById('start-tutorial-btn').style.display = '';
             document.getElementById('chart-guide-btn').style.display = '';
+            _surveyDisabledCharts = null;
             loadActiveFiles(getActiveFiles());
         },
     });
