@@ -1135,6 +1135,58 @@ body.survey-active #tutorial-zone {
 .cheatsheet-card-gif-wrapper {
     width: 100%;
     cursor: pointer;
+    position: relative;
+}
+
+.cheatsheet-gif-expand-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--color-ink);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 2;
+}
+
+.cheatsheet-card-gif-wrapper:hover .cheatsheet-gif-expand-btn {
+    opacity: 1;
+}
+
+.cheatsheet-gif-expand-btn:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+#cheatsheet-gif-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+#cheatsheet-gif-lightbox.open {
+    display: flex;
+}
+
+#cheatsheet-gif-lightbox-img {
+    max-width: 85vw;
+    max-height: 85vh;
+    border-radius: 10px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
 }
 
 .cheatsheet-card-gif-static,
