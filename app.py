@@ -32,6 +32,10 @@ def _is_constraint_val(val):
     return bool(re.match(r'^[<>]=?\d', val.strip())) if val else False
 
 
+def _is_direction_row(row):
+    return all(v in ('', '1', '-1') for v in row.values())
+
+
 def _spearman(x, y):
     n = len(x)
     if n == 0:
@@ -71,9 +75,14 @@ def load_csv(path):
 
     idx = 0
 
-    # Optional constraints row: values like <0.3, >=0.5, etc.
+    # Optional constraints row: explicit constraint values (<0.3, >0.2 …) OR an
+    # all-blank row that precedes a direction row (unconstrained frontiers still
+    # emit a blank constraints row to keep the column structure consistent).
     constraints = {}
-    if any(_is_constraint_val(v) for v in rows[idx].values()):
+    is_all_blank = not any(rows[idx].values())
+    has_constraint_vals = any(_is_constraint_val(v) for v in rows[idx].values())
+    next_is_direction = idx + 1 < len(rows) and _is_direction_row(rows[idx + 1])
+    if has_constraint_vals or (is_all_blank and next_is_direction):
         constraints = {col: val for col, val in rows[idx].items() if val}
         idx += 1
 
