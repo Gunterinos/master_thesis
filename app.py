@@ -32,10 +32,6 @@ def _is_constraint_val(val):
     return bool(re.match(r'^[<>]=?\d', val.strip())) if val else False
 
 
-def _is_direction_row(row):
-    return all(v in ('', '1', '-1') for v in row.values())
-
-
 def _spearman(x, y):
     n = len(x)
     if n == 0:
@@ -73,45 +69,41 @@ def load_csv(path):
     if not rows:
         return [], {}, {}, {}
 
-    idx = 0
-
-    # Optional constraints row: explicit constraint values (<0.3, >0.2 …) OR an
-    # all-blank row that precedes a direction row (unconstrained frontiers still
-    # emit a blank constraints row to keep the column structure consistent).
+    # Inspect up to 3 metadata rows and identify each by content.
+    # Stops as soon as a numeric data row is encountered.
+    # Row roles (any order, any subset may be absent):
+    #   constraints : has at least one </>= value
+    #   directions  : all non-empty values are '1' or '-1'
+    #   groups      : has non-numeric, non-constraint strings
     constraints = {}
-    is_all_blank = not any(rows[idx].values())
-    has_constraint_vals = any(_is_constraint_val(v) for v in rows[idx].values())
-    next_is_direction = idx + 1 < len(rows) and _is_direction_row(rows[idx + 1])
-    if has_constraint_vals or (is_all_blank and next_is_direction):
-        constraints = {col: val for col, val in rows[idx].items() if val}
-        idx += 1
-
-    if idx >= len(rows):
-        return [], {}, {}, constraints
-
-    # Direction metadata row (1=max, -1=min, empty=decision)
-    meta_row = rows[idx]
-    idx += 1
-
-    # Optional group metadata row: non-empty, non-numeric, non-constraint values.
-    groups = {}
-    data_start = idx
-    if len(rows) > idx:
-        candidate_vals = [v for v in rows[idx].values() if v]
-        if candidate_vals and any(not _is_numeric(v) for v in candidate_vals):
-            groups = {col: val for col, val in rows[idx].items() if val}
-            data_start = idx + 1
-
-    data_rows = rows[data_start:]
-
     directions = {}
-    for col, val in meta_row.items():
-        if val == "1":
-            directions[col] = "max"
-        elif val == "-1":
-            directions[col] = "min"
+    groups = {}
+    data_start = 0
 
-    return data_rows, directions, groups, constraints
+    for i, row in enumerate(rows[:3]):
+        non_empty = {k: v for k, v in row.items() if v}
+        vals = list(non_empty.values())
+
+        if not vals:
+            # blank metadata row (e.g. empty constraints row in unconstrained files)
+            data_start = i + 1
+        elif any(_is_constraint_val(v) for v in vals):
+            constraints = non_empty
+            data_start = i + 1
+        elif all(v in ('1', '-1') for v in vals):
+            for col, val in row.items():
+                if val == '1':
+                    directions[col] = 'max'
+                elif val == '-1':
+                    directions[col] = 'min'
+            data_start = i + 1
+        elif any(not _is_numeric(v) and not _is_constraint_val(v) for v in vals):
+            groups = non_empty
+            data_start = i + 1
+        else:
+            break  # reached a numeric data row
+
+    return rows[data_start:], directions, groups, constraints
 
 
 @app.get("/")
