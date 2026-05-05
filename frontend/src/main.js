@@ -243,9 +243,7 @@ function getActiveFiles() {
 // ── Survey event bridge ──────────────────────────────────────────────────
 window.addEventListener('survey:load-data', ({ detail }) => {
     _surveyDisabledCharts = detail.disabledCharts ?? null;
-    d3.selectAll('#frontier-buttons button').each(function() {
-        d3.select(this).classed('active', detail.files.includes(d3.select(this).attr('data-file')));
-    });
+    populateFrontierButtons(detail.files, {}, detail.files);
     loadActiveFiles(detail.files, {
         benchmark: detail.benchmark,
         onDone: () => {
@@ -301,51 +299,63 @@ async function finishSurvey(responses, sessionId) {
             document.getElementById('start-tutorial-btn').style.display = '';
             document.getElementById('chart-guide-btn').style.display = '';
             _surveyDisabledCharts = null;
+            populateFrontierButtons(_defaultFrontierFiles, _defaultFileConstraints);
             loadActiveFiles(getActiveFiles());
         },
     });
 }
 
+let _defaultFrontierFiles = [];
+let _defaultFileConstraints = {};
+
+function formatConstraintVal(val) {
+    return val.replace(/([<>]=?)(\d+(?:\.\d+)?)/g, (_, op, num) => {
+        const pct = parseFloat((parseFloat(num) * 100).toPrecision(4));
+        return `${op}${pct}%`;
+    });
+}
+
+function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null) {
+    const container = d3.select("#frontier-buttons");
+    container.selectAll("*").remove();
+
+    const initialActive = activeFiles ?? (files.length > 0 ? [files[0]] : []);
+
+    files.forEach((fname) => {
+        const constraints = fileConstraints[fname] ?? {};
+        const constraintEntries = Object.entries(constraints);
+        const label = fname.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ');
+
+        const tooltipText = constraintEntries.length > 0
+            ? constraintEntries.map(([col, val]) => `${formatLabel(col)} ${formatConstraintVal(val)}`).join(' · ')
+            : null;
+
+        const group = container.append("div")
+            .attr("class", "frontier-btn-group");
+
+        const btn = group.append("button")
+            .attr("type", "button")
+            .attr("data-file", fname)
+            .classed("active", initialActive.includes(fname))
+            .text(label)
+            .on("click", function () {
+                const isActive = d3.select(this).classed("active");
+                if (isActive && getActiveFiles().length === 1) { return; }
+                d3.select(this).classed("active", !isActive);
+                loadActiveFiles(getActiveFiles());
+            });
+
+        if (tooltipText) {
+            btn.attr("data-tooltip", tooltipText);
+        }
+    });
+}
+
 d3.json("/api/data-files")
     .then(({ files, fileConstraints = {} }) => {
-        const container = d3.select("#frontier-buttons");
-
-        function formatConstraintVal(val) {
-            return val.replace(/([<>]=?)(\d+(?:\.\d+)?)/g, (_, op, num) => {
-                const pct = parseFloat((parseFloat(num) * 100).toPrecision(4));
-                return `${op}${pct}%`;
-            });
-        }
-
-        files.forEach((fname, i) => {
-            const constraints = fileConstraints[fname] ?? {};
-            const constraintEntries = Object.entries(constraints);
-            const label = fname.replace(/\.csv$/i, '').replace(/_/g, ' ');
-
-            const tooltipText = constraintEntries.length > 0
-                ? constraintEntries.map(([col, val]) => `${formatLabel(col)} ${formatConstraintVal(val)}`).join(' · ')
-                : null;
-
-            const group = container.append("div")
-                .attr("class", "frontier-btn-group");
-
-            const btn = group.append("button")
-                .attr("type", "button")
-                .attr("data-file", fname)
-                .classed("active", i === 0)
-                .text(label)
-                .on("click", function () {
-                    const isActive = d3.select(this).classed("active");
-                    // Prevent deselecting the last active button
-                    if (isActive && getActiveFiles().length === 1) { return; }
-                    d3.select(this).classed("active", !isActive);
-                    loadActiveFiles(getActiveFiles());
-                });
-
-            if (tooltipText) {
-                btn.attr("data-tooltip", tooltipText);
-            }
-        });
+        _defaultFrontierFiles = files;
+        _defaultFileConstraints = fileConstraints;
+        populateFrontierButtons(files, fileConstraints);
         if (files.length > 0) { loadActiveFiles([files[0]]); }
     })
     .catch(() => {
