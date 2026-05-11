@@ -11,6 +11,7 @@ import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
 import { formatLabel } from './formatLabel.js';
+import { getFrontierColor } from './colors.js';
 
 let fullData = [];
 let objectiveDirections = {};
@@ -41,6 +42,7 @@ function renderAllPanels(options = {}) {
         renderOptions: { animate },
         groups,
         measures,
+        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
     });
@@ -324,7 +326,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
 
     const initialActive = activeFiles ?? (files.length > 0 ? [files[0]] : []);
 
-    files.forEach((fname) => {
+    files.forEach((fname, i) => {
         const constraints = fileConstraints[fname] ?? {};
         const constraintEntries = Object.entries(constraints);
         const label = fname.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ');
@@ -339,6 +341,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
         const btn = group.append("button")
             .attr("type", "button")
             .attr("data-file", fname)
+            .style("--fc", getFrontierColor(i))
             .classed("active", initialActive.includes(fname))
             .text(label)
             .on("click", function () {

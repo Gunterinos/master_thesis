@@ -32,6 +32,7 @@ export function initializeSpacePanel(config) {
         decisionColumns = [],
         groups = {},
         measures = {},
+        frontierOrder = null,
         columns,
         data,
         objectiveDirections = {},
@@ -210,7 +211,7 @@ export function initializeSpacePanel(config) {
                 ? computeDominantGroups(renderData, decisionColumns, groups)
                 : null;
             const { colorMap: frontierColorOverrides, items: frontierLegendItems } = showFrontierColors
-                ? computeFrontierColors(renderData)
+                ? computeFrontierColors(renderData, frontierOrder)
                 : { colorMap: null, items: [] };
             chartConfig.render({
                 containerSelector,

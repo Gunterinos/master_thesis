@@ -487,6 +487,12 @@ body.survey-active #tutorial-zone {
     gap: 0.4rem;
 }
 
+#frontier-buttons button {
+    border-color: transparent;
+    outline: 2px solid var(--fc, transparent);
+    outline-offset: 1px;
+}
+
 .frontier-btn-group {
     position: relative;
     display: inline-flex;
