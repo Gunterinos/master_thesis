@@ -18,7 +18,7 @@ const CHARTS = [
         label: '3D Scatterplot',
         icon: '/icons/3D_ScatterPlot.svg',
         gif: '/gifs/3D_Scatter_GIF.gif',
-        description: 'Each <strong>dot</strong> is one portfolio in three dimensions. <strong>Drag</strong> to rotate. <strong>Brush</strong> along any axis to filter to a range.',
+        description: 'Each <strong>dot</strong> is one portfolio in three dimensions. <strong>Drag</strong> to rotate. <strong>Shift+click</strong> to select.',
     },
     {
         id: 'pcp',
