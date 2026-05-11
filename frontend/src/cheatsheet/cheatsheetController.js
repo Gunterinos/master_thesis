@@ -77,14 +77,7 @@ function buildCard(chart) {
         gifImg.className = 'cheatsheet-card-gif';
         gifImg.alt = `${chart.label} animation`;
 
-        const expandBtn = document.createElement('button');
-        expandBtn.className = 'cheatsheet-gif-expand-btn';
-        expandBtn.title = 'Enlarge';
-        expandBtn.innerHTML = '<svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="6.5,1 9,1 9,3.5"/><polyline points="3.5,9 1,9 1,6.5"/><line x1="9" y1="1" x2="5.5" y2="4.5"/><line x1="1" y1="9" x2="4.5" y2="5.5"/></svg>';
-        expandBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openGifLightbox(chart.gif, chart.label);
-        });
+        wrapper.addEventListener('click', () => openGifLightbox(chart.gif, chart.label));
 
         // Capture first frame of the GIF into the canvas
         const loader = new Image();
@@ -108,7 +101,6 @@ function buildCard(chart) {
 
         wrapper.appendChild(canvas);
         wrapper.appendChild(gifImg);
-        wrapper.appendChild(expandBtn);
         card.appendChild(wrapper);
     }
 
