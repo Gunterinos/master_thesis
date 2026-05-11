@@ -94,6 +94,7 @@
 
 .radviz-expanded .radviz-point:not(.radviz-point--expanded) {
     opacity: 0.12;
+    pointer-events: none;
 }
 
 /* ── Selection and hover states — declared last to win the cascade ── */
