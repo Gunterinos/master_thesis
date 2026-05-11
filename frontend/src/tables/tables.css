@@ -11,6 +11,12 @@ td {
     padding: 0.52rem 0.62rem;
     text-align: left;
     font-size: 0.86rem;
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 th:first-child,
@@ -31,7 +37,6 @@ th {
     color: var(--color-table-header-text);
     font-weight: 600;
     cursor: pointer;
-    white-space: nowrap;
 }
 
 th:hover {
@@ -48,6 +53,15 @@ th[data-col-color] {
     font-size: 0.72rem;
 }
 
+.col-measure {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
 th.sort-active .sort-indicator {
     opacity: 1;
 }
@@ -61,12 +75,9 @@ tbody tr.is-linked-highlight td {
     background: var(--color-table-positive-bg);
 }
 
-body.shift-held tbody tr.is-point-selected td {
-    background: var(--color-selection-tint-soft);
-}
-
-body.shift-held tbody tr.is-point-selected td:first-child {
-    border-left: 3px solid var(--color-selection);
+tbody tr.is-point-selected td {
+    background: rgba(79, 140, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(79, 140, 255, 0.28), inset 0 -1px 0 rgba(79, 140, 255, 0.28);
 }
 
 tbody tr.is-linked-dim {
@@ -77,8 +88,8 @@ tbody tr.is-linked-dim.is-point-selected {
     opacity: 1;
 }
 
-tbody tr.is-linked-dim.is-point-selected td:first-child {
-    border-left: 3px solid var(--color-selection);
+tbody tr td:first-child {
+    border-left: 3px solid var(--frontier-color, var(--color-table-border));
 }
 
 tbody tr.is-benchmark td:first-child {

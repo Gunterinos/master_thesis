@@ -89,21 +89,23 @@ export function getFrontierColor(index) {
  * Returns { colorMap: Map<rowIndex, colorString>, items: [{ label, color }] }.
  * Benchmark rows are excluded — they always render with POINT_COLOR_BENCHMARK.
  */
-export function computeFrontierColors(data) {
-    const frontierOrder = [];
-    const seen = new Set();
-    for (const row of data) {
-        if (row.__isBenchmark) continue;
-        const name = row.__frontier ?? 'Unknown';
-        if (!seen.has(name)) { seen.add(name); frontierOrder.push(name); }
-    }
+export function computeFrontierColors(data, globalOrder = null) {
     const colorMap = new Map();
+    const seen = new Map(); // name → color index
+    const items = [];
+    let nextIdx = 0;
+
     for (const row of data) {
         if (row.__isBenchmark) continue;
         const name = row.__frontier ?? 'Unknown';
-        colorMap.set(row.__rowIndex, getFrontierColor(frontierOrder.indexOf(name)));
+        if (!seen.has(name)) {
+            const idx = globalOrder ? globalOrder.indexOf(name) : -1;
+            const colorIdx = idx >= 0 ? idx : nextIdx++;
+            seen.set(name, colorIdx);
+            items.push({ label: name, color: getFrontierColor(colorIdx) });
+        }
+        colorMap.set(row.__rowIndex, getFrontierColor(seen.get(name)));
     }
-    const items = frontierOrder.map((label, i) => ({ label, color: getFrontierColor(i) }));
     return { colorMap, items };
 }
 

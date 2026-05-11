@@ -57,6 +57,12 @@ body.shift-held .pcp-line.is-line-selected {
 
 }
 
+.pcp-axis-measure {
+    font-size: 0.68rem;
+    font-weight: 400;
+    fill: var(--color-text-muted);
+}
+
 .pcp-axis-label {
     font-size: 0.78rem;
     font-weight: 600;

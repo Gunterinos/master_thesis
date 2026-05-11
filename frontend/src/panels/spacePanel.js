@@ -31,6 +31,8 @@ export function initializeSpacePanel(config) {
         spreadSliderSelector = null,
         decisionColumns = [],
         groups = {},
+        measures = {},
+        frontierOrder = null,
         columns,
         data,
         objectiveDirections = {},
@@ -209,7 +211,7 @@ export function initializeSpacePanel(config) {
                 ? computeDominantGroups(renderData, decisionColumns, groups)
                 : null;
             const { colorMap: frontierColorOverrides, items: frontierLegendItems } = showFrontierColors
-                ? computeFrontierColors(renderData)
+                ? computeFrontierColors(renderData, frontierOrder)
                 : { colorMap: null, items: [] };
             chartConfig.render({
                 containerSelector,
@@ -228,6 +230,8 @@ export function initializeSpacePanel(config) {
                 groupColorOverrides,
                 decisionColumns,
                 groups,
+                measures,
+                frontierOrder,
                 frontierColorOverrides,
                 frontierLegendItems,
             });
@@ -303,6 +307,13 @@ export function initializeSpacePanel(config) {
     if (decGroupsBtn) decGroupsBtn.on("click", toggleDecGroups);
 
     if (frontierColorsToggle) {
+        const multipleFrontiers = (frontierOrder?.length ?? 0) > 1;
+        frontierColorsToggle.classed('hidden', !multipleFrontiers);
+        if (!multipleFrontiers) {
+            showFrontierColors = false;
+            frontierColorsToggle.classed('active', false);
+        }
+
         frontierColorsToggle.on("click", () => {
             showFrontierColors = !showFrontierColors;
             frontierColorsToggle.classed("active", showFrontierColors);

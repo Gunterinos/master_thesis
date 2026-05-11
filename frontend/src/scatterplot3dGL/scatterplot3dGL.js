@@ -6,13 +6,11 @@ import * as THREE from 'three';
 import * as d3 from 'd3';
 import './scatterplot3dGL.css';
 import { getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
-import { getFilterState } from './filterState.js';
 import { _instances, setScatter3dGLSelection } from './globalState.js';
 import { computeParetoFront, generateDominatedCloud } from './paretoHelpers.js';
 import { buildSurfaceMesh } from './surfaceMesh.js';
 import { createCircleTexture, createRingTexture, makeTextSprite } from './textureHelpers.js';
 import { buildScene } from './sceneSetup.js';
-import { buildBrushFilter } from './brushFilter.js';
 import { formatLabel } from '../formatLabel.js';
 import { buildOrbitControls } from './orbitControls.js';
 import { buildPointVisuals } from './pointVisuals.js';
@@ -32,8 +30,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         onHoverEnd          = () => {},
         onSelectionChange   = () => {},
         onShiftClick        = () => {},
-        onBrushFilterChange = () => {},
-        disableBrush        = false,
+        measures            = {},
         animate             = false,
         showLabels          = false,
         showSurface         = false,
@@ -51,7 +48,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const yDir = objectiveDirections[yKey] ?? 'min';
     const zDir = objectiveDirections[zKey] ?? 'min';
 
-    const filterState   = getFilterState(containerSelector);
     const container     = d3.select(containerSelector);
     const containerNode = container.node();
     if (!containerNode) return;
@@ -135,7 +131,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
     const { renderer, canvas, scene, camera, spherical, updateCamera, axisLabelSprites, oldAxisLabelSprites } =
         buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale,
-            { startXScale, startYScale, startZScale, shouldAnimate });
+            { startXScale, startYScale, startZScale, shouldAnimate }, measures);
     wrapper.node().appendChild(canvas);
 
     function renderFrame() { renderer.render(scene, camera); }
@@ -223,7 +219,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     }
 
     wrapper.append('div').attr('class', 'scatter3dgl-hint')
-        .text('Drag to rotate · Shift+click to select · Double-click filter to remove');
+        .text('Drag to rotate · Shift+click to select');
 
     if (totalObj > 3) {
         const warnTooltip = d3.select("body")
@@ -292,45 +288,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         );
     }
 
-    const axisScaleMeta = [
-        { key: xKey, scale: xScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(1,0,0), color: COLOR_INK },
-        { key: yKey, scale: yScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,1,0), color: COLOR_INK },
-        { key: zKey, scale: zScale, from: new THREE.Vector3(0,0,0), to: new THREE.Vector3(0,0,1), color: COLOR_INK },
-    ];
-
     const pvModule = buildPointVisuals({
-        pointMeshes, ringMeshes, labelSprites, filterState,
-        xKey, yKey, zKey, POINT_SIZE, RING_SIZE, renderFrame,
-    });
-
-    function updateFilteredPoints() {
-        const active   = Object.entries(filterState.axisFilters).filter(([k]) => !filterState.hiddenFilters.has(k));
-        const hasBrush = active.length > 0;
-        const hasOnlyHidden = Object.keys(filterState.axisFilters).length > 0 && !hasBrush;
-        if (!hasOnlyHidden) {
-            const wasActive = filterState.hadActiveBrushFilters || false;
-            filterState.hadActiveBrushFilters = hasBrush;
-            if (hasBrush) {
-                const passing = data
-                    .filter(row => active.every(([axis, f]) => { const v = Number(row[axis]); return v >= f.min && v <= f.max; }))
-                    .map((row, i) => row.__rowIndex ?? i);
-                onBrushFilterChange(passing);
-            } else if (wasActive) {
-                onBrushFilterChange(null);
-            }
-        }
-        pvModule.refreshPointVisuals();
-    }
-
-    const filterPlaneGroup    = new THREE.Group();
-    const brushHighlightGroup = new THREE.Group();
-    scene.add(filterPlaneGroup);
-    scene.add(brushHighlightGroup);
-
-    const brushModule = buildBrushFilter({
-        canvas, scene, camera, filterState, axisScaleMeta,
-        filterPlaneGroup, brushHighlightGroup,
-        disableBrush, renderFrame, updateFilteredPoints,
+        pointMeshes, ringMeshes, labelSprites,
+        POINT_SIZE, RING_SIZE, renderFrame,
     });
 
     const orbitModule = buildOrbitControls({
@@ -339,11 +299,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         renderFrame, onHoverStart, onHoverEnd, onShiftClick,
     });
 
-    brushModule.rebuildFilterPlanes();
-    brushModule.rebuildBrushHighlights();
     pvModule.applyHighlight(getActiveRowIndex());
     pvModule.setSelection(getEffectiveSelection());
-    updateFilteredPoints();
+    pvModule.refreshPointVisuals();
     renderFrame();
 
     if (shouldAnimate) {
@@ -377,7 +335,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         containerNode.dataset.gl3dTheta  = String(spherical.theta);
         pvModule.teardown();
         orbitModule.teardown();
-        brushModule.teardown();
         renderer.dispose();
         scene.traverse(obj => {
             if (obj.geometry) obj.geometry.dispose();
@@ -393,7 +350,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         setSelection:   pvModule.setSelection,
         applyHighlight: pvModule.applyHighlight,
         dispose,
-        refreshVisuals: updateFilteredPoints,
     });
 }
 

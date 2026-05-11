@@ -44,6 +44,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         groups = {},
         frontierColorOverrides = null,
         frontierLegendItems = [],
+        measures = {},
     } = options;
 
     const xAxisLabel = pcaLabels ? formatLabel(pcaLabels.x) : formatLabel(xKey);
@@ -187,20 +188,29 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
         yAxisGroup.call(d3.axisLeft(yScale));
     }
 
-    svg
-        .append("text")
+    const xMeasure = !pcaLabels && measures[xKey] ? measures[xKey] : null;
+    const yMeasure = !pcaLabels && measures[yKey] ? measures[yKey] : null;
+
+    const xLabelEl = svg.append("text")
         .attr("x", width / 2)
         .attr("y", height + margin.bottom - 8)
-        .attr("text-anchor", "middle")
-        .text(xAxisLabel);
+        .attr("text-anchor", "middle");
+    xLabelEl.append("tspan").text(xAxisLabel);
+    if (xMeasure) xLabelEl.append("tspan")
+        .attr("dx", "0.5em")
+        .attr("class", "axis-measure-label")
+        .text(xMeasure);
 
-    svg
-        .append("text")
+    const yLabelEl = svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", -height / 2)
         .attr("y", -40)
-        .attr("text-anchor", "middle")
-        .text(yAxisLabel);
+        .attr("text-anchor", "middle");
+    yLabelEl.append("tspan").text(yAxisLabel);
+    if (yMeasure) yLabelEl.append("tspan")
+        .attr("dx", "0.5em")
+        .attr("class", "axis-measure-label")
+        .text(yMeasure);
 
     if (showLabels) {
         const labelGroup = svg.append("g").attr("class", "scatter-point-labels");

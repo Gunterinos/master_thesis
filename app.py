@@ -69,23 +69,24 @@ def load_csv(path):
     if not rows:
         return [], {}, {}, {}
 
-    # Inspect up to 3 metadata rows and identify each by content.
+    # Inspect up to 4 metadata rows and identify each by content.
     # Stops as soon as a numeric data row is encountered.
     # Row roles (any order, any subset may be absent):
     #   constraints : has at least one </>= value
     #   directions  : all non-empty values are '1' or '-1'
-    #   groups      : has non-numeric, non-constraint strings
+    #   groups      : non-numeric strings in dec_ columns
+    #   measures    : non-numeric strings in obj_ columns (units/scale labels)
     constraints = {}
     directions = {}
     groups = {}
+    measures = {}
     data_start = 0
 
-    for i, row in enumerate(rows[:3]):
+    for i, row in enumerate(rows[:4]):
         non_empty = {k: v for k, v in row.items() if v}
         vals = list(non_empty.values())
 
         if not vals:
-            # blank metadata row (e.g. empty constraints row in unconstrained files)
             data_start = i + 1
         elif any(_is_constraint_val(v) for v in vals):
             constraints = non_empty
@@ -98,12 +99,17 @@ def load_csv(path):
                     directions[col] = 'min'
             data_start = i + 1
         elif any(not _is_numeric(v) and not _is_constraint_val(v) for v in vals):
-            groups = non_empty
+            obj_keys = {k for k in non_empty if k.startswith('obj_')}
+            dec_keys = {k for k in non_empty if k.startswith('dec_')}
+            if obj_keys and not dec_keys:
+                measures = non_empty
+            else:
+                groups = non_empty
             data_start = i + 1
         else:
             break  # reached a numeric data row
 
-    return rows[data_start:], directions, groups, constraints
+    return rows[data_start:], directions, groups, constraints, measures
 
 
 @app.get("/")
@@ -114,7 +120,7 @@ def index():
 @app.get("/api/data-files")
 def data_files():
     # Only return files whose obj_/dec_ columns match the benchmark
-    bm_rows, _, _, _ = load_csv(BENCHMARK_PATH)
+    bm_rows, _, _, _, _ = load_csv(BENCHMARK_PATH)
     bm_cols = frozenset(
         k for k in (bm_rows[0] if bm_rows else {})
         if k.startswith("obj_") or k.startswith("dec_")
@@ -125,7 +131,7 @@ def data_files():
     for p in sorted(DATA_DIR.glob("*.csv")):
         if p.name.lower() == "benchmark.csv":
             continue
-        rows, _, _, constraints = load_csv(p)
+        rows, _, _, constraints, _ = load_csv(p)
         if rows:
             file_cols = frozenset(
                 k for k in rows[0]
@@ -146,28 +152,30 @@ def load_data():
     benchmark_file = body.get("benchmark")
 
     bm_path = _resolve_data_file(benchmark_file) if benchmark_file else BENCHMARK_PATH
-    bm_rows, _, _, _ = load_csv(bm_path)
+    bm_rows, _, _, _, _ = load_csv(bm_path)
     benchmark_row = bm_rows[0]
 
     all_frontier_rows = []
     directions = {}
     groups = {}
+    measures = {}
 
     for fname in filenames:
         path = _resolve_data_file(fname)
 
-        rows, file_directions, file_groups, _ = load_csv(path)
+        rows, file_directions, file_groups, _, file_measures = load_csv(path)
 
         if not all_frontier_rows:
             directions = file_directions
             groups = file_groups
+            measures = file_measures
 
         frontier_name = _frontier_display_name(fname)
         all_frontier_rows.extend({**r, "__frontier": frontier_name} for r in rows)
 
     benchmark_row = {**benchmark_row, "__frontier": "Benchmark"}
     merged = [benchmark_row] + all_frontier_rows
-    return jsonify({"rows": merged, "directions": directions, "groups": groups})
+    return jsonify({"rows": merged, "directions": directions, "groups": groups, "measures": measures})
 
 
 @app.post("/api/pca")

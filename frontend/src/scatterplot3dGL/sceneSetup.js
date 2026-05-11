@@ -10,7 +10,7 @@ import { formatLabel } from '../formatLabel.js';
 const TICK_COUNT = 4;
 
 // Creates the full Three.js scene with renderer, camera, axes and tick labels, returning all live references.
-export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale, animOpts) {
+export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale, animOpts, measures = {}) {
     const { startXScale, startYScale, startZScale, shouldAnimate } = animOpts;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -52,10 +52,14 @@ export function buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale
     boxLine.position.set(0.5, 0.5, 0.5);
     scene.add(boxLine);
 
+    const axisLabel = (key) => {
+        const base = formatLabel(key);
+        return measures[key] ? `${base}  ·  ${measures[key]}` : base;
+    };
     const AXIS_CFG = [
-        { color: COLOR_INK, from: [0,0,0], to: [1,0,0], label: formatLabel(xKey), scale: xScale },
-        { color: COLOR_INK, from: [0,0,0], to: [0,1,0], label: formatLabel(yKey), scale: yScale },
-        { color: COLOR_INK, from: [0,0,0], to: [0,0,1], label: formatLabel(zKey), scale: zScale },
+        { color: COLOR_INK, from: [0,0,0], to: [1,0,0], label: axisLabel(xKey), scale: xScale },
+        { color: COLOR_INK, from: [0,0,0], to: [0,1,0], label: axisLabel(yKey), scale: yScale },
+        { color: COLOR_INK, from: [0,0,0], to: [0,0,1], label: axisLabel(zKey), scale: zScale },
     ];
 
     AXIS_CFG.forEach(a => {

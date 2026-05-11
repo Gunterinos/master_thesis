@@ -1,22 +1,16 @@
-// Composites brush-filter, hover and selection state into final point sprite
-// visuals (colour, opacity, scale). Brush filter has highest priority.
-
-import { POINT_COLOR_BENCHMARK, POINT_COLOR_REGULAR, POINT_COLOR_FILTERED } from '../colors.js';
+import { POINT_COLOR_BENCHMARK, POINT_COLOR_REGULAR } from '../colors.js';
 
 // Builds the point-visual compositing system; returns { applyHighlight, setSelection, refreshPointVisuals, teardown }.
 export function buildPointVisuals(ctx) {
-    const { pointMeshes, ringMeshes, labelSprites, filterState,
-            xKey, yKey, zKey, POINT_SIZE, RING_SIZE, renderFrame } = ctx;
+    const { pointMeshes, ringMeshes, labelSprites,
+            POINT_SIZE, RING_SIZE, renderFrame } = ctx;
 
     let _hoveredRowIndex  = null;
     let _lastSelectionSet = null;
 
     function refreshPointVisuals() {
-        const hovered   = _hoveredRowIndex;
-        const selected  = _lastSelectionSet;
-        const active    = Object.entries(filterState.axisFilters)
-            .filter(([k]) => !filterState.hiddenFilters.has(k));
-        const hasBrush     = active.length > 0;
+        const hovered      = _hoveredRowIndex;
+        const selected     = _lastSelectionSet;
         const hasSelection = selected !== null;
         const hasHover     = hovered !== null;
         const shiftHeld    = document.body.classList.contains('shift-held');
@@ -25,21 +19,6 @@ export function buildPointVisuals(ctx) {
             const p    = m.userData;
             const ring = ringMeshes[i];
             const lbl  = labelSprites[i] || null;
-
-            const isBrushFiltered = hasBrush && active.some(([axis, f]) => {
-                const val = axis === xKey ? p.xVal : axis === yKey ? p.yVal : p.zVal;
-                return val < f.min || val > f.max;
-            });
-
-            if (isBrushFiltered) {
-                m.scale.set(POINT_SIZE, POINT_SIZE, 1);
-                m.material.color.set(POINT_COLOR_FILTERED);
-                m.material.opacity = 0.15;
-                ring.scale.set(RING_SIZE, RING_SIZE, ring.scale.z);
-                ring.material.opacity = 0;
-                if (lbl) lbl.material.opacity = 0.15;
-                return;
-            }
 
             m.material.color.set(p.activeColor ?? (p.isBenchmark ? POINT_COLOR_BENCHMARK : (p.surfaceColor ?? POINT_COLOR_REGULAR)));
 
@@ -57,7 +36,7 @@ export function buildPointVisuals(ctx) {
             const isSelectionDim = hasSelection && !isSelected;
             let opacity = 1, labelOpacity = 1, ringOpacity = 0;
 
-            if (hasSelection && !hasBrush) {
+            if (hasSelection) {
                 if (shiftHeld) {
                     ringOpacity = isSelected ? 1 : 0;
                 } else {

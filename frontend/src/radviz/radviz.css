@@ -19,6 +19,12 @@
     transition: opacity 0.2s ease;
 }
 
+.radviz-anchor-measure {
+    font-size: 0.68rem;
+    font-weight: 400;
+    fill: var(--color-text-muted);
+}
+
 .radviz-slice {
     transition: opacity 0.15s ease;
 }
@@ -94,6 +100,7 @@
 
 .radviz-expanded .radviz-point:not(.radviz-point--expanded) {
     opacity: 0.12;
+    pointer-events: none;
 }
 
 /* ── Selection and hover states — declared last to win the cascade ── */

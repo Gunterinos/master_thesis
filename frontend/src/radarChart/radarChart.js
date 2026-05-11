@@ -66,6 +66,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
         groups = {},
         frontierColorOverrides = null,
         frontierLegendItems = [],
+        measures = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -516,7 +517,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
     }
 
     // ── Step 8: Axis labels with direction indicator ──────────────────────────
-    const LABEL_OFFSET = 18;
+    const LABEL_OFFSET = 32;
 
     const labelGroups = labelsG
         .selectAll('g.radar-label-group')
@@ -543,12 +544,19 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             .attr('x', lx).attr('y', ly)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
-            .text(() => {
+            .each(function () {
                 const dir = objectiveDirections[axis];
                 const label = formatLabel(axis);
-                if (dir === 'max') return `${label} ↑`;
-                if (dir === 'min') return `${label} ↓`;
-                return label;
+                const dirSuffix = dir === 'max' ? ' ↑' : dir === 'min' ? ' ↓' : '';
+                const el = d3.select(this);
+                el.append('tspan').text(`${label}${dirSuffix}`);
+                if (measures[axis]) {
+                    el.append('tspan')
+                        .attr('class', 'radar-axis-measure')
+                        .attr('x', lx)
+                        .attr('dy', '1.2em')
+                        .text(measures[axis]);
+                }
             });
     });
 

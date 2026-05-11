@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import './tables.css';
 import { subscribe, getActiveRowIndex, getEffectiveSelection } from '../state/appState.js';
-import { getGroupBaseColor, getVariableColor, getGroupOrder, getGroupMembers } from '../colors.js';
+import { getGroupBaseColor, getVariableColor, getGroupOrder, getGroupMembers, computeFrontierColors } from '../colors.js';
 import { formatLabel } from '../formatLabel.js';
 
 // ── Per-container persistent state ───────────────────────────────────────────
@@ -79,7 +79,27 @@ function getCellValue(row, col, isGroupCol, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, disableBrush = false } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, measures = {}, disableBrush = false, frontierOrder = null } = options;
+
+    const multiFrontier = (frontierOrder?.length ?? 0) > 1;
+    let borderColorMap = null;
+    let frontierColorByName = new Map();
+    let frontierNames = [];
+    let frontierRowsMap = new Map();
+    if (multiFrontier) {
+        const { colorMap, items } = computeFrontierColors(data, frontierOrder);
+        borderColorMap = colorMap;
+        for (const { label, color } of items) {
+            frontierColorByName.set(label, color);
+            frontierNames.push(label);
+            frontierRowsMap.set(label, []);
+        }
+        for (const row of data) {
+            if (row.__isBenchmark) continue;
+            const fname = row.__frontier ?? 'Unknown';
+            if (frontierRowsMap.has(fname)) frontierRowsMap.get(fname).push(row);
+        }
+    }
 
     const container = d3.select(containerSelector);
     const containerNode = container.node();
@@ -212,9 +232,29 @@ export function renderTable(containerSelector, columns, data, options = {}) {
 
             const xScale = d3.scaleLinear().domain(ext).range([0, innerW]).clamp(true);
             const bins   = d3.bin().domain(ext).thresholds(HIST_BINS)(vals);
-            const yScale = d3.scaleLinear()
-                .domain([0, d3.max(bins, b => b.length)])
-                .range([innerH, 0]);
+
+            // Pre-compute per-frontier values for this column
+            const frontierColVals = new Map();
+            if (multiFrontier) {
+                for (const [fname, rows] of frontierRowsMap) {
+                    frontierColVals.set(fname, rows.map(r => isGroupCol[col]
+                        ? (groupMembersMap[col] || []).reduce((s, c) => s + (Number(r[c]) || 0), 0)
+                        : Number(r[col])).filter(Number.isFinite));
+                }
+            }
+
+            const yScale = multiFrontier
+                ? d3.scaleLinear().domain([0, d3.max(bins, (b, i) => {
+                    const isLast = i === bins.length - 1;
+                    let max = 0;
+                    for (const fname of frontierNames) {
+                        const fv = frontierColVals.get(fname) ?? [];
+                        const count = fv.filter(v => v >= b.x0 && (isLast ? v <= b.x1 : v < b.x1)).length;
+                        if (count > max) max = count;
+                    }
+                    return max;
+                }) || 1]).range([innerH, 0])
+                : d3.scaleLinear().domain([0, d3.max(bins, b => b.length)]).range([innerH, 0]);
 
             const svg = cell.append("svg")
                 .attr("class", "col-histogram")
@@ -225,14 +265,35 @@ export function renderTable(containerSelector, columns, data, options = {}) {
 
             const g = svg.append("g").attr("transform", `translate(${HIST_M},${HIST_M})`);
 
-            g.selectAll("rect.hist-bar")
-                .data(bins)
-                .enter().append("rect")
-                .attr("class", "hist-bar")
-                .attr("x",      d => xScale(d.x0) + 0.5)
-                .attr("width",  d => Math.max(0, xScale(d.x1) - xScale(d.x0) - 1))
-                .attr("y",      d => yScale(d.length))
-                .attr("height", d => innerH - yScale(d.length));
+            if (multiFrontier) {
+                const nFrontiers = frontierNames.length;
+                bins.forEach((bin, binIdx) => {
+                    const isLast = binIdx === bins.length - 1;
+                    const binW = Math.max(0, xScale(bin.x1) - xScale(bin.x0) - 1);
+                    const subW = binW / nFrontiers;
+                    frontierNames.forEach((fname, fi) => {
+                        const fv = frontierColVals.get(fname) ?? [];
+                        const count = fv.filter(v => v >= bin.x0 && (isLast ? v <= bin.x1 : v < bin.x1)).length;
+                        if (count > 0) {
+                            g.append("rect")
+                                .attr("x", xScale(bin.x0) + fi * subW + 0.5)
+                                .attr("width", Math.max(0, subW - 0.5))
+                                .attr("y", yScale(count))
+                                .attr("height", innerH - yScale(count))
+                                .attr("fill", frontierColorByName.get(fname) ?? '#aaa');
+                        }
+                    });
+                });
+            } else {
+                g.selectAll("rect.hist-bar")
+                    .data(bins)
+                    .enter().append("rect")
+                    .attr("class", "hist-bar")
+                    .attr("x",      d => xScale(d.x0) + 0.5)
+                    .attr("width",  d => Math.max(0, xScale(d.x1) - xScale(d.x0) - 1))
+                    .attr("y",      d => yScale(d.length))
+                    .attr("height", d => innerH - yScale(d.length));
+            }
 
             const tickVals = [ext[0], (ext[0] + ext[1]) / 2, ext[1]];
             const axisG = g.append("g")
@@ -297,21 +358,22 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                 if (isVarCol[col]) th.classed('var-sub-header', true);
             })
             .html(col => {
+                const measureLabel = measures[col] ? `<span class="col-measure">${measures[col]}</span>` : '';
                 if (isGroupCol[col]) {
                     const canExpand = (groupMembersMap[col] || []).length > 1;
                     if (!canExpand) {
                         const indicator = col === sortState.col
                             ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                             : `<span class="sort-indicator">↕</span>`;
-                        return `${formatLabel(col)}${indicator}`;
+                        return `${formatLabel(col)}${indicator}${measureLabel}`;
                     }
                     const isExpanded = expandedSet.has(col);
-                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>`;
+                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>${measureLabel}`;
                 }
                 const indicator = col === sortState.col
                     ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                     : `<span class="sort-indicator">↕</span>`;
-                return `${formatLabel(col)}${indicator}`;
+                return `${formatLabel(col)}${indicator}${measureLabel}`;
             })
             .on("click", (event, col) => {
                 const rerender = () => {
@@ -350,12 +412,13 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             .enter()
             .append("tr")
             .attr("class", row => row.__isBenchmark ? "is-benchmark" : null)
-            .attr("data-row-index", row => row.__rowIndex);
+            .attr("data-row-index", row => row.__rowIndex)
+            .style("--frontier-color", row => borderColorMap?.get(row.__rowIndex) ?? null);
 
         attachRowEvents(rowsSel);
         rowsSel.selectAll("td")
             .data(row => [
-                row.__isBenchmark ? 'Benchmark' : (row.__frontier ? `${row.__rowIndex}<br>${row.__frontier}` : row.__rowIndex),
+                row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
                 ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
             ])
             .enter()
@@ -376,20 +439,22 @@ export function renderTable(containerSelector, columns, data, options = {}) {
     const rowEnter = rowSel.enter()
         .append("tr")
         .attr("class", row => row.__isBenchmark ? "is-benchmark" : null)
-        .attr("data-row-index", row => row.__rowIndex);
+        .attr("data-row-index", row => row.__rowIndex)
+        .style("--frontier-color", row => borderColorMap?.get(row.__rowIndex) ?? null);
 
     attachRowEvents(rowEnter);
     rowEnter.selectAll("td")
         .data(row => [
-            row.__isBenchmark ? 'Benchmark' : (row.__frontier ? `${row.__rowIndex}<br>${row.__frontier}` : row.__rowIndex),
+            row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
             ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
         ])
         .enter().append("td").html(formatCell);
 
     rowSel.each(function (row) {
+        d3.select(this).style("--frontier-color", borderColorMap?.get(row.__rowIndex) ?? null);
         d3.select(this).selectAll("td")
             .data([
-                row.__isBenchmark ? 'Benchmark' : (row.__frontier ? `${row.__rowIndex}<br>${row.__frontier}` : row.__rowIndex),
+                row.__isBenchmark ? 'Benchmark' : row.__rowIndex,
                 ...effectiveColumns.map(col => getCellValue(row, col, isGroupCol, groupMembersMap)),
             ])
             .html(formatCell);

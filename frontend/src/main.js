@@ -11,10 +11,12 @@ import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
 import { formatLabel } from './formatLabel.js';
+import { getFrontierColor } from './colors.js';
 
 let fullData = [];
 let objectiveDirections = {};
 let groups = {};
+let measures = {};
 let chartRegistry = null;
 let appInitialized = false;
 
@@ -39,6 +41,8 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        measures,
+        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
     });
@@ -48,6 +52,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
     });
 }
@@ -210,7 +215,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
                 return;
             }
 
-            const { rows: rawData, directions, groups: groupsFromAPI } = data;
+            const { rows: rawData, directions, groups: groupsFromAPI, measures: measuresFromAPI } = data;
             if (!rawData || rawData.length === 0) {
                 errorEl.classed("hidden", false).text("The selected files contain no data.");
                 return;
@@ -218,6 +223,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
 
             objectiveDirections = directions;
             groups = groupsFromAPI ?? {};
+            measures = measuresFromAPI ?? {};
             fullData = rawData.map((row, index) => ({
                 ...row,
                 __rowIndex: index,
@@ -321,7 +327,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
 
     const initialActive = activeFiles ?? (files.length > 0 ? [files[0]] : []);
 
-    files.forEach((fname) => {
+    files.forEach((fname, i) => {
         const constraints = fileConstraints[fname] ?? {};
         const constraintEntries = Object.entries(constraints);
         const label = fname.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ');
@@ -336,6 +342,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
         const btn = group.append("button")
             .attr("type", "button")
             .attr("data-file", fname)
+            .style("--fc", files.length > 1 ? getFrontierColor(i) : null)
             .classed("active", initialActive.includes(fname))
             .text(label)
             .on("click", function () {
