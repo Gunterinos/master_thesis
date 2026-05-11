@@ -23,6 +23,7 @@ let appInitialized = false;
 let _externalFilter = null;       // passing row indices from PCP / lasso / etc.
 const _tableFilters = new Map(); // containerSelector → passing row indices (one entry per table)
 let _surveyDisabledCharts = null;
+let _surveyDefaultScreen = null;
 
 function getCurrentData() {
     const filteredRowIndices = getFilteredRowIndexSet();
@@ -34,6 +35,9 @@ function getCurrentData() {
 function renderAllPanels(options = {}) {
     const { animate = false } = options;
     const dataToRender = getCurrentData();
+    const forceEmptyState = !!_surveyDefaultScreen;
+    const emptyStateText = typeof _surveyDefaultScreen === 'string' ? _surveyDefaultScreen : null;
+    _surveyDefaultScreen = null;
 
     initializeObjectivesSpacePanel({
         data: dataToRender,
@@ -45,6 +49,8 @@ function renderAllPanels(options = {}) {
         frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
+        forceEmptyState,
+        emptyStateText,
     });
 
     initializeDecisionSpacePanel({
@@ -54,6 +60,8 @@ function renderAllPanels(options = {}) {
         groups,
         frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
+        forceEmptyState,
+        emptyStateText,
     });
 }
 
@@ -249,6 +257,7 @@ function getActiveFiles() {
 // ── Survey event bridge ──────────────────────────────────────────────────
 window.addEventListener('survey:load-data', ({ detail }) => {
     _surveyDisabledCharts = detail.disabledCharts ?? null;
+    _surveyDefaultScreen = detail.defaultScreen ?? null;
     populateFrontierButtons(detail.files, {}, detail.files);
     loadActiveFiles(detail.files, {
         benchmark: detail.benchmark,

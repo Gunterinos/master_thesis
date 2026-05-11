@@ -41,6 +41,8 @@ export function initializeSpacePanel(config) {
         chartRegistry,
         renderOptions = {},
         onAfterRender = () => {},
+        forceEmptyState = false,
+        emptyStateText = null,
     } = config;
 
     const chartSelect = d3.select(chartSelectSelector);
@@ -96,7 +98,7 @@ export function initializeSpacePanel(config) {
     const selectedChart = [previousChart, defaultChart, fallbackChart].find((chartKey) =>
         charts.some((chart) => chart.key === chartKey),
     );
-    const hasExplicitPreviousChart = !!previousChart;
+    const hasExplicitPreviousChart = !!previousChart && !forceEmptyState;
     chartSelect.property("value", hasExplicitPreviousChart ? selectedChart : "");
 
     const syncButtonActiveState = () => {
@@ -382,12 +384,13 @@ export function initializeSpacePanel(config) {
     let emptyHint = container.select('.empty-state-chart-hint');
     if (emptyHint.empty()) {
         emptyHint = container.append('div').attr('class', 'empty-state-chart-hint');
-        emptyHint.text('Select a chart type above to get started');
     }
-
+    emptyHint.text(emptyStateText ?? 'Select a chart type above to get started');
     emptyHint.classed('hidden', hasExplicitPreviousChart);
 
     if (hasExplicitPreviousChart) {
         updatePanel(renderOptions.animate === true);
+    } else {
+        container.selectAll(':not(.empty-state-chart-hint)').remove();
     }
 }

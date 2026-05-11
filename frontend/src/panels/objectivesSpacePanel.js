@@ -1,7 +1,7 @@
 import { initializeSpacePanel } from './spacePanel.js';
 
 export function initializeObjectivesSpacePanel(config) {
-    const { data, objectiveDirections = {}, chartRegistry, renderOptions = {}, onAfterRender, groups = {}, measures = {}, frontierOrder = null, disabledCharts = null } = config;
+    const { data, objectiveDirections = {}, chartRegistry, renderOptions = {}, onAfterRender, groups = {}, measures = {}, frontierOrder = null, disabledCharts = null, forceEmptyState = false, emptyStateText = null } = config;
     const allColumns = Object.keys(data[0]);
     const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));
     const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
@@ -40,5 +40,7 @@ export function initializeObjectivesSpacePanel(config) {
         chartRegistry,
         renderOptions,
         onAfterRender,
+        forceEmptyState,
+        emptyStateText,
     });
 }

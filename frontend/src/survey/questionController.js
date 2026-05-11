@@ -67,6 +67,7 @@ function loadAndRender(index) {
             files: question.dataset.frontiers,
             benchmark: question.dataset.benchmark ?? null,
             disabledCharts: question.disabledCharts ?? null,
+            defaultScreen: question.defaultScreen ?? null,
         },
     }));
 }
