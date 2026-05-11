@@ -72,6 +72,10 @@ function loadAndRender(index) {
     }));
 }
 
+function needsJustification(question) {
+    return question.answerSpec?.type === 'knee_point' || question.type === 'decide_on_frontier';
+}
+
 function renderQuestion(index) {
     const question = _questions[index];
     const zone = document.getElementById('tutorial-zone');
@@ -100,9 +104,15 @@ function renderQuestion(index) {
         middleHTML = `<p class="question-instruction">Select points using Shift+click or the lasso tool, then click Submit.</p>`;
     }
 
+    const justificationHTML = needsJustification(question) ? `
+        <div class="question-justification">
+            <textarea id="question-justification-input" class="question-justification-input" rows="2" placeholder="Briefly explain your reasoning…"></textarea>
+        </div>` : '';
+
     zone.innerHTML = `
         <p id="question-prompt">${question.prompt}</p>
         ${middleHTML}
+        ${justificationHTML}
         <div id="question-controls-wrapper">
             <div id="question-controls">
                 <span id="question-counter">Task ${index + 1} / ${total}</span>
@@ -157,11 +167,17 @@ async function submitAnswer(index) {
     const score = computed.score ?? 0;
     const correctAnswer = computed.rowIndices ?? computed.option ?? null;
 
+    const justificationEl = document.getElementById('question-justification-input');
+    const justificationText = justificationEl ? justificationEl.value.trim() : null;
+    const recordedAnswer = justificationText !== null
+        ? { value: answer, justification: justificationText }
+        : answer;
+
     _responses.push({
         questionId: question.id,
         questionType: question.type,
         interactionType: question.interactionType,
-        answer,
+        answer: recordedAnswer,
         correctAnswer,
         score,
         isCorrect: score >= 1.0,
