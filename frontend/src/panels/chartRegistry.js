@@ -165,9 +165,10 @@ export function createChartRegistry(interactionOptions) {
             description: "Show pairwise correlations between objectives",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, columns, data, decisionColumns = [], animate = false }) => {
+            render: ({ containerSelector, columns, data, decisionColumns = [], frontierOrder = null, animate = false }) => {
                 renderCorrelationHeatmap(containerSelector, columns, data, {
                     decisionColumns,
+                    frontierOrder,
                     animate,
                 });
             },
