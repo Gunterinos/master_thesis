@@ -1,10 +1,13 @@
 import { initializeSpacePanel } from './spacePanel.js';
 
 export function initializeObjectivesSpacePanel(config) {
-    const { data, objectiveDirections = {}, chartRegistry, renderOptions = {}, onAfterRender, groups = {} } = config;
+    const { data, objectiveDirections = {}, chartRegistry, renderOptions = {}, onAfterRender, groups = {}, disabledCharts = null } = config;
     const allColumns = Object.keys(data[0]);
     const objectiveColumns = allColumns.filter((column) => column.startsWith("obj"));
     const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
+
+    const allChartKeys = ["table", "scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap"];
+    const chartKeys = disabledCharts ? allChartKeys.filter(k => !disabledCharts.includes(k)) : allChartKeys;
 
     initializeSpacePanel({
         containerSelector: "#objectives-container",
@@ -31,7 +34,7 @@ export function initializeObjectivesSpacePanel(config) {
         objectiveDirections,
         defaultChart: "scatter",
         groups,
-        chartKeys: ["table", "scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap"],
+        chartKeys,
         chartRegistry,
         renderOptions,
         onAfterRender,

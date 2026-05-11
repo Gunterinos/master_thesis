@@ -169,7 +169,7 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         .data(variables)
         .enter().append('text')
         .attr('class', 'corr-heatmap-axis-label')
-        .attr('transform', (_d, i) => `translate(0, ${i * cellSize + cellSize / 2}) rotate(-45)`)
+        .attr('transform', (_d, i) => `translate(0, ${i * cellSize + cellSize / 2})`)
         .attr('dy', '0.35em')
         .attr('text-anchor', 'end')
         .text((d) => formatLabel(d));

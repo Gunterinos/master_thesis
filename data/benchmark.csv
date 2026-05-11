@@ -1,4 +1,4 @@
-dec_Equity_Developed_Markets,dec_Equity_Emerging_Markets,dec_Bond_US,dec_Bond_EU,dec_RealEstate_US,dec_RealEstate_EU,dec_Cash,dec_Private_Debt,dec_Infrastructure,dec_Private_Equity,obj_Risk,obj_Return,obj_Liquidity
-,,,,,,,,,,-1,1,1
-Equities,Equities,Fixed_Income,Fixed_Income,Real_Assets,Real_Assets,Cash,Fixed_Income,Real_Assets,Private_Equity,,,
-0.002077094627681224,0.0005789293972461005,0.0147363464673735,0.01292219361343947,0.0013560124103765027,0.0031809283615114275,0.9650141003514588,5.633938124724643e-06,5.072130573376822e-05,7.803952705460207e-05,9.79486687529999e-05,0.020662199325014785,0.9946250903116628
+dec_Chicken_Breast,dec_Tofu,dec_Eggs,dec_Sweet_Potato,dec_White_Rice,dec_Oats,dec_Almonds,dec_Olive_Oil,dec_Avocado,dec_Spinach,dec_Berries,dec_Broccoli,obj_Nutrient_Density,obj_Cost,obj_Prep_Time,obj_Carbon_Footprint,obj_Satiety,obj_Diversity
+,,,,,,,,,,,,1,-1,-1,-1,1,1
+Proteins,Proteins,Proteins,Carbohydrates,Carbohydrates,Carbohydrates,Fats,Fats,Fats,Vegetables_Fruits,Vegetables_Fruits,Vegetables_Fruits,,,,,,
+0.0025873601212258,0.005155941889836137,0.008248057406856212,0.008601131953615178,0.0023600951117794667,0.00039860436789120003,0.0007045657197730961,0.0010736110296870197,0.0011524134831806924,0.9674815485593329,0.0002826310267537385,0.001954039330068683,0.8956077572509986,0.48960594334664154,12.03514210610577,23.878282666879105,0.5044792748188675,0.06959079372161923

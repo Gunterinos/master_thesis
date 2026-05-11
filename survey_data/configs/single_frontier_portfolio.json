@@ -1,36 +1,36 @@
 {
   "questionnaires": [
     {
-      "id": "diet_3d_block_1",
+      "id": "portfolio_3d_block_1",
       "type": "single_frontier",
-      "title": "Diet 3D – Block 1",
+      "title": "Portfolio 3D – Block 1",
       "questions": [
         {
           "id": "q1",
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": {
-            "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"],
-            "benchmark": "data/diet_datasets/diet_3D_benchmark.csv"
+            "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv"
           },
-          "prompt": "Select the diet with the highest Nutrient Density value.",
+          "prompt": "Select the portfolio with the highest Return value.",
           "options": [],
-          "answerSpec": { "type": "highest_value", "column": "obj_Nutrient_Density" }
+          "answerSpec": { "type": "highest_value", "column": "obj_Return" }
         },
         {
           "id": "q2",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": {
-            "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"],
-            "benchmark": "data/diet_datasets/diet_3D_benchmark.csv"
+            "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv"
           },
-          "prompt": "Which objective is most strongly correlated with Nutrient Density?",
+          "prompt": "Which objective is most strongly correlated with Return?",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": {
             "type": "strongest_correlation",
-            "targetColumn": "obj_Nutrient_Density",
+            "targetColumn": "obj_Return",
             "candidateColumns": []
           }
         },
@@ -39,39 +39,135 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": {
-            "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"],
-            "benchmark": "data/diet_datasets/diet_3D_benchmark.csv"
+            "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv"
           },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
       ]
     },
     {
-      "id": "diet_3d_block_2",
+      "id": "portfolio_3d_block_2",
       "type": "single_frontier",
-      "title": "Diet 3D – Block 2",
+      "title": "Portfolio 3D – Block 2",
       "questions": [
         {
           "id": "q4",
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": {
-            "frontiers": ["data/diet_datasets/High_Protein_3D.csv"],
-            "benchmark": "data/diet_datasets/diet_3D_benchmark.csv"
+            "frontiers": ["data/portfolio_data/unconstrained_3D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv"
           },
-          "prompt": "Select the diet with the greatest Diversity value.",
+          "prompt": "Select the portfolio with the highest Liquidity value.",
           "options": [],
-          "answerSpec": { "type": "highest_value", "column": "obj_Diversity" }
+          "answerSpec": { "type": "highest_value", "column": "obj_Liquidity" }
         },
         {
           "id": "q5",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": {
-            "frontiers": ["data/diet_datasets/High_Protein_3D.csv"],
-            "benchmark": "data/diet_datasets/diet_3D_benchmark.csv"
+            "frontiers": ["data/portfolio_data/unconstrained_3D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv"
+          },
+          "prompt": "Which objective is most strongly correlated with Liquidity?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": {
+            "type": "strongest_correlation",
+            "targetColumn": "obj_Liquidity",
+            "candidateColumns": []
+          }
+        },
+        {
+          "id": "q6",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": {
+            "frontiers": ["data/portfolio_data/unconstrained_3D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv"
+          },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_1",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 1",
+      "questions": [
+        {
+          "id": "q7",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": {
+            "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv"
+          },
+          "prompt": "Select the portfolio with the highest ESG score.",
+          "options": [],
+          "answerSpec": { "type": "highest_value", "column": "obj_ESG" }
+        },
+        {
+          "id": "q8",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": {
+            "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv"
+          },
+          "prompt": "Which objective is most strongly correlated with ESG?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": {
+            "type": "strongest_correlation",
+            "targetColumn": "obj_ESG",
+            "candidateColumns": []
+          }
+        },
+        {
+          "id": "q9",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": {
+            "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv"
+          },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_2",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 2",
+      "questions": [
+        {
+          "id": "q10",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": {
+            "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv"
+          },
+          "prompt": "Select the portfolio with the highest Diversity value.",
+          "options": [],
+          "answerSpec": { "type": "highest_value", "column": "obj_Diversity" }
+        },
+        {
+          "id": "q11",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": {
+            "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv"
           },
           "prompt": "Which objective is most strongly correlated with Diversity?",
           "options": [],
@@ -83,110 +179,14 @@
           }
         },
         {
-          "id": "q6",
-          "type": "decision",
-          "interactionType": "record_selection",
-          "dataset": {
-            "frontiers": ["data/diet_datasets/High_Protein_3D.csv"],
-            "benchmark": "data/diet_datasets/diet_3D_benchmark.csv"
-          },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
-          "options": [],
-          "answerSpec": { "type": "knee_point" }
-        }
-      ]
-    },
-    {
-      "id": "diet_6d_block_1",
-      "type": "single_frontier",
-      "title": "Diet 6D – Block 1",
-      "questions": [
-        {
-          "id": "q7",
-          "type": "value_retrieval",
-          "interactionType": "record_selection",
-          "dataset": {
-            "frontiers": ["data/diet_datasets/Vegan_6D.csv"],
-            "benchmark": "data/diet_datasets/diet_6D_benchmark.csv"
-          },
-          "prompt": "Select the diet with the highest Satiety value.",
-          "options": [],
-          "answerSpec": { "type": "highest_value", "column": "obj_Satiety" }
-        },
-        {
-          "id": "q8",
-          "type": "correlation",
-          "interactionType": "select_option",
-          "dataset": {
-            "frontiers": ["data/diet_datasets/Vegan_6D.csv"],
-            "benchmark": "data/diet_datasets/diet_6D_benchmark.csv"
-          },
-          "prompt": "Which objective is most strongly correlated with Satiety?",
-          "options": [],
-          "optionSource": "objectives",
-          "answerSpec": {
-            "type": "strongest_correlation",
-            "targetColumn": "obj_Satiety",
-            "candidateColumns": []
-          }
-        },
-        {
-          "id": "q9",
-          "type": "decision",
-          "interactionType": "record_selection",
-          "dataset": {
-            "frontiers": ["data/diet_datasets/Vegan_6D.csv"],
-            "benchmark": "data/diet_datasets/diet_6D_benchmark.csv"
-          },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
-          "options": [],
-          "answerSpec": { "type": "knee_point" }
-        }
-      ]
-    },
-    {
-      "id": "diet_6d_block_2",
-      "type": "single_frontier",
-      "title": "Diet 6D – Block 2",
-      "questions": [
-        {
-          "id": "q10",
-          "type": "value_retrieval",
-          "interactionType": "record_selection",
-          "dataset": {
-            "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"],
-            "benchmark": "data/diet_datasets/diet_6D_benchmark.csv"
-          },
-          "prompt": "Select the diet with the lowest Carbon Footprint value.",
-          "options": [],
-          "answerSpec": { "type": "lowest_value", "column": "obj_Carbon_Footprint" }
-        },
-        {
-          "id": "q11",
-          "type": "correlation",
-          "interactionType": "select_option",
-          "dataset": {
-            "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"],
-            "benchmark": "data/diet_datasets/diet_6D_benchmark.csv"
-          },
-          "prompt": "Which objective is most strongly correlated with Carbon Footprint?",
-          "options": [],
-          "optionSource": "objectives",
-          "answerSpec": {
-            "type": "strongest_correlation",
-            "targetColumn": "obj_Carbon_Footprint",
-            "candidateColumns": []
-          }
-        },
-        {
           "id": "q12",
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": {
-            "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"],
-            "benchmark": "data/diet_datasets/diet_6D_benchmark.csv"
+            "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"],
+            "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv"
           },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }

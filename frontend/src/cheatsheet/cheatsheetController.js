@@ -77,6 +77,15 @@ function buildCard(chart) {
         gifImg.className = 'cheatsheet-card-gif';
         gifImg.alt = `${chart.label} animation`;
 
+        const expandBtn = document.createElement('button');
+        expandBtn.className = 'cheatsheet-gif-expand-btn';
+        expandBtn.title = 'Enlarge';
+        expandBtn.innerHTML = '<svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="6.5,1 9,1 9,3.5"/><polyline points="3.5,9 1,9 1,6.5"/><line x1="9" y1="1" x2="5.5" y2="4.5"/><line x1="1" y1="9" x2="4.5" y2="5.5"/></svg>';
+        expandBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openGifLightbox(chart.gif, chart.label);
+        });
+
         // Capture first frame of the GIF into the canvas
         const loader = new Image();
         loader.onload = () => {
@@ -99,6 +108,7 @@ function buildCard(chart) {
 
         wrapper.appendChild(canvas);
         wrapper.appendChild(gifImg);
+        wrapper.appendChild(expandBtn);
         card.appendChild(wrapper);
     }
 
@@ -157,6 +167,35 @@ function buildBackdrop() {
 }
 
 let backdrop = null;
+let gifLightbox = null;
+
+function buildGifLightbox() {
+    const lb = document.createElement('div');
+    lb.id = 'cheatsheet-gif-lightbox';
+
+    const img = document.createElement('img');
+    img.id = 'cheatsheet-gif-lightbox-img';
+    img.alt = '';
+
+    lb.appendChild(img);
+    lb.addEventListener('click', () => closeGifLightbox());
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lb.classList.contains('open')) closeGifLightbox();
+    });
+    return lb;
+}
+
+function openGifLightbox(src, label) {
+    const img = gifLightbox.querySelector('#cheatsheet-gif-lightbox-img');
+    img.src = src;
+    img.alt = label;
+    gifLightbox.classList.add('open');
+}
+
+function closeGifLightbox() {
+    gifLightbox.classList.remove('open');
+    gifLightbox.querySelector('#cheatsheet-gif-lightbox-img').src = '';
+}
 
 function openCheatsheet() {
     backdrop.classList.add('open');
@@ -172,7 +211,9 @@ function closeCheatsheet() {
 
 export function initCheatsheet() {
     backdrop = buildBackdrop();
+    gifLightbox = buildGifLightbox();
     document.body.appendChild(backdrop);
+    document.body.appendChild(gifLightbox);
 
     document.getElementById('chart-guide-btn').addEventListener('click', openCheatsheet);
     document.getElementById('cheatsheet-close-btn').addEventListener('click', closeCheatsheet);

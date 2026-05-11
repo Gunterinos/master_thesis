@@ -5,9 +5,12 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
-import { loadTutorialConfig } from './survey/surveyConfig.js';
+import { loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
+import { startQuestions } from './survey/questionController.js';
+import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
+import { formatLabel } from './formatLabel.js';
 
 let fullData = [];
 let objectiveDirections = {};
@@ -17,6 +20,7 @@ let appInitialized = false;
 
 let _externalFilter = null;       // passing row indices from PCP / lasso / etc.
 const _tableFilters = new Map(); // containerSelector → passing row indices (one entry per table)
+let _surveyDisabledCharts = null;
 
 function getCurrentData() {
     const filteredRowIndices = getFilteredRowIndexSet();
@@ -35,6 +39,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
     });
 
@@ -43,6 +48,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        disabledCharts: _surveyDisabledCharts,
     });
 }
 
@@ -175,7 +181,7 @@ function initializeApp() {
     initCheatsheet();
 }
 
-function loadActiveFiles(activeFiles) {
+function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
     const errorEl = d3.select("#load-error-msg");
     errorEl.classed("hidden", true).text("");
 
@@ -189,10 +195,13 @@ function loadActiveFiles(activeFiles) {
         return;
     }
 
+    const body = { files: activeFiles };
+    if (benchmark) body.benchmark = benchmark;
+
     fetch("/api/load-data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ files: activeFiles }),
+        body: JSON.stringify(body),
     })
         .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
         .then(({ ok, data }) => {
@@ -219,6 +228,7 @@ function loadActiveFiles(activeFiles) {
             initializeApp();
             renderAllPanels({ animate: true });
             updateSelectionButtons();
+            onDone?.();
         })
         .catch(() => {
             errorEl.classed("hidden", false).text("Network error: could not reach the server.");
@@ -230,28 +240,122 @@ function getActiveFiles() {
         .map((el) => el.dataset.file);
 }
 
-document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
-    const steps = await loadTutorialConfig();
-    startTutorial(steps);
+// ── Survey event bridge ──────────────────────────────────────────────────
+window.addEventListener('survey:load-data', ({ detail }) => {
+    _surveyDisabledCharts = detail.disabledCharts ?? null;
+    populateFrontierButtons(detail.files, {}, detail.files);
+    loadActiveFiles(detail.files, {
+        benchmark: detail.benchmark,
+        onDone: () => {
+            const objCols = Object.keys(objectiveDirections);
+            const decCols = fullData.length > 0
+                ? Object.keys(fullData[0]).filter(k => k.startsWith('dec_'))
+                : [];
+            window.dispatchEvent(new CustomEvent('survey:data-ready', {
+                detail: { objectiveColumns: objCols, decisionColumns: decCols },
+            }));
+        },
+    });
 });
 
-d3.json("/api/data-files")
-    .then(({ files }) => {
-        const container = d3.select("#frontier-buttons");
-        files.forEach((fname, i) => {
-            container.append("button")
-                .attr("type", "button")
-                .attr("data-file", fname)
-                .classed("active", i === 0)
-                .text(fname.replace(/\.csv$/i, ""))
-                .on("click", function () {
-                    const isActive = d3.select(this).classed("active");
-                    // Prevent deselecting the last active button
-                    if (isActive && getActiveFiles().length === 1) { return; }
-                    d3.select(this).classed("active", !isActive);
-                    loadActiveFiles(getActiveFiles());
+// ── Survey flow ──────────────────────────────────────────────────────────
+document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
+    const steps = await loadTutorialConfig();
+    startTutorial(steps, { onComplete: showQuestionsIntroScreen });
+});
+
+function showQuestionsIntroScreen() {
+    const zone = document.getElementById('tutorial-zone');
+    zone.innerHTML = `
+        <p id="question-intro-text">Tutorial complete. You will now complete a short set of tasks using the visualization.</p>
+        <div id="question-controls-wrapper">
+            <button id="start-questions-btn" type="button">Start Tasks →</button>
+            <button id="tutorial-chart-guide-btn" type="button">Chart Guide</button>
+        </div>
+    `;
+    document.getElementById('start-questions-btn').addEventListener('click', async () => {
+        const config = await loadQuestionsConfig();
+        const allQuestions = config.questionnaires.flatMap(q => q.questions);
+        startQuestions(allQuestions, { onComplete: finishSurvey });
+    });
+}
+
+async function finishSurvey(responses, sessionId) {
+    const config = await loadQuestionsConfig().catch(() => null);
+    const pqConfig = config?.postQuestionnaire ?? null;
+
+    showPostQuestionnaire(pqConfig, {
+        onComplete: async (postQuestionnaire) => {
+            try {
+                await fetch('/api/save-responses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId, responses, postQuestionnaire }),
                 });
-        });
+            } catch { /* non-critical */ }
+
+            document.getElementById('tutorial-zone').innerHTML = '';
+            document.body.classList.remove('survey-active');
+            document.getElementById('start-tutorial-btn').style.display = '';
+            document.getElementById('chart-guide-btn').style.display = '';
+            _surveyDisabledCharts = null;
+            populateFrontierButtons(_defaultFrontierFiles, _defaultFileConstraints);
+            loadActiveFiles(getActiveFiles());
+        },
+    });
+}
+
+let _defaultFrontierFiles = [];
+let _defaultFileConstraints = {};
+
+function formatConstraintVal(val) {
+    return val.replace(/([<>]=?)(\d+(?:\.\d+)?)/g, (_, op, num) => {
+        const pct = parseFloat((parseFloat(num) * 100).toPrecision(4));
+        return `${op}${pct}%`;
+    });
+}
+
+function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null) {
+    const container = d3.select("#frontier-buttons");
+    container.selectAll("*").remove();
+
+    const initialActive = activeFiles ?? (files.length > 0 ? [files[0]] : []);
+
+    files.forEach((fname) => {
+        const constraints = fileConstraints[fname] ?? {};
+        const constraintEntries = Object.entries(constraints);
+        const label = fname.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ');
+
+        const tooltipText = constraintEntries.length > 0
+            ? constraintEntries.map(([col, val]) => `${formatLabel(col)} ${formatConstraintVal(val)}`).join(' · ')
+            : null;
+
+        const group = container.append("div")
+            .attr("class", "frontier-btn-group");
+
+        const btn = group.append("button")
+            .attr("type", "button")
+            .attr("data-file", fname)
+            .classed("active", initialActive.includes(fname))
+            .text(label)
+            .on("click", function () {
+                const isActive = d3.select(this).classed("active");
+                if (isActive && getActiveFiles().length === 1) { return; }
+                d3.select(this).classed("active", !isActive);
+                loadActiveFiles(getActiveFiles());
+            });
+
+        if (tooltipText) {
+            btn.attr("data-tooltip", tooltipText);
+        }
+    });
+}
+
+d3.json("/api/data-files")
+    .then(({ files, fileConstraints = {} }) => {
+        _defaultFrontierFiles = files;
+        _defaultFileConstraints = fileConstraints;
+        populateFrontierButtons(files, fileConstraints);
         if (files.length > 0) { loadActiveFiles([files[0]]); }
     })
     .catch(() => {

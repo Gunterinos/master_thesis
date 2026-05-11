@@ -1,0 +1,154 @@
+{
+  "description": "One canonical example per question type. Use these as templates when authoring new questionnaires.",
+  "dataset_notes": {
+    "frontiers": "Bare filenames (e.g. 'portfolio_3D.csv') resolve to the data/ folder. Relative paths (e.g. 'other_study/file.csv') resolve relative to the project root.",
+    "benchmark": "Optional. Bare filename or relative path. Omit to use the default data/benchmark.csv."
+  },
+  "examples": [
+    {
+      "type": "value_retrieval",
+      "answerSpec_type": "highest_value",
+      "interactionType": "record_selection",
+      "scoring": "binary (1 if correct point selected, 0 otherwise)",
+      "example": {
+        "id": "ex1",
+        "type": "value_retrieval",
+        "interactionType": "record_selection",
+        "dataset": {
+          "frontiers": ["portfolio_3D.csv"],
+          "benchmark": "data/benchmark.csv"
+        },
+        "prompt": "Select the portfolio with the highest Return value.",
+        "options": [],
+        "answerSpec": { "type": "highest_value", "column": "obj_Return" }
+      }
+    },
+    {
+      "type": "value_retrieval",
+      "answerSpec_type": "lowest_value",
+      "interactionType": "record_selection",
+      "scoring": "binary (1 if correct point selected, 0 otherwise)",
+      "example": {
+        "id": "ex2",
+        "type": "value_retrieval",
+        "interactionType": "record_selection",
+        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "prompt": "Select the portfolio with the lowest Risk value.",
+        "options": [],
+        "answerSpec": { "type": "lowest_value", "column": "obj_Risk" }
+      }
+    },
+    {
+      "type": "value_retrieval",
+      "answerSpec_type": "range",
+      "interactionType": "record_selection",
+      "scoring": "binary (1 if all selected points are within range and at least one selected, 0 otherwise)",
+      "example": {
+        "id": "ex3",
+        "type": "value_retrieval",
+        "interactionType": "record_selection",
+        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "prompt": "Select all portfolios where Liquidity is above 0.7.",
+        "options": [],
+        "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.7, "max": null }
+      }
+    },
+    {
+      "type": "correlation",
+      "answerSpec_type": "strongest_correlation",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - |spearman(correct, target) - spearman(user_pick, target)|",
+      "example": {
+        "id": "ex4",
+        "type": "correlation",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "prompt": "Which objective is most strongly correlated with Return?",
+        "options": [],
+        "optionSource": "objectives",
+        "answerSpec": {
+          "type": "strongest_correlation",
+          "targetColumn": "obj_Return",
+          "candidateColumns": []
+        }
+      }
+    },
+    {
+      "type": "decision",
+      "answerSpec_type": "knee_point",
+      "interactionType": "record_selection",
+      "scoring": "graded: mean of (1 - rank/N-1) across all selected points, where rank 0 = closest to utopia",
+      "note": "Selecting only the true knee point gives 1.0; selecting bad points pulls the score down.",
+      "example": {
+        "id": "ex5",
+        "type": "decision",
+        "interactionType": "record_selection",
+        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "prompt": "Select the portfolio that best balances all three objectives (the knee point).",
+        "options": [],
+        "answerSpec": { "type": "knee_point" }
+      }
+    },
+    {
+      "type": "simple_comparison",
+      "answerSpec_type": "higher_average",
+      "interactionType": "select_option",
+      "scoring": "binary (1 if correct frontier selected, 0 otherwise)",
+      "example": {
+        "id": "ex6",
+        "type": "simple_comparison",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+        "prompt": "Which frontier has a higher average Return value?",
+        "options": ["portfolio 3D", "portfolio 3D copy"],
+        "answerSpec": { "type": "higher_average", "column": "obj_Return" }
+      }
+    },
+    {
+      "type": "simple_comparison",
+      "answerSpec_type": "lower_average",
+      "interactionType": "select_option",
+      "scoring": "binary (1 if correct frontier selected, 0 otherwise)",
+      "example": {
+        "id": "ex7",
+        "type": "simple_comparison",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+        "prompt": "Which frontier allocates less to Cash on average?",
+        "options": ["portfolio 3D", "portfolio 3D copy"],
+        "answerSpec": { "type": "lower_average", "column": "dec_Cash" }
+      }
+    },
+    {
+      "type": "most_distinct_objective",
+      "answerSpec_type": "most_distinct_objective",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - rank/(N_objectives - 1), where rank 0 = objective with largest normalised mean difference between frontiers",
+      "example": {
+        "id": "ex8",
+        "type": "most_distinct_objective",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+        "prompt": "In which objective do the two frontiers differ the most on average?",
+        "options": [],
+        "optionSource": "objectives",
+        "answerSpec": { "type": "most_distinct_objective" }
+      }
+    },
+    {
+      "type": "decide_on_frontier",
+      "answerSpec_type": "best_average",
+      "interactionType": "select_option",
+      "scoring": "binary (1 if correct frontier selected, 0 otherwise). Winner determined by highest normalised average across all objectives, accounting for direction (max/min).",
+      "example": {
+        "id": "ex9",
+        "type": "decide_on_frontier",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+        "prompt": "Which frontier performs better overall across all objectives?",
+        "options": ["portfolio 3D", "portfolio 3D copy"],
+        "answerSpec": { "type": "best_average" }
+      }
+    }
+  ]
+}

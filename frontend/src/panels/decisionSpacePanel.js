@@ -1,9 +1,12 @@
 import { initializeSpacePanel } from './spacePanel.js';
 
 export function initializeDecisionSpacePanel(config) {
-    const { data, chartRegistry, renderOptions = {}, onAfterRender, groups = {} } = config;
+    const { data, chartRegistry, renderOptions = {}, onAfterRender, groups = {}, disabledCharts = null } = config;
     const allColumns = Object.keys(data[0]);
     const decisionColumns = allColumns.filter((column) => column.startsWith("dec"));
+
+    const allChartKeys = ["table", "barChart"];
+    const chartKeys = disabledCharts ? allChartKeys.filter(k => !disabledCharts.includes(k)) : allChartKeys;
 
     initializeSpacePanel({
         containerSelector: "#decision-container",
@@ -16,7 +19,7 @@ export function initializeDecisionSpacePanel(config) {
         columns: decisionColumns,
         data,
         defaultChart: "barChart",
-        chartKeys: ["table", "barChart"],
+        chartKeys,
         chartRegistry,
         renderOptions,
         onAfterRender,
