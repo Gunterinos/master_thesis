@@ -94,10 +94,11 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
     const charPx = 6;
     const longestLabel = d3.max(variables, (v) => formatLabel(v).length) || 1;
     const leftPad = Math.min(140, Math.max(60, longestLabel * charPx + 8));
-    const topPad = Math.min(140, Math.max(60, longestLabel * charPx * 0.75 + 8));
+    const topPad = Math.min(80, Math.max(30, longestLabel * charPx * 0.4 + 8));
     const legendWidth = 56;
     const rightPad = 16;
-    const bottomPad = 12;
+    const hasBothSections = decisionColumns.length > 0 && columns.length > 0;
+    const bottomPad = hasBothSections ? 36 : 12;
 
     const gridW = Math.max(50, containerW - leftPad - legendWidth - rightPad);
     const gridH = Math.max(50, containerH - topPad - bottomPad);
@@ -180,9 +181,33 @@ export function renderCorrelationHeatmap(containerSelector, columns, data, optio
         .data(variables)
         .enter().append('text')
         .attr('class', 'corr-heatmap-axis-label')
-        .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2}, -6) rotate(-45)`)
+        .attr('transform', (_d, i) => `translate(${i * cellSize + cellSize / 2}, ${i * cellSize - 4}) rotate(-45)`)
         .attr('text-anchor', 'start')
         .text((d) => formatLabel(d));
+
+    if (hasBothSections) {
+        const splitX = decisionColumns.length * cellSize;
+
+        gridG.append('line')
+            .attr('class', 'corr-heatmap-separator')
+            .attr('x1', splitX).attr('y1', splitX)
+            .attr('x2', splitX).attr('y2', actualGridSize);
+
+        const labelsG = svg.append('g')
+            .attr('transform', `translate(${leftPad}, ${topPad + actualGridSize + 20})`);
+
+        labelsG.append('text')
+            .attr('class', 'corr-heatmap-section-label')
+            .attr('x', splitX / 2)
+            .attr('text-anchor', 'middle')
+            .text('Decision Variables');
+
+        labelsG.append('text')
+            .attr('class', 'corr-heatmap-section-label')
+            .attr('x', splitX + (actualGridSize - splitX) / 2)
+            .attr('text-anchor', 'middle')
+            .text('Objectives');
+    }
 
     const legendBarW = 14;
     const legendBarH = Math.min(actualGridSize, 260);

@@ -29,6 +29,18 @@
     font-size: 0.62rem;
 }
 
+.corr-heatmap-separator {
+    stroke: #ff0400;
+    stroke-width: 3;
+    opacity: 1;
+}
+
+.corr-heatmap-section-label {
+    fill: var(--color-text-secondary);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
 .corr-heatmap-tooltip {
     position: fixed;
     z-index: 999;
