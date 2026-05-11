@@ -10,6 +10,7 @@ import { startTutorial } from './survey/tutorialController.js';
 import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
+import { showSurveyIntro } from './survey/surveyIntroController.js';
 import { formatLabel } from './formatLabel.js';
 import { getFrontierColor } from './colors.js';
 
@@ -275,8 +276,13 @@ window.addEventListener('survey:load-data', ({ detail }) => {
 
 // ── Survey flow ──────────────────────────────────────────────────────────
 document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
-    const steps = await loadTutorialConfig();
-    startTutorial(steps, { onComplete: showQuestionsIntroScreen });
+    const { intro, steps } = await loadTutorialConfig();
+    const launchTutorial = () => startTutorial(steps, { onComplete: showQuestionsIntroScreen });
+    if (intro) {
+        showSurveyIntro(intro, launchTutorial);
+    } else {
+        launchTutorial();
+    }
 });
 
 function showQuestionsIntroScreen() {

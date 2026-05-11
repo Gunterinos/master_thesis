@@ -1,4 +1,9 @@
 {
+  "intro": {
+    "title": "Welcome to the Study",
+    "body": "In this study you will explore Pareto-optimal solutions using an interactive visualisation tool. You will first go through a short tutorial to learn how the tool works, and then complete a set of tasks.\n\nPlease read each task carefully before answering.",
+    "continueLabel": "Start Tutorial →"
+  },
   "tutorial": [
     {
       "id": "t1",
