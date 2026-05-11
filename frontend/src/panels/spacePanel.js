@@ -231,6 +231,7 @@ export function initializeSpacePanel(config) {
                 decisionColumns,
                 groups,
                 measures,
+                frontierOrder,
                 frontierColorOverrides,
                 frontierLegendItems,
             });
@@ -306,8 +307,7 @@ export function initializeSpacePanel(config) {
     if (decGroupsBtn) decGroupsBtn.on("click", toggleDecGroups);
 
     if (frontierColorsToggle) {
-        const uniqueFrontiers = new Set(data.filter(r => !r.__isBenchmark).map(r => r.__frontier ?? 'Unknown'));
-        const multipleFrontiers = uniqueFrontiers.size > 1;
+        const multipleFrontiers = (frontierOrder?.length ?? 0) > 1;
         frontierColorsToggle.classed('hidden', !multipleFrontiers);
         if (!multipleFrontiers) {
             showFrontierColors = false;

@@ -27,7 +27,7 @@ export function createChartRegistry(interactionOptions) {
             description: "View raw data in sortable, filterable rows",
             needsAxes: false,
             canRender: () => true,
-            render: ({ containerSelector, columns, data, animate = false, groups = {}, measures = {} }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {}, measures = {}, frontierOrder = null }) => {
                 const columnColors = Object.fromEntries(
                     columns.map((col, i) => [col, getColumnColor(i)])
                 );
@@ -39,6 +39,7 @@ export function createChartRegistry(interactionOptions) {
                     columnColors,
                     groups,
                     measures,
+                    frontierOrder,
                 });
             },
         },
