@@ -1,0 +1,4 @@
+dec_Equity_Developed_Markets,dec_Equity_Emerging_Markets,dec_Bond_US,dec_Bond_EU,dec_RealEstate_US,dec_RealEstate_EU,dec_Cash,dec_Private_Debt,dec_Infrastructure,dec_Private_Equity,obj_Risk,obj_Return,obj_Liquidity
+,,,,,,,,,,-1,1,1
+Equities,Equities,Fixed_Income,Fixed_Income,Real_Assets,Real_Assets,Cash,Fixed_Income,Real_Assets,Private_Equity,,,
+0.09323664439537542,0.1026456306607595,0.10091363328450247,0.07735893429080731,0.06372729312544093,0.07059825653985115,0.13297389274830845,0.06890618856519479,0.07640393868381463,0.18884534380350623,0.00893982150899531,0.0666898171842713,0.5682197708417069
