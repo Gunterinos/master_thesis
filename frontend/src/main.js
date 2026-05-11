@@ -341,7 +341,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
         const btn = group.append("button")
             .attr("type", "button")
             .attr("data-file", fname)
-            .style("--fc", getFrontierColor(i))
+            .style("--fc", files.length > 1 ? getFrontierColor(i) : null)
             .classed("active", initialActive.includes(fname))
             .text(label)
             .on("click", function () {
