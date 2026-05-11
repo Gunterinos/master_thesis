@@ -96,7 +96,8 @@ export function initializeSpacePanel(config) {
     const selectedChart = [previousChart, defaultChart, fallbackChart].find((chartKey) =>
         charts.some((chart) => chart.key === chartKey),
     );
-    chartSelect.property("value", selectedChart);
+    const hasExplicitPreviousChart = !!previousChart;
+    chartSelect.property("value", hasExplicitPreviousChart ? selectedChart : "");
 
     const syncButtonActiveState = () => {
         if (!chartButtons) return;
@@ -117,7 +118,7 @@ export function initializeSpacePanel(config) {
             .attr("type", "button")
             .attr("data-chart-key", (chart) => chart.key)
             .attr("data-tooltip", (chart) => chart.description ? `${chart.label}: ${chart.description}` : chart.label)
-            .classed("active", (chart) => chart.key === selectedChart)
+            .classed("active", (chart) => hasExplicitPreviousChart && chart.key === selectedChart)
             .on("click", function (event, chart) {
                 chartSelect.property("value", chart.key);
                 chartSelect.dispatch("change");
@@ -349,6 +350,7 @@ export function initializeSpacePanel(config) {
 
     chartSelect.on("change", () => {
         syncButtonActiveState();
+        d3.select(containerSelector).select('.empty-state-chart-hint').classed('hidden', true);
         updatePanel(true);
     });
     xAxisSelect.on("change", () => updatePanel(true));
@@ -376,5 +378,16 @@ export function initializeSpacePanel(config) {
         _observers.set(containerSelector, observer);
     }
 
-    updatePanel(renderOptions.animate === true);
+    const container = d3.select(containerSelector);
+    let emptyHint = container.select('.empty-state-chart-hint');
+    if (emptyHint.empty()) {
+        emptyHint = container.append('div').attr('class', 'empty-state-chart-hint');
+        emptyHint.text('Select a chart type above to get started');
+    }
+
+    emptyHint.classed('hidden', hasExplicitPreviousChart);
+
+    if (hasExplicitPreviousChart) {
+        updatePanel(renderOptions.animate === true);
+    }
 }

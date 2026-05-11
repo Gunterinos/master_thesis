@@ -564,7 +564,21 @@ body.survey-active #tutorial-zone {
     color: var(--color-text-secondary);
 }
 
+.empty-state-chart-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+}
+
 .panel-content {
+    position: relative;
     background: var(--color-overlay);
     border-radius: 12px;
     border: 1px solid rgba(212, 218, 227, 0.7);
