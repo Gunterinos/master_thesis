@@ -79,7 +79,7 @@ function getCellValue(row, col, isGroupCol, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, disableBrush = false } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, measures = {}, disableBrush = false } = options;
 
     const container = d3.select(containerSelector);
     const containerNode = container.node();
@@ -297,21 +297,22 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                 if (isVarCol[col]) th.classed('var-sub-header', true);
             })
             .html(col => {
+                const measureLabel = measures[col] ? `<span class="col-measure">${measures[col]}</span>` : '';
                 if (isGroupCol[col]) {
                     const canExpand = (groupMembersMap[col] || []).length > 1;
                     if (!canExpand) {
                         const indicator = col === sortState.col
                             ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                             : `<span class="sort-indicator">↕</span>`;
-                        return `${formatLabel(col)}${indicator}`;
+                        return `${formatLabel(col)}${indicator}${measureLabel}`;
                     }
                     const isExpanded = expandedSet.has(col);
-                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>`;
+                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>${measureLabel}`;
                 }
                 const indicator = col === sortState.col
                     ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                     : `<span class="sort-indicator">↕</span>`;
-                return `${formatLabel(col)}${indicator}`;
+                return `${formatLabel(col)}${indicator}${measureLabel}`;
             })
             .on("click", (event, col) => {
                 const rerender = () => {

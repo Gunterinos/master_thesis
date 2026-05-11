@@ -86,7 +86,12 @@ body.shift-held .scatter-point-label.is-point-selected {
     font-size: 0.68rem;
     fill: var(--color-text-muted);
     pointer-events: none;
+}
 
+.axis-measure-label {
+    font-size: 0.60rem;
+    fill: var(--color-text-muted);
+    font-weight: 400;
 }
 
 .scatter-point.is-benchmark {

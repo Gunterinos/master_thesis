@@ -30,6 +30,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         onHoverEnd          = () => {},
         onSelectionChange   = () => {},
         onShiftClick        = () => {},
+        measures            = {},
         animate             = false,
         showLabels          = false,
         showSurface         = false,
@@ -130,7 +131,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
 
     const { renderer, canvas, scene, camera, spherical, updateCamera, axisLabelSprites, oldAxisLabelSprites } =
         buildScene(containerNode, W, H, xKey, yKey, zKey, xScale, yScale, zScale,
-            { startXScale, startYScale, startZScale, shouldAnimate });
+            { startXScale, startYScale, startZScale, shouldAnimate }, measures);
     wrapper.node().appendChild(canvas);
 
     function renderFrame() { renderer.render(scene, camera); }

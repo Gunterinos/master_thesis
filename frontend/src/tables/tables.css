@@ -48,6 +48,15 @@ th[data-col-color] {
     font-size: 0.72rem;
 }
 
+.col-measure {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
 th.sort-active .sort-indicator {
     opacity: 1;
 }

@@ -31,6 +31,7 @@ export function initializeSpacePanel(config) {
         spreadSliderSelector = null,
         decisionColumns = [],
         groups = {},
+        measures = {},
         columns,
         data,
         objectiveDirections = {},
@@ -228,6 +229,7 @@ export function initializeSpacePanel(config) {
                 groupColorOverrides,
                 decisionColumns,
                 groups,
+                measures,
                 frontierColorOverrides,
                 frontierLegendItems,
             });

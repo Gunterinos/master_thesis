@@ -63,6 +63,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         groups = {},
         frontierColorOverrides = null,
         frontierLegendItems = [],
+        measures = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -418,13 +419,20 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
         .append("text")
         .attr("class", "pcp-axis-label")
         .attr("text-anchor", "middle")
-        .attr("y", -14)
-        .text((axis) => {
+        .attr("y", -20)
+        .each(function (axis) {
             const dir = objectiveDirections[axis];
             const label = formatLabel(axis);
-            if (dir === 'max') return `${label} ↑`;
-            if (dir === 'min') return `${label} ↓`;
-            return label;
+            const dirSuffix = dir === 'max' ? ' ↑' : dir === 'min' ? ' ↓' : '';
+            const el = d3.select(this);
+            el.append("tspan").text(`${label}${dirSuffix}`);
+            if (measures[axis]) {
+                el.append("tspan")
+                    .attr("class", "pcp-axis-measure")
+                    .attr("x", 0)
+                    .attr("dy", "1.2em")
+                    .text(measures[axis]);
+            }
         });
 
     // Drag handle — covers only the label area at the top

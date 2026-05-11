@@ -59,6 +59,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
         groups = {},
         frontierColorOverrides = null,
         frontierLegendItems = [],
+        measures = {},
     } = options;
 
     const container = d3.select(containerSelector);
@@ -139,7 +140,17 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             .attr('y', ay * labelR)
             .attr('text-anchor', Math.abs(ax) < 0.1 ? 'middle' : ax > 0 ? 'start' : 'end')
             .attr('dominant-baseline', ay > 0.1 ? 'hanging' : ay < -0.1 ? 'auto' : 'middle')
-            .text(formatLabel(col));
+            .each(function () {
+                const el = d3.select(this);
+                el.append('tspan').text(formatLabel(col));
+                if (measures[col]) {
+                    el.append('tspan')
+                        .attr('class', 'radviz-anchor-measure')
+                        .attr('x', ax * labelR)
+                        .attr('dy', '1.2em')
+                        .text(measures[col]);
+                }
+            });
     });
 
     g.append('text')
@@ -169,7 +180,7 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
 
         const totalItems = legendItems.length + ringItems.length;
         const legendX = availW + 12;
-        const legendY = cy - (totalItems * itemH) / 2;
+        const legendY = 32;
 
         const legendG = svg.append('g')
             .attr('class', 'radviz-legend')

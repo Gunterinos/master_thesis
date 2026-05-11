@@ -118,6 +118,12 @@ body.shift-held .radar-path.is-path-selected {
     pointer-events: none;
 }
 
+.radar-axis-measure {
+    font-size: 0.68rem;
+    font-weight: 400;
+    fill: var(--color-text-muted);
+}
+
 .radar-spoke--dragging .radar-axis-label {
     cursor: grabbing;
     fill: var(--color-selection);

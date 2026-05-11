@@ -15,6 +15,7 @@ import { formatLabel } from './formatLabel.js';
 let fullData = [];
 let objectiveDirections = {};
 let groups = {};
+let measures = {};
 let chartRegistry = null;
 let appInitialized = false;
 
@@ -39,6 +40,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
+        measures,
         disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
     });
@@ -210,7 +212,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
                 return;
             }
 
-            const { rows: rawData, directions, groups: groupsFromAPI } = data;
+            const { rows: rawData, directions, groups: groupsFromAPI, measures: measuresFromAPI } = data;
             if (!rawData || rawData.length === 0) {
                 errorEl.classed("hidden", false).text("The selected files contain no data.");
                 return;
@@ -218,6 +220,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
 
             objectiveDirections = directions;
             groups = groupsFromAPI ?? {};
+            measures = measuresFromAPI ?? {};
             fullData = rawData.map((row, index) => ({
                 ...row,
                 __rowIndex: index,

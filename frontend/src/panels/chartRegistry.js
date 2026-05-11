@@ -27,7 +27,7 @@ export function createChartRegistry(interactionOptions) {
             description: "View raw data in sortable, filterable rows",
             needsAxes: false,
             canRender: () => true,
-            render: ({ containerSelector, columns, data, animate = false, groups = {} }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {}, measures = {} }) => {
                 const columnColors = Object.fromEntries(
                     columns.map((col, i) => [col, getColumnColor(i)])
                 );
@@ -38,6 +38,7 @@ export function createChartRegistry(interactionOptions) {
                     animate,
                     columnColors,
                     groups,
+                    measures,
                 });
             },
         },
@@ -47,7 +48,7 @@ export function createChartRegistry(interactionOptions) {
             description: "Plot two objectives on X and Y axes",
             needsAxes: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
+            render: ({ containerSelector, data, xAxis, yAxis, animate = false, showLabels = false, pcaLabels = null, groupColorOverrides = null, decisionColumns = [], groups = {}, measures = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderScatterplot(containerSelector, data, xAxis, yAxis, {
                     ...interactionOptions,
                     animate,
@@ -56,6 +57,7 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    measures,
                     frontierColorOverrides,
                     frontierLegendItems,
                 });
@@ -68,7 +70,7 @@ export function createChartRegistry(interactionOptions) {
             needsAxes: true,
             needsZAxis: true,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
+            render: ({ containerSelector, data, objectiveDirections = {}, xAxis, yAxis, zAxis, animate = false, showLabels = false, showSurface = false, showDominated = false, showIdealPoint = false, groupColorOverrides = null, decisionColumns = [], groups = {}, measures = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderScatterplot3dGL(containerSelector, data, xAxis, yAxis, zAxis, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -79,6 +81,7 @@ export function createChartRegistry(interactionOptions) {
                     showIdealPoint,
                     groupColorOverrides,
                     decisionColumns,
+                    measures,
                     groups,
                     frontierColorOverrides,
                     frontierLegendItems,
@@ -104,7 +107,7 @@ export function createChartRegistry(interactionOptions) {
             description: "Compare all objectives as parallel vertical axes",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 2,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, measures = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderParallelCoords(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -112,6 +115,7 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    measures,
                     frontierColorOverrides,
                     frontierLegendItems,
                 });
@@ -123,7 +127,7 @@ export function createChartRegistry(interactionOptions) {
             description: "Compare objectives on radial axes from center",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
+            render: ({ containerSelector, columns, data, objectiveDirections = {}, animate = false, groupColorOverrides = null, decisionColumns = [], groups = {}, measures = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderRadarChart(containerSelector, columns, data, {
                     ...interactionOptions,
                     objectiveDirections,
@@ -131,6 +135,7 @@ export function createChartRegistry(interactionOptions) {
                     groupColorOverrides,
                     decisionColumns,
                     groups,
+                    measures,
                     frontierColorOverrides,
                     frontierLegendItems,
                 });
@@ -142,11 +147,12 @@ export function createChartRegistry(interactionOptions) {
             description: "Position points by attraction to objective anchors",
             needsAxes: false,
             canRender: ({ numericColumns }) => numericColumns.length >= 3,
-            render: ({ containerSelector, columns, data, animate = false, groups = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
+            render: ({ containerSelector, columns, data, animate = false, groups = {}, measures = {}, frontierColorOverrides = null, frontierLegendItems = [] }) => {
                 renderRadviz(containerSelector, data, columns, {
                     ...interactionOptions,
                     animate,
                     groups,
+                    measures,
                     frontierColorOverrides,
                     frontierLegendItems,
                 });
