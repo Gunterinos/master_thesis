@@ -1,0 +1,93 @@
+{
+  "tutorial": [
+    {
+      "id": "t1",
+      "highlight": ".header-panel",
+      "focus": [".header-frontiers.panel-controls", "#tutorial-chart-guide-btn"],
+      "text": "The header guides you through each step of the tutorial and tasks. Use the <strong>Frontiers</strong> panel to toggle which frontiers are loaded. Across all charts, solutions are <strong>separated by frontier</strong>; charts that support it offer a <strong>Frontier Colours</strong> option to colour-code them. The <strong>Chart Guide</strong> is your cheatsheet; open it at any point if you need a reminder of chart interactions."
+    },
+    {
+      "id": "t2",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "text": "The tool has two linked spaces. The <strong>Objectives Space</strong> shows your output metrics (<strong>y = f(x)</strong>). The <strong>Decision Space</strong> shows the allocations (<strong>x</strong>) that produce them. Each point is a solution on the Pareto frontier, representing an optimal trade-off."
+    },
+    {
+      "id": "t3",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "text": "Every chart supports <strong>hovering</strong>, <strong>selection</strong>, and <strong>filtering</strong>. Hold <strong>Shift + click</strong> a point to select it; selections are <strong>synchronized</strong> between both spaces. <strong>Click</strong> the <strong>zoom in/out</strong> button to zoom in/out. Use <strong>Clear Selection</strong> to reset any active filter."
+    },
+    {
+      "id": "t4",
+      "highlight": ["#objectives-chart-buttons", "#decision-chart-buttons"],
+      "setChart": [
+        { "select": "#objectives-chart-select", "value": "scatter" },
+        { "select": "#decision-chart-select", "value": "barChart" }
+      ],
+      "text": "Both spaces offer several <strong>visualisation types</strong>. We'll walk through each one, explaining their functionality."
+    },
+    {
+      "id": "t5",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-buttons button[data-chart-key='scatter']", "#objectives-options-dropdown .options-dropdown-btn"],
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The <strong>2D Scatterplot</strong> shows the relationship between two objectives. Use the <strong>axis dropdowns</strong> to change what's plotted. <strong>Shift + click</strong> to select a point, or use the <strong>Lasso Tool</strong> to select an area. Click <strong>Options</strong> to customise: <strong>Dim. Reduction</strong> projects all objectives into 2D via PCA, <strong>Labels</strong> shows solution IDs on each point, and <strong>Dominant Allocation</strong> colours points by their largest allocation group."
+    },
+    {
+      "id": "t6",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-buttons button[data-chart-key='scatter3dGL']", "#objectives-options-dropdown .options-dropdown-btn"],
+      "setChart": { "select": "#objectives-chart-select", "value": "scatter3dGL" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The <strong>3D Scatterplot</strong> adds a third axis; click and drag to <strong>rotate</strong>. Click <strong>Options</strong> for extras: <strong>Surface</strong> renders the Pareto frontier as a mesh, <strong>Dominated</strong> shows non-optimal solutions, and <strong>Ideal Point</strong> marks the theoretical best."
+    },
+    {
+      "id": "t7",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-buttons button[data-chart-key='pcp']", "#objectives-options-dropdown .options-dropdown-btn"],
+      "setChart": { "select": "#objectives-chart-select", "value": "pcp" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The <strong>Parallel Coordinates Plot</strong> draws each objective as a vertical axis; each solution is a line crossing all axes. <strong>Brush</strong> (click and drag) an axis to filter to a range; deselect by <strong>double-clicking</strong> it or using <strong>Clear Selection</strong>. Drag an axis <strong>by its label</strong> to reorder axes. Click <strong>Options</strong> to colour lines by <strong>Dominant Allocation</strong>."
+    },
+    {
+      "id": "t8",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-buttons button[data-chart-key='radar']", "#objectives-options-dropdown .options-dropdown-btn"],
+      "setChart": { "select": "#objectives-chart-select", "value": "radar" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "The <strong>Radar Chart</strong> maps each objective onto a radial axis; each solution is a polygon. <strong>Brush</strong> (click and drag) an axis to filter; deselect by <strong>double-clicking</strong> it or using <strong>Clear Selection</strong>. Drag an axis <strong>by its label</strong> to reorder axes. Click <strong>Options</strong> to colour polygons by <strong>Dominant Allocation</strong>."
+    },
+    {
+      "id": "t9",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-buttons button[data-chart-key='radviz']", "g.radviz-point", "#objectives-options-dropdown .options-dropdown-btn"],
+      "setChart": { "select": "#objectives-chart-select", "value": "radviz" },
+      "openMenu": "#objectives-options-dropdown .options-dropdown-menu",
+      "text": "<strong>RadViz</strong> positions solutions around a circle of objective anchors; balanced solutions sit near the centre, objective-dominated ones are pulled towards their anchor. <strong>Shift + click</strong> or use the <strong>Lasso Tool</strong> to select. Each solution is a <strong>mini pie glyph</strong>: click to expand into a <strong>donut chart</strong>, click a <strong>group arc</strong> to drill into individual allocations, and click the <strong>centre area</strong> to close. Use <strong>Options</strong> to toggle <strong>Spread</strong> (grid layout)."
+    },
+    {
+      "id": "t10",
+      "highlight": ".table-panel:first-of-type",
+      "focus": ["#objectives-chart-buttons button[data-chart-key='correlationHeatmap']"],
+      "setChart": { "select": "#objectives-chart-select", "value": "correlationHeatmap" },
+      "text": "The <strong>Correlation Heatmap</strong> shows pairwise correlations between objectives. <strong>Dark</strong> = negative correlation; <strong>light</strong> = positive. When multiple frontiers are loaded, a <strong>separate heatmap</strong> is shown for each, so you can compare correlation patterns across frontiers."
+    },
+    {
+      "id": "t11",
+      "highlight": ".table-panel:last-of-type",
+      "focus": ["#decision-chart-buttons button[data-chart-key='barChart']", ".bar-chart-bar:nth-of-type(10)"],
+      "setChart": { "select": "#decision-chart-select", "value": "barChart" },
+      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per solution. <strong>Shift + click</strong> a bar to select that solution. Frontiers are grouped and labelled with a <strong>bracket and name</strong> above their columns. Some categories represent <strong>allocation groups</strong>: click a <strong>group bar</strong> to <strong>expand</strong> it and see individual allocations, which also expands the section in the <strong>tooltip</strong>."
+    },
+    {
+      "id": "t12",
+      "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
+      "focus": [".hist-bar", ".group-header"],
+      "setChart": [
+        { "select": "#objectives-chart-select", "value": "table" },
+        { "select": "#decision-chart-select", "value": "table" }
+      ],
+      "text": "The <strong>Table</strong> lists every solution with raw objective and decision values. <strong>Sort</strong> by any column. The mini bars at the top show the <strong>distribution per frontier</strong>; <strong>Brush</strong> (click and drag) to filter to a range, deselect by <strong>double-clicking</strong> or using <strong>Clear Selection</strong>. Allocation group columns can be <strong>expanded</strong> to show individual allocations."
+    }
+  ]
+}

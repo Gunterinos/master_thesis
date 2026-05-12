@@ -210,16 +210,23 @@ def pca():
     })
 
 
+@app.get("/api/intro-config")
+def intro_config():
+    with (SURVEY_DATA_DIR / "current_setup" / "intro_config.json").open(encoding="utf-8") as f:
+        config = json.load(f)
+    return jsonify(config)
+
+
 @app.get("/api/tutorial-config")
 def tutorial_config():
-    with (SURVEY_DATA_DIR / "tutorial_config.json").open(encoding="utf-8") as f:
+    with (SURVEY_DATA_DIR / "current_setup" / "tutorial_config.json").open(encoding="utf-8") as f:
         config = json.load(f)
     return jsonify(config)
 
 
 @app.get("/api/questions-config")
 def questions_config():
-    with (SURVEY_DATA_DIR / "questions_config.json").open(encoding="utf-8") as f:
+    with (SURVEY_DATA_DIR / "current_setup" / "questions_config.json").open(encoding="utf-8") as f:
         config = json.load(f)
     return jsonify(config)
 

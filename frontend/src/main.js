@@ -5,7 +5,7 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
-import { loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
+import { loadIntroConfig, loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
 import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
@@ -276,7 +276,7 @@ window.addEventListener('survey:load-data', ({ detail }) => {
 
 // ── Survey flow ──────────────────────────────────────────────────────────
 document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
-    const { intro, steps } = await loadTutorialConfig();
+    const [intro, { steps }] = await Promise.all([loadIntroConfig(), loadTutorialConfig()]);
     const launchTutorial = () => startTutorial(steps, { onComplete: showQuestionsIntroScreen });
     if (intro) {
         showSurveyIntro(intro, launchTutorial);

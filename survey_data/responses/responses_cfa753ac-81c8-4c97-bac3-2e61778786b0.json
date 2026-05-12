@@ -1,0 +1,163 @@
+{
+  "sessionId": "cfa753ac-81c8-4c97-bac3-2e61778786b0",
+  "responses": [
+    {
+      "questionId": "q1",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        1
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 11861
+    },
+    {
+      "questionId": "q2",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Diversity",
+      "score": 0.7579,
+      "isCorrect": false,
+      "timeToAnswerMs": 8506
+    },
+    {
+      "questionId": "q3",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        17
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 8935
+    },
+    {
+      "questionId": "q4",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        7
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 3383
+    },
+    {
+      "questionId": "q5",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Nutrient_Density",
+      "score": 0.3263,
+      "isCorrect": false,
+      "timeToAnswerMs": 437
+    },
+    {
+      "questionId": "q6",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        13
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 955
+    },
+    {
+      "questionId": "q7",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        89
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 1953
+    },
+    {
+      "questionId": "q8",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Carbon_Footprint",
+      "correctAnswer": "obj_Nutrient_Density",
+      "score": 0.95,
+      "isCorrect": false,
+      "timeToAnswerMs": 517
+    },
+    {
+      "questionId": "q9",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        65
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 538
+    },
+    {
+      "questionId": "q10",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        18
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 533
+    },
+    {
+      "questionId": "q11",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Prep_Time",
+      "score": 0.1915,
+      "isCorrect": false,
+      "timeToAnswerMs": 726
+    },
+    {
+      "questionId": "q12",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": [],
+      "correctAnswer": [
+        56
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 1235
+    }
+  ],
+  "postQuestionnaire": [
+    {
+      "questionId": "pq1",
+      "type": "likert",
+      "answer": null
+    },
+    {
+      "questionId": "pq2",
+      "type": "likert",
+      "answer": null
+    },
+    {
+      "questionId": "pq3",
+      "type": "likert",
+      "answer": null
+    },
+    {
+      "questionId": "pq4",
+      "type": "likert",
+      "answer": null
+    }
+  ]
+}

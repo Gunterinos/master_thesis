@@ -19,7 +19,7 @@ function buildBackdrop(intro) {
     body.id = 'survey-intro-body';
     intro.body.split('\n').filter(l => l.trim()).forEach(line => {
         const p = document.createElement('p');
-        p.textContent = line;
+        p.innerHTML = line;
         body.appendChild(p);
     });
     modal.appendChild(body);
