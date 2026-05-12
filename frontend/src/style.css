@@ -575,7 +575,7 @@ body.survey-active #tutorial-zone {
     text-align: center;
     pointer-events: none;
     user-select: none;
-    white-space: nowrap;
+    white-space: pre-line;
 }
 
 .panel-content {

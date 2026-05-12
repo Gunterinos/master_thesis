@@ -140,7 +140,7 @@ export function initializeSpacePanel(config) {
 
     const hasChartChoice = charts.length > 1;
     if (chartButtons) {
-        chartButtons.classed("hidden", !hasChartChoice);
+        chartButtons.classed("hidden", false);
     } else {
         chartSelect.classed("hidden", !hasChartChoice);
     }
