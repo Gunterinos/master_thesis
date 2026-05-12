@@ -1,4 +1,4 @@
-{
+﻿{
   "questionnaires": [
     {
       "id": "diet_3d_block_1",
@@ -12,7 +12,8 @@
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
           "prompt": "Select all diets where Nutrient Density is above 0.65.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.65, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.65, "max": null },
+          "defaultScreen": "You've switched to the following dataset: Budget Diet 3D. Select a chart type above to get started."
         },
         {
           "id": "q2",
@@ -47,7 +48,8 @@
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
           "prompt": "Select all diets where Diversity is above 0.60.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.60, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.60, "max": null },
+          "defaultScreen": "You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
         },
         {
           "id": "q5",
@@ -83,7 +85,8 @@
           "prompt": "Select all diets where Cost is below 0.40.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Cost", "min": null, "max": 0.40 },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: Diverse 3D. Select a chart type above to get started."
         },
         {
           "id": "q8",
@@ -121,7 +124,8 @@
           "prompt": "Select all diets where Nutrient Density is above 0.60.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.60, "max": null },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: Vegan 3D. Select a chart type above to get started."
         },
         {
           "id": "q11",
@@ -158,7 +162,8 @@
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
           "prompt": "Select all diets where Satiety is above 0.70.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.70, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.70, "max": null },
+          "defaultScreen": "You've switched to the following dataset: Vegan 6D. Select a chart type above to get started."
         },
         {
           "id": "q14",
@@ -193,7 +198,8 @@
           "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
           "prompt": "Select all diets where Carbon Footprint is below 0.35.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Carbon_Footprint", "min": null, "max": 0.35 }
+          "answerSpec": { "type": "range", "column": "obj_Carbon_Footprint", "min": null, "max": 0.35 },
+          "defaultScreen": "You've switched to the following dataset: Low Carb 6D. Select a chart type above to get started."
         },
         {
           "id": "q17",
@@ -229,7 +235,8 @@
           "prompt": "Select all diets where Prep Time is below 0.50.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 0.50 },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: High Protein 6D. Select a chart type above to get started."
         },
         {
           "id": "q20",
@@ -267,7 +274,8 @@
           "prompt": "Select all diets where Diversity is above 0.60.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.60, "max": null },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: Budget Diet 6D. Select a chart type above to get started."
         },
         {
           "id": "q23",

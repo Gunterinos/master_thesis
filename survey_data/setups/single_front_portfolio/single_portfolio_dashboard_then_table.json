@@ -1,4 +1,4 @@
-{
+﻿{
   "questionnaires": [
     {
       "id": "portfolio_3d_block_1",
@@ -12,7 +12,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
           "prompt": "Select all portfolios where Return is above 0.07.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.07, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.07, "max": null },
+          "defaultScreen": "You've switched to the following dataset: equity heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q2",
@@ -47,7 +48,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
           "prompt": "Select all portfolios where Liquidity is above 0.60.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null },
+          "defaultScreen": "You've switched to the following dataset: unconstrained 3D. Select a chart type above to get started."
         },
         {
           "id": "q5",
@@ -83,7 +85,8 @@
           "prompt": "Select all portfolios where Risk is below 0.40.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Risk", "min": null, "max": 0.40 },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: real assets heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q8",
@@ -121,7 +124,8 @@
           "prompt": "Select all portfolios where Liquidity is above 0.55.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.55, "max": null },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q11",
@@ -158,7 +162,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
           "prompt": "Select all portfolios where ESG score is above 0.60.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_ESG", "min": 0.60, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_ESG", "min": 0.60, "max": null },
+          "defaultScreen": "You've switched to the following dataset: real assets heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q14",
@@ -193,7 +198,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
           "prompt": "Select all portfolios where Diversity is above 0.55.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.55, "max": null }
+          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.55, "max": null },
+          "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q17",
@@ -229,7 +235,8 @@
           "prompt": "Select all portfolios where Liquidity is above 0.60.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: equity heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q20",
@@ -267,7 +274,8 @@
           "prompt": "Select all portfolios where Geopolitical Risk is below 0.35.",
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Geopolitical", "min": null, "max": 0.35 },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
         },
         {
           "id": "q23",

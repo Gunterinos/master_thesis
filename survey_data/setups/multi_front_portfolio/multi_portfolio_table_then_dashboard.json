@@ -1,4 +1,4 @@
-{
+﻿{
   "questionnaires": [
     {
       "id": "portfolio_3d_block_1",
@@ -13,7 +13,8 @@
           "prompt": "Which portfolio strategy has a higher average Return?",
           "options": ["equity heavy 3D", "fixed income cash heavy 3D"],
           "answerSpec": { "type": "higher_average", "column": "obj_Return" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: equity heavy 3D, fixed income cash heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q2",
@@ -51,7 +52,8 @@
           "prompt": "Which portfolio strategy has a lower average Risk?",
           "options": ["real assets heavy 3D", "unconstrained 3D"],
           "answerSpec": { "type": "lower_average", "column": "obj_Risk" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: real assets heavy 3D, unconstrained 3D. Select a chart type above to get started."
         },
         {
           "id": "q5",
@@ -88,7 +90,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
           "prompt": "Which portfolio strategy has a lower average Risk?",
           "options": ["equity heavy 3D", "real assets heavy 3D"],
-          "answerSpec": { "type": "lower_average", "column": "obj_Risk" }
+          "answerSpec": { "type": "lower_average", "column": "obj_Risk" },
+          "defaultScreen": "You've switched to the following datasets: equity heavy 3D, real assets heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q8",
@@ -123,7 +126,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
           "prompt": "Which portfolio strategy has a higher average Liquidity?",
           "options": ["fixed income cash heavy 3D", "unconstrained 3D"],
-          "answerSpec": { "type": "higher_average", "column": "obj_Liquidity" }
+          "answerSpec": { "type": "higher_average", "column": "obj_Liquidity" },
+          "defaultScreen": "You've switched to the following datasets: fixed income cash heavy 3D, unconstrained 3D. Select a chart type above to get started."
         },
         {
           "id": "q11",
@@ -159,7 +163,8 @@
           "prompt": "Which portfolio strategy has a higher average ESG score?",
           "options": ["equity heavy 6D", "fixed income cash heavy 6D"],
           "answerSpec": { "type": "higher_average", "column": "obj_ESG" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: equity heavy 6D, fixed income cash heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q14",
@@ -197,7 +202,8 @@
           "prompt": "Which portfolio strategy has a lower average Geopolitical Risk?",
           "options": ["real assets heavy 6D", "unconstrained 6D"],
           "answerSpec": { "type": "lower_average", "column": "obj_Geopolitical" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: real assets heavy 6D, unconstrained 6D. Select a chart type above to get started."
         },
         {
           "id": "q17",
@@ -234,7 +240,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
           "prompt": "Which portfolio strategy has a higher average Return?",
           "options": ["equity heavy 6D", "real assets heavy 6D"],
-          "answerSpec": { "type": "higher_average", "column": "obj_Return" }
+          "answerSpec": { "type": "higher_average", "column": "obj_Return" },
+          "defaultScreen": "You've switched to the following datasets: equity heavy 6D, real assets heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q20",
@@ -269,7 +276,8 @@
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
           "prompt": "Which portfolio strategy has a lower average Geopolitical Risk?",
           "options": ["fixed income cash heavy 6D", "unconstrained 6D"],
-          "answerSpec": { "type": "lower_average", "column": "obj_Geopolitical" }
+          "answerSpec": { "type": "lower_average", "column": "obj_Geopolitical" },
+          "defaultScreen": "You've switched to the following datasets: fixed income cash heavy 6D, unconstrained 6D. Select a chart type above to get started."
         },
         {
           "id": "q23",
