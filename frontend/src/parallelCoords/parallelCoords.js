@@ -164,6 +164,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
                     }
                     state.enabledAxes.delete(col);
                 }
+                window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'pcp_dimension_toggle', column: col, enabled: this.checked } }));
                 state.dropdownOpen = true; // keep panel open during toggle
                 rerender(true);
             });
@@ -522,6 +523,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
             // Store live positions so the re-render can animate from them
             state.prevAxisPositions = { ...livePositions };
 
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'pcp_axis_reorder', newOrder: liveOrder.slice() } }));
             rerender(true);
         });
 
@@ -562,6 +564,9 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
                     delete state.axisFilters[axis];
                     state.hiddenFilters.delete(axis);
                     updateFilteredLines();
+                } else {
+                    const f = state.axisFilters[axis];
+                    if (f) window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'pcp_brush_filter', axis, min: f.min, max: f.max } }));
                 }
             });
 
@@ -595,6 +600,7 @@ export function renderParallelCoords(containerSelector, allColumns, data, option
                 delete state.axisFilters[axis];
                 state.hiddenFilters.delete(axis);
                 updateFilteredLines();
+                window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'pcp_brush_remove', axis } }));
             }
         });
     });

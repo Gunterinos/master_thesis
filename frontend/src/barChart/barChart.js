@@ -229,8 +229,10 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                 if (canExpand) {
                     item.on('click', () => {
                         const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
-                        next.has(grp) ? next.delete(grp) : next.add(grp);
+                        const expanding = !next.has(grp);
+                        expanding ? next.add(grp) : next.delete(grp);
                         _legendExpandedGroups.set(containerSelector, next);
+                        window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'barchart_group_expand', group: grp, expanded: expanding } }));
                         rerender();
                     });
                 }
@@ -319,8 +321,10 @@ export function renderBarChart(containerSelector, columns, data, options = {}) {
                             if (event.shiftKey) { event.stopPropagation(); onShiftClick(row.rowIndex); return; }
                             if ((groupMembersMap[seg.grp] || []).length <= 1) return;
                             const next = new Set(_legendExpandedGroups.get(containerSelector) ?? new Set());
-                            next.has(seg.grp) ? next.delete(seg.grp) : next.add(seg.grp);
+                            const expanding = !next.has(seg.grp);
+                            expanding ? next.add(seg.grp) : next.delete(seg.grp);
                             _legendExpandedGroups.set(containerSelector, next);
+                            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'barchart_group_expand', group: seg.grp, expanded: expanding } }));
                             rerender();
                         })
                         .on('mouseenter', function (event) {

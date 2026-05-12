@@ -99,13 +99,15 @@ function toggleZoom() {
     if (!selectedRowIndices) { return; }
 
     clearActiveRowIndex();
-    if (getIsZoomed()) {
-        setSelectionState({ selected: selectedRowIndices, filtered: null, zoomed: false });
-    } else {
+    const zoomingIn = !getIsZoomed();
+    if (zoomingIn) {
         setSelectionState({ selected: selectedRowIndices, filtered: selectedRowIndices, zoomed: true });
+    } else {
+        setSelectionState({ selected: selectedRowIndices, filtered: null, zoomed: false });
     }
     renderAllPanels({ animate: true });
     updateSelectionButtons();
+    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'zoom_toggle', zoomed: zoomingIn } }));
 }
 
 function applyIntersectedFilter() {
@@ -141,6 +143,7 @@ function clearSelectionFilter() {
     setEmptyFilterWarning(false);
     renderAllPanels({ animate: true });
     updateSelectionButtons();
+    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'clear_selection' } }));
 }
 
 function initializeApp() {
@@ -163,10 +166,11 @@ function initializeApp() {
         onShiftClick: (rowIndex) => {
             const current = getSelectedRowIndexSet();
             const newSet = current ? new Set(current) : new Set();
-            if (newSet.has(rowIndex)) {
-                newSet.delete(rowIndex);
-            } else {
+            const adding = !newSet.has(rowIndex);
+            if (adding) {
                 newSet.add(rowIndex);
+            } else {
+                newSet.delete(rowIndex);
             }
             if (newSet.size === 0) {
                 setSelectionState({ selected: null, filtered: null, zoomed: false });
@@ -174,6 +178,7 @@ function initializeApp() {
                 setSelectionState({ selected: newSet, filtered: getFilteredRowIndexSet(), zoomed: getIsZoomed() });
             }
             updateSelectionButtons();
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'shift_click', rowIndex, action: adding ? 'add' : 'remove' } }));
         },
     };
 

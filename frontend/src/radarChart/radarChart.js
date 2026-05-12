@@ -149,6 +149,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                     if (state.enabledAxes.size <= 1) { this.checked = true; return; }
                     state.enabledAxes.delete(col);
                 }
+                window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radar_dimension_toggle', column: col, enabled: this.checked } }));
                 state.dropdownOpen = true;
                 rerender(true);
             });
@@ -475,7 +476,11 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                     positionHandles();
                     updateFilteredPaths();
                 })
-                .on('end', () => { brushAnchorT = null; })
+                .on('end', () => {
+                    brushAnchorT = null;
+                    const f = state.axisFilters[axis];
+                    if (f) window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radar_spoke_filter', axis, t1: f.t1, t2: f.t2 } }));
+                })
             );
 
             // Individual handle drags (adjust an existing filter)
@@ -489,6 +494,10 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                     positionHandles();
                     updateFilteredPaths();
                 })
+                .on('end', function () {
+                    const f = state.axisFilters[axis];
+                    if (f) window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radar_spoke_filter', axis, t1: f.t1, t2: f.t2 } }));
+                })
             );
 
             maxHandle.call(d3.drag()
@@ -501,6 +510,10 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                     positionHandles();
                     updateFilteredPaths();
                 })
+                .on('end', function () {
+                    const f = state.axisFilters[axis];
+                    if (f) window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radar_spoke_filter', axis, t1: f.t1, t2: f.t2 } }));
+                })
             );
 
             // Double-click anywhere in the axis filter group to remove filter
@@ -512,6 +525,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
                 maxHandle.style('display', 'none');
                 filterRangeLine.style('display', 'none');
                 updateFilteredPaths();
+                window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radar_spoke_filter_remove', axis } }));
             });
         });
     }
@@ -618,6 +632,7 @@ export function renderRadarChart(containerSelector, allColumns, data, options = 
             d3.select(this).classed('radar-spoke--dragging', false);
             const inactiveAxes = state.axisOrder.filter((c) => !activeAxes.includes(c));
             state.axisOrder = [...liveOrder, ...inactiveAxes];
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radar_axis_reorder', newOrder: liveOrder.slice() } }));
             rerender(false);
         })
     );

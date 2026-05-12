@@ -1,4 +1,5 @@
 import { getSelectedRowIndexSet, clearSelectionState } from '../state/appState.js';
+import { startTracking, stopTracking, getResult as getTelemetryResult } from './telemetry.js';
 
 let _questions = [];
 let _currentIndex = 0;
@@ -123,12 +124,15 @@ function renderQuestion(index) {
     `;
 
     _startTime = performance.now();
+    startTracking();
     document.getElementById('question-submit-btn').addEventListener('click', () => submitAnswer(index));
 }
 
 async function submitAnswer(index) {
     const question = _questions[index];
     const timeToAnswerMs = Math.round(performance.now() - _startTime);
+    stopTracking();
+    const telemetry = getTelemetryResult();
 
     let answer;
     if (_dynamicCandidates !== null) {
@@ -182,6 +186,8 @@ async function submitAnswer(index) {
         score,
         isCorrect: score >= 1.0,
         timeToAnswerMs,
+        timePerChart: telemetry.timePerChart,
+        actions: telemetry.actions,
     });
 
     clearSelectionState();
