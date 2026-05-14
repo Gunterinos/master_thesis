@@ -7,7 +7,7 @@ let _startTime = 0;
 let _responses = [];
 let _sessionId = '';
 let _onComplete = null;
-let _availableColumns = { objectives: [], decisions: [] };
+let _availableColumns = { objectives: [], decisions: [], groups: [] };
 let _dynamicCandidates = null;
 
 function generateSessionId() {
@@ -29,6 +29,8 @@ function buildCandidates(question) {
         cols = _availableColumns.objectives.slice();
     } else if (source === 'decisions') {
         cols = _availableColumns.decisions.slice();
+    } else if (source === 'groups') {
+        cols = _availableColumns.groups.slice();
     } else if (source === 'all') {
         cols = [..._availableColumns.objectives, ..._availableColumns.decisions];
     } else {
@@ -55,9 +57,12 @@ function loadAndRender(index) {
 
     window.addEventListener('survey:data-ready', function handler(event) {
         const detail = event.detail ?? {};
+        const rawGroups = detail.groups ?? {};
+        const uniqueGroups = [...new Set(Object.values(rawGroups))];
         _availableColumns = {
             objectives: detail.objectiveColumns ?? [],
             decisions: detail.decisionColumns ?? [],
+            groups: uniqueGroups,
         };
         clearSelectionState();
         renderQuestion(index);

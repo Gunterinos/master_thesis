@@ -276,7 +276,7 @@ window.addEventListener('survey:load-data', ({ detail }) => {
                 ? Object.keys(fullData[0]).filter(k => k.startsWith('dec_'))
                 : [];
             window.dispatchEvent(new CustomEvent('survey:data-ready', {
-                detail: { objectiveColumns: objCols, decisionColumns: decCols },
+                detail: { objectiveColumns: objCols, decisionColumns: decCols, groups },
             }));
         },
     });

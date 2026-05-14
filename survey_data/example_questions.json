@@ -56,6 +56,22 @@
     {
       "type": "value_retrieval",
       "answerSpec_type": "highest_value",
+      "note": "Works with group names — use the group label (e.g. 'Proteins') as the column. The backend sums member columns. Same for lowest_value and range.",
+      "interactionType": "record_selection",
+      "scoring": "binary (1 if correct point selected, 0 otherwise)",
+      "example": {
+        "id": "ex3c",
+        "type": "value_retrieval",
+        "interactionType": "record_selection",
+        "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"] },
+        "prompt": "Select the diet with the highest total allocation to Proteins.",
+        "options": [],
+        "answerSpec": { "type": "highest_value", "column": "Proteins" }
+      }
+    },
+    {
+      "type": "value_retrieval",
+      "answerSpec_type": "highest_value",
       "note": "Works with dec_ columns — use dec_ prefix in column. Same for lowest_value and range.",
       "interactionType": "record_selection",
       "scoring": "binary (1 if correct point selected, 0 otherwise)",
@@ -85,6 +101,27 @@
         "answerSpec": {
           "type": "strongest_correlation",
           "targetColumn": "obj_Return",
+          "candidateColumns": []
+        }
+      }
+    },
+    {
+      "type": "correlation",
+      "answerSpec_type": "strongest_correlation",
+      "note": "Decision groups as candidates — optionSource: 'groups'. Group value is the sum of its member columns.",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - |spearman(correct, target) - spearman(user_pick, target)|",
+      "example": {
+        "id": "ex4c",
+        "type": "correlation",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"] },
+        "prompt": "Which food group is most strongly correlated with Cost?",
+        "options": [],
+        "optionSource": "groups",
+        "answerSpec": {
+          "type": "strongest_correlation",
+          "targetColumn": "obj_Cost",
           "candidateColumns": []
         }
       }
@@ -160,6 +197,22 @@
     {
       "type": "simple_comparison",
       "answerSpec_type": "higher_average",
+      "note": "Works with group names — use the group label as the column. The backend sums member columns per row before averaging.",
+      "interactionType": "select_option",
+      "scoring": "binary (1 if correct frontier selected, 0 otherwise)",
+      "example": {
+        "id": "ex7c",
+        "type": "simple_comparison",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"] },
+        "prompt": "Which diet plan allocates more to Proteins on average?",
+        "options": ["Budget Diet 3D", "High Protein 3D"],
+        "answerSpec": { "type": "higher_average", "column": "Proteins" }
+      }
+    },
+    {
+      "type": "simple_comparison",
+      "answerSpec_type": "higher_average",
       "note": "Decision variable example with higher_average",
       "interactionType": "select_option",
       "scoring": "binary (1 if correct frontier selected, 0 otherwise)",
@@ -186,6 +239,23 @@
         "prompt": "In which objective do the two frontiers differ the most on average?",
         "options": [],
         "optionSource": "objectives",
+        "answerSpec": { "type": "most_distinct_objective" }
+      }
+    },
+    {
+      "type": "most_distinct_objective",
+      "answerSpec_type": "most_distinct_objective",
+      "note": "Decision groups as candidates — set optionSource to 'groups'. Group value is the sum of its member columns.",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - rank/(N_columns - 1), where rank 0 = column with largest normalised mean difference between frontiers",
+      "example": {
+        "id": "ex8c",
+        "type": "most_distinct_objective",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"] },
+        "prompt": "In which food group do the two diet plans differ the most on average?",
+        "options": [],
+        "optionSource": "groups",
         "answerSpec": { "type": "most_distinct_objective" }
       }
     },
