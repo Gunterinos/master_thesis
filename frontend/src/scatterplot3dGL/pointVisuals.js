@@ -20,7 +20,7 @@ export function buildPointVisuals(ctx) {
             const ring = ringMeshes[i];
             const lbl  = labelSprites[i] || null;
 
-            m.material.color.set(p.activeColor ?? (p.isBenchmark ? POINT_COLOR_BENCHMARK : (p.surfaceColor ?? POINT_COLOR_REGULAR)));
+            m.material.color.set(p.activeColor ?? (p.isBenchmark ? POINT_COLOR_BENCHMARK : POINT_COLOR_REGULAR));
 
             const BASE      = p.baseSize     ?? POINT_SIZE;
             const BASE_RING = p.baseRingSize ?? RING_SIZE;

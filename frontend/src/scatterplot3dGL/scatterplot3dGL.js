@@ -15,7 +15,7 @@ import { formatLabel } from '../formatLabel.js';
 import { buildOrbitControls } from './orbitControls.js';
 import { buildPointVisuals } from './pointVisuals.js';
 import {
-    POINT_COLOR_BENCHMARK, interpolateSurfaceColor,
+    POINT_COLOR_BENCHMARK, POINT_COLOR_REGULAR,
     COLOR_WHITE, COLOR_INK, COLOR_DOMINATED,
     COLOR_IDEAL_FILL, COLOR_IDEAL_STROKE, COLOR_TEXT_SECONDARY,
     getColumnColor, getGroupBaseColor, getGroupOrder,
@@ -95,21 +95,6 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     const zScale = d3.scaleLinear().domain([zExt[0] - pad(zExt), zExt[1] + pad(zExt)]).range([0, 1]);
     points.forEach(p => { p.nx = xScale(p.xVal); p.ny = yScale(p.yVal); p.nz = zScale(p.zVal); });
 
-    // Compute distance-to-ideal colour for each point (same gradient as the Pareto surface).
-    const xIdeal = xDir === 'max' ? 1 : 0;
-    const yIdeal = yDir === 'max' ? 1 : 0;
-    const zIdeal = zDir === 'max' ? 1 : 0;
-    points.forEach(p => {
-        p.distToIdeal = Math.sqrt((xIdeal - p.nx) ** 2 + (yIdeal - p.ny) ** 2 + (zIdeal - p.nz) ** 2);
-    });
-    const dMin = Math.min(...points.map(p => p.distToIdeal));
-    const dMax = Math.max(...points.map(p => p.distToIdeal));
-    const dRange = dMax - dMin || 1;
-    points.forEach(p => {
-        const ao = (p.distToIdeal - dMin) / dRange;
-        p.surfaceColor = interpolateSurfaceColor(ao).hex;
-    });
-
     const shouldAnimate = animate && hasPrevDomain;
     const startXScale = shouldAnimate ? d3.scaleLinear().domain([prevXMin, prevXMax]).range([0, 1]) : xScale;
     const startYScale = shouldAnimate ? d3.scaleLinear().domain([prevYMin, prevYMax]).range([0, 1]) : yScale;
@@ -145,7 +130,7 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
     points.forEach(p => {
         p.activeColor = p.isBenchmark
             ? POINT_COLOR_BENCHMARK
-            : (frontierColorOverrides?.get(p.rowIndex) ?? groupColorOverrides?.get(p.rowIndex) ?? p.surfaceColor);
+            : (frontierColorOverrides?.get(p.rowIndex) ?? groupColorOverrides?.get(p.rowIndex) ?? POINT_COLOR_REGULAR);
         const sx = shouldAnimate ? p.startNx : p.nx;
         const sy = shouldAnimate ? p.startNy : p.ny;
         const sz = shouldAnimate ? p.startNz : p.nz;
@@ -281,9 +266,9 @@ export function renderScatterplot3dGL(containerSelector, data, xKey, yKey, zKey,
         );
     } else {
         legendDiv.html(
-            `<span class="scatter3dgl-legend-title">Distance to Ideal [${idealLabel}]</span>` +
-            '<div class="scatter3dgl-legend-bar"></div>' +
-            '<div class="scatter3dgl-legend-labels"><span>Near</span><span>Far</span></div>' +
+            `<div class="scatter3dgl-legend-benchmark">` +
+            `<span class="scatter3dgl-legend-dot" style="background:${POINT_COLOR_REGULAR}"></span>` +
+            `<span>Portfolio</span></div>` +
             benchmarkRow
         );
     }

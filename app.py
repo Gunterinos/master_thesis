@@ -159,23 +159,27 @@ def load_data():
     directions = {}
     groups = {}
     measures = {}
+    file_constraints_map = {}
 
     for fname in filenames:
         path = _resolve_data_file(fname)
 
-        rows, file_directions, file_groups, _, file_measures = load_csv(path)
+        rows, file_directions, file_groups, file_constraints, file_measures = load_csv(path)
 
         if not all_frontier_rows:
             directions = file_directions
             groups = file_groups
             measures = file_measures
 
+        if file_constraints:
+            file_constraints_map[fname] = file_constraints
+
         frontier_name = _frontier_display_name(fname)
         all_frontier_rows.extend({**r, "__frontier": frontier_name} for r in rows)
 
     benchmark_row = {**benchmark_row, "__frontier": "Benchmark"}
     merged = [benchmark_row] + all_frontier_rows
-    return jsonify({"rows": merged, "directions": directions, "groups": groups, "measures": measures})
+    return jsonify({"rows": merged, "directions": directions, "groups": groups, "measures": measures, "fileConstraints": file_constraints_map})
 
 
 @app.post("/api/pca")
@@ -210,16 +214,23 @@ def pca():
     })
 
 
+@app.get("/api/intro-config")
+def intro_config():
+    with (SURVEY_DATA_DIR / "current_setup" / "intro_config.json").open(encoding="utf-8") as f:
+        config = json.load(f)
+    return jsonify(config)
+
+
 @app.get("/api/tutorial-config")
 def tutorial_config():
-    with (SURVEY_DATA_DIR / "tutorial_config.json").open(encoding="utf-8") as f:
+    with (SURVEY_DATA_DIR / "current_setup" / "tutorial_config.json").open(encoding="utf-8") as f:
         config = json.load(f)
     return jsonify(config)
 
 
 @app.get("/api/questions-config")
 def questions_config():
-    with (SURVEY_DATA_DIR / "questions_config.json").open(encoding="utf-8") as f:
+    with (SURVEY_DATA_DIR / "current_setup" / "questions_config.json").open(encoding="utf-8") as f:
         config = json.load(f)
     return jsonify(config)
 
@@ -239,25 +250,45 @@ def _resolve_data_file(fname):
     return (Path(__file__).resolve().parent / p).resolve()
 
 
+def _group_members(groups, dec_cols):
+    """Build {group_name: [col, ...]} preserving column order."""
+    result = {}
+    for col in dec_cols:
+        grp = groups.get(col)
+        if grp:
+            result.setdefault(grp, []).append(col)
+    return result
+
+
+def _col_value(row, col_or_group, group_members_map):
+    """Return float value for a column or a group (sum of members)."""
+    if col_or_group in group_members_map:
+        return sum(float(row[c]) for c in group_members_map[col_or_group])
+    return float(row[col_or_group])
+
+
 def _load_frontier_rows(frontiers, benchmark=None):
     """Load rows for the given frontier filenames.
-    Returns (all_rows, directions) where all_rows excludes the benchmark and
-    each row has a '__frontier' key set to the display name of its source file.
+    Returns (all_rows, directions, groups) where all_rows excludes the benchmark
+    and each row has a '__frontier' key set to the display name of its source file.
     Row order matches /api/load-data: benchmark at index 0, then frontier rows
     in the order given, so the correct __rowIndex for a frontier row at position
     i in all_rows is i + 1.
     """
     all_rows = []
     directions = {}
+    groups = {}
     for fname in frontiers:
         path = _resolve_data_file(fname)
-        rows, file_directions, *_ = load_csv(path)
+        rows, file_directions, file_groups, *_ = load_csv(path)
         if not directions:
             directions = file_directions
+        if not groups:
+            groups = file_groups
         display = _frontier_display_name(fname)
         for row in rows:
             all_rows.append({**row, "__frontier": display})
-    return all_rows, directions
+    return all_rows, directions, groups
 
 
 @app.post("/api/compute-answer")
@@ -268,23 +299,26 @@ def compute_answer():
     user_answer = body.get("userAnswer")
     benchmark_file = body.get("benchmark")
 
-    rows, directions = _load_frontier_rows(frontiers, benchmark_file)
+    rows, directions, groups = _load_frontier_rows(frontiers, benchmark_file)
     if not rows:
         return jsonify({"error": "No data found"}), 400
+
+    dec_cols = [c for c in rows[0] if c.startswith("dec_")]
+    group_members_map = _group_members(groups, dec_cols)
 
     spec_type = spec["type"]
 
     # ── Row-selection answers ──────────────────────────────────────────────
     if spec_type == "highest_value":
         col = spec["column"]
-        idx = max(range(len(rows)), key=lambda i: float(rows[i][col]))
+        idx = max(range(len(rows)), key=lambda i: _col_value(rows[i], col, group_members_map))
         correct = [idx + 1]
         score = 1.0 if user_answer and any(i in correct for i in user_answer) else 0.0
         return jsonify({"rowIndices": correct, "score": score})
 
     if spec_type == "lowest_value":
         col = spec["column"]
-        idx = min(range(len(rows)), key=lambda i: float(rows[i][col]))
+        idx = min(range(len(rows)), key=lambda i: _col_value(rows[i], col, group_members_map))
         correct = [idx + 1]
         score = 1.0 if user_answer and any(i in correct for i in user_answer) else 0.0
         return jsonify({"rowIndices": correct, "score": score})
@@ -296,12 +330,18 @@ def compute_answer():
         correct = [
             i + 1
             for i, row in enumerate(rows)
-            if (lo is None or float(row[col]) >= lo)
-            and (hi is None or float(row[col]) <= hi)
+            if (lo is None or _col_value(row, col, group_members_map) >= lo)
+            and (hi is None or _col_value(row, col, group_members_map) <= hi)
         ]
         correct_set = set(correct)
-        score = 1.0 if user_answer and all(i in correct_set for i in user_answer) else 0.0
-        return jsonify({"rowIndices": correct, "score": score})
+        if user_answer:
+            user_set = set(user_answer)
+            intersection = len(correct_set & user_set)
+            union = len(correct_set | user_set)
+            score = intersection / union if union > 0 else 0.0
+        else:
+            score = 0.0
+        return jsonify({"rowIndices": correct, "score": round(score, 4)})
 
     if spec_type == "knee_point":
         obj_cols = [c for c in rows[0] if c.startswith("obj_")]
@@ -344,17 +384,27 @@ def compute_answer():
     if spec_type == "strongest_correlation":
         target_col = spec["targetColumn"]
         candidates = spec["candidateColumns"]
-        target_vals = [float(r[target_col]) for r in rows]
+        direction = spec.get("direction", "any")
+        target_vals = [_col_value(r, target_col, group_members_map) for r in rows]
 
-        corr_map = {}
+        raw_map = {}
         for col in candidates:
-            vals = [float(r[col]) for r in rows]
-            corr_map[col] = abs(_spearman(target_vals, vals))
+            vals = [_col_value(r, col, group_members_map) for r in rows]
+            raw_map[col] = _spearman(target_vals, vals)
 
-        best_col = max(corr_map, key=corr_map.get)
+        if direction == "positive":
+            sorted_candidates = sorted(candidates, key=lambda c: raw_map[c], reverse=True)
+        elif direction == "negative":
+            sorted_candidates = sorted(candidates, key=lambda c: raw_map[c])
+        else:
+            sorted_candidates = sorted(candidates, key=lambda c: abs(raw_map[c]), reverse=True)
 
-        if user_answer and user_answer in corr_map:
-            score = 1.0 - abs(corr_map[best_col] - corr_map[user_answer])
+        best_col = sorted_candidates[0]
+        n = len(candidates)
+
+        if user_answer and user_answer in raw_map:
+            rank = sorted_candidates.index(user_answer)
+            score = 1.0 - rank / (n - 1) if n > 1 else 1.0
         else:
             score = 0.0
         return jsonify({"option": best_col, "score": round(score, 4)})
@@ -364,7 +414,7 @@ def compute_answer():
         sums, counts = {}, {}
         for row in rows:
             f = row["__frontier"]
-            sums[f] = sums.get(f, 0.0) + float(row[col])
+            sums[f] = sums.get(f, 0.0) + _col_value(row, col, group_members_map)
             counts[f] = counts.get(f, 0) + 1
         avgs = {f: sums[f] / counts[f] for f in sums}
         winner = max(avgs, key=avgs.get) if spec_type == "higher_average" else min(avgs, key=avgs.get)
@@ -376,30 +426,30 @@ def compute_answer():
         if len(frontier_names) < 2:
             return jsonify({"error": "Need at least 2 frontiers"}), 400
         f1, f2 = frontier_names[0], frontier_names[1]
-        obj_cols = [c for c in rows[0] if c.startswith("obj_")]
-        col_mins = {c: min(float(r[c]) for r in rows) for c in obj_cols}
-        col_maxs = {c: max(float(r[c]) for r in rows) for c in obj_cols}
+        candidate_cols = spec.get("candidateColumns") or [c for c in rows[0] if c.startswith("obj_")]
+        col_mins = {c: min(_col_value(r, c, group_members_map) for r in rows) for c in candidate_cols}
+        col_maxs = {c: max(_col_value(r, c, group_members_map) for r in rows) for c in candidate_cols}
 
-        def norm_val(val, col):
+        def norm_val(v, col):
             lo, hi = col_mins[col], col_maxs[col]
-            return (float(val) - lo) / (hi - lo) if hi != lo else 0.5
+            return (v - lo) / (hi - lo) if hi != lo else 0.5
 
         f1_rows = [r for r in rows if r["__frontier"] == f1]
         f2_rows = [r for r in rows if r["__frontier"] == f2]
         distinction = {
             col: abs(
-                sum(norm_val(r[col], col) for r in f1_rows) / len(f1_rows)
-                - sum(norm_val(r[col], col) for r in f2_rows) / len(f2_rows)
+                sum(norm_val(_col_value(r, col, group_members_map), col) for r in f1_rows) / len(f1_rows)
+                - sum(norm_val(_col_value(r, col, group_members_map), col) for r in f2_rows) / len(f2_rows)
             )
-            for col in obj_cols
+            for col in candidate_cols
         }
-        sorted_cols = sorted(obj_cols, key=lambda c: distinction[c], reverse=True)
+        sorted_cols = sorted(candidate_cols, key=lambda c: distinction[c], reverse=True)
         best_col = sorted_cols[0]
-        n_obj = len(obj_cols)
+        n_cols = len(candidate_cols)
 
         if user_answer and user_answer in distinction:
             rank = sorted_cols.index(user_answer)
-            score = 1.0 - rank / (n_obj - 1) if n_obj > 1 else 1.0
+            score = 1.0 - rank / (n_cols - 1) if n_cols > 1 else 1.0
         else:
             score = 0.0
         return jsonify({"option": best_col, "score": round(score, 4)})

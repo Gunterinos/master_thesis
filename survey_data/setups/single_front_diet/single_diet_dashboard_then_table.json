@@ -1,0 +1,314 @@
+﻿{
+  "questionnaires": [
+    {
+      "id": "diet_3d_block_1",
+      "type": "single_frontier",
+      "title": "Diet 3D – Block 1",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select all diets where Nutrient Density is above 0.75.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.75, "max": null },
+          "defaultScreen": "You've switched to the following dataset: Budget Diet 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q2",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which decision variable is most positively correlated with Nutrient Density?",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "positive" }
+        },
+        {
+          "id": "q3",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "diet_3d_block_2",
+      "type": "single_frontier",
+      "title": "Diet 3D – Block 2",
+      "questions": [
+        {
+          "id": "q4",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select all diets where the total Fats allocation is above 20%.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "Fats", "min": 0.20, "max": null },
+          "defaultScreen": "You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q5",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Prep Time (negatively)?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [], "direction": "negative" }
+        },
+        {
+          "id": "q6",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "diet_3d_block_3",
+      "type": "single_frontier",
+      "title": "Diet 3D – Block 3",
+      "questions": [
+        {
+          "id": "q7",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select all diets where Cost is below 0.30.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Cost", "min": null, "max": 0.30 },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: Diverse 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q8",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which food group is most strongly correlated (negatively) with Fats?",
+          "options": [],
+          "optionSource": "groups",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "Fats", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q9",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "diet_3d_block_4",
+      "type": "single_frontier",
+      "title": "Diet 3D – Block 4",
+      "questions": [
+        {
+          "id": "q10",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select all diets where Tofu allocation is above 0.7.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "dec_Tofu", "min": 0.7, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: Vegan 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q11",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Nutrient Density (negatively)?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q12",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_1",
+      "type": "single_frontier",
+      "title": "Diet 6D – Block 1",
+      "questions": [
+        {
+          "id": "q13",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select all diets where Satiety is above 0.65.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.65, "max": null },
+          "defaultScreen": "You've switched to the following dataset: Vegan 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q14",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which decision variable is most positively correlated with Satiety?",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Satiety", "candidateColumns": [], "direction": "positive" }
+        },
+        {
+          "id": "q15",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_2",
+      "type": "single_frontier",
+      "title": "Diet 6D – Block 2",
+      "questions": [
+        {
+          "id": "q16",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select all diets where Chicken Breast (Proteins) allocation is above 0.4.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "dec_Chicken_Breast", "min": 0.4, "max": null },
+          "defaultScreen": "You've switched to the following dataset: Low Carb 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q17",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated (positively) with Carbon Footprint?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" }
+        },
+        {
+          "id": "q18",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_3",
+      "type": "single_frontier",
+      "title": "Diet 6D – Block 3",
+      "questions": [
+        {
+          "id": "q19",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select all diets where Prep Time is below 10.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 10 },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: High Protein 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q20",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which decision variable is most positively correlated with Carbon Footprint?",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q21",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_4",
+      "type": "single_frontier",
+      "title": "Diet 6D – Block 4",
+      "questions": [
+        {
+          "id": "q22",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select all diets where White Rice (Carbohydrates) allocation is above 10%.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "dec_White_Rice", "min": 0.10, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: Budget Diet 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q23",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Diversity?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "positive" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q24",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": {
+    "title": "Experience Questionnaire",
+    "subtitle": "Please rate your agreement with the following statements.",
+    "questions": [
+      { "id": "pq1", "type": "likert", "prompt": "I have to spend too much time correcting things with this system.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq2", "type": "likert", "prompt": "This system's capabilities meet my requirements.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq3", "type": "likert", "prompt": "This system is easy to use.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq4", "type": "likert", "prompt": "Using this system is a frustrating experience.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } }
+    ]
+  }
+}

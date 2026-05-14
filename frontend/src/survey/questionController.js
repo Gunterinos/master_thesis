@@ -1,4 +1,5 @@
 import { getSelectedRowIndexSet, clearSelectionState } from '../state/appState.js';
+import { startTracking, stopTracking, getResult as getTelemetryResult } from './telemetry.js';
 
 let _questions = [];
 let _currentIndex = 0;
@@ -6,7 +7,7 @@ let _startTime = 0;
 let _responses = [];
 let _sessionId = '';
 let _onComplete = null;
-let _availableColumns = { objectives: [], decisions: [] };
+let _availableColumns = { objectives: [], decisions: [], groups: [], groupsMap: {} };
 let _dynamicCandidates = null;
 
 function generateSessionId() {
@@ -28,6 +29,11 @@ function buildCandidates(question) {
         cols = _availableColumns.objectives.slice();
     } else if (source === 'decisions') {
         cols = _availableColumns.decisions.slice();
+    } else if (source === 'groups') {
+        cols = _availableColumns.groups.slice();
+    } else if (source.startsWith('group:')) {
+        const groupName = source.slice(6);
+        cols = _availableColumns.decisions.filter(c => _availableColumns.groupsMap[c] === groupName);
     } else if (source === 'all') {
         cols = [..._availableColumns.objectives, ..._availableColumns.decisions];
     } else {
@@ -54,9 +60,13 @@ function loadAndRender(index) {
 
     window.addEventListener('survey:data-ready', function handler(event) {
         const detail = event.detail ?? {};
+        const rawGroups = detail.groups ?? {};
+        const uniqueGroups = [...new Set(Object.values(rawGroups))];
         _availableColumns = {
             objectives: detail.objectiveColumns ?? [],
             decisions: detail.decisionColumns ?? [],
+            groups: uniqueGroups,
+            groupsMap: rawGroups,
         };
         clearSelectionState();
         renderQuestion(index);
@@ -67,8 +77,13 @@ function loadAndRender(index) {
             files: question.dataset.frontiers,
             benchmark: question.dataset.benchmark ?? null,
             disabledCharts: question.disabledCharts ?? null,
+            defaultScreen: question.defaultScreen ?? null,
         },
     }));
+}
+
+function needsJustification(question) {
+    return question.answerSpec?.type === 'knee_point' || question.type === 'decide_on_frontier';
 }
 
 function renderQuestion(index) {
@@ -99,9 +114,15 @@ function renderQuestion(index) {
         middleHTML = `<p class="question-instruction">Select points using Shift+click or the lasso tool, then click Submit.</p>`;
     }
 
+    const justificationHTML = needsJustification(question) ? `
+        <div class="question-justification">
+            <textarea id="question-justification-input" class="question-justification-input" rows="2" placeholder="(Optional) Briefly explain your reasoning…"></textarea>
+        </div>` : '';
+
     zone.innerHTML = `
         <p id="question-prompt">${question.prompt}</p>
         ${middleHTML}
+        ${justificationHTML}
         <div id="question-controls-wrapper">
             <div id="question-controls">
                 <span id="question-counter">Task ${index + 1} / ${total}</span>
@@ -112,12 +133,15 @@ function renderQuestion(index) {
     `;
 
     _startTime = performance.now();
+    startTracking();
     document.getElementById('question-submit-btn').addEventListener('click', () => submitAnswer(index));
 }
 
 async function submitAnswer(index) {
     const question = _questions[index];
     const timeToAnswerMs = Math.round(performance.now() - _startTime);
+    stopTracking();
+    const telemetry = getTelemetryResult();
 
     let answer;
     if (_dynamicCandidates !== null) {
@@ -132,7 +156,7 @@ async function submitAnswer(index) {
     }
 
     let answerSpec = question.answerSpec;
-    if (_dynamicCandidates && answerSpec.type === 'strongest_correlation') {
+    if (_dynamicCandidates && (answerSpec.type === 'strongest_correlation' || answerSpec.type === 'most_distinct_objective')) {
         answerSpec = { ...answerSpec, candidateColumns: _dynamicCandidates };
     }
 
@@ -156,15 +180,23 @@ async function submitAnswer(index) {
     const score = computed.score ?? 0;
     const correctAnswer = computed.rowIndices ?? computed.option ?? null;
 
+    const justificationEl = document.getElementById('question-justification-input');
+    const justificationText = justificationEl ? justificationEl.value.trim() : null;
+    const recordedAnswer = justificationText !== null
+        ? { value: answer, justification: justificationText }
+        : answer;
+
     _responses.push({
         questionId: question.id,
         questionType: question.type,
         interactionType: question.interactionType,
-        answer,
+        answer: recordedAnswer,
         correctAnswer,
         score,
         isCorrect: score >= 1.0,
         timeToAnswerMs,
+        timePerChart: telemetry.timePerChart,
+        actions: telemetry.actions,
     });
 
     clearSelectionState();

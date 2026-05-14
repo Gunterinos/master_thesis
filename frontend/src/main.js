@@ -5,11 +5,12 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
-import { loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
+import { loadIntroConfig, loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
 import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
+import { showSurveyIntro } from './survey/surveyIntroController.js';
 import { formatLabel } from './formatLabel.js';
 import { getFrontierColor } from './colors.js';
 
@@ -23,6 +24,8 @@ let appInitialized = false;
 let _externalFilter = null;       // passing row indices from PCP / lasso / etc.
 const _tableFilters = new Map(); // containerSelector → passing row indices (one entry per table)
 let _surveyDisabledCharts = null;
+let _surveyDefaultScreen = null;
+let _activeBenchmark = null;
 
 function getCurrentData() {
     const filteredRowIndices = getFilteredRowIndexSet();
@@ -34,6 +37,9 @@ function getCurrentData() {
 function renderAllPanels(options = {}) {
     const { animate = false } = options;
     const dataToRender = getCurrentData();
+    const forceEmptyState = !!_surveyDefaultScreen;
+    const emptyStateText = typeof _surveyDefaultScreen === 'string' ? _surveyDefaultScreen : null;
+    _surveyDefaultScreen = null;
 
     initializeObjectivesSpacePanel({
         data: dataToRender,
@@ -42,9 +48,11 @@ function renderAllPanels(options = {}) {
         renderOptions: { animate },
         groups,
         measures,
-        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
+        frontierOrder: _activeFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
+        forceEmptyState,
+        emptyStateText,
     });
 
     initializeDecisionSpacePanel({
@@ -52,8 +60,10 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
-        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
+        frontierOrder: _activeFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
+        forceEmptyState,
+        emptyStateText,
     });
 }
 
@@ -90,13 +100,15 @@ function toggleZoom() {
     if (!selectedRowIndices) { return; }
 
     clearActiveRowIndex();
-    if (getIsZoomed()) {
-        setSelectionState({ selected: selectedRowIndices, filtered: null, zoomed: false });
-    } else {
+    const zoomingIn = !getIsZoomed();
+    if (zoomingIn) {
         setSelectionState({ selected: selectedRowIndices, filtered: selectedRowIndices, zoomed: true });
+    } else {
+        setSelectionState({ selected: selectedRowIndices, filtered: null, zoomed: false });
     }
     renderAllPanels({ animate: true });
     updateSelectionButtons();
+    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'zoom_toggle', zoomed: zoomingIn } }));
 }
 
 function applyIntersectedFilter() {
@@ -132,6 +144,7 @@ function clearSelectionFilter() {
     setEmptyFilterWarning(false);
     renderAllPanels({ animate: true });
     updateSelectionButtons();
+    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'clear_selection' } }));
 }
 
 function initializeApp() {
@@ -154,10 +167,11 @@ function initializeApp() {
         onShiftClick: (rowIndex) => {
             const current = getSelectedRowIndexSet();
             const newSet = current ? new Set(current) : new Set();
-            if (newSet.has(rowIndex)) {
-                newSet.delete(rowIndex);
-            } else {
+            const adding = !newSet.has(rowIndex);
+            if (adding) {
                 newSet.add(rowIndex);
+            } else {
+                newSet.delete(rowIndex);
             }
             if (newSet.size === 0) {
                 setSelectionState({ selected: null, filtered: null, zoomed: false });
@@ -165,6 +179,7 @@ function initializeApp() {
                 setSelectionState({ selected: newSet, filtered: getFilteredRowIndexSet(), zoomed: getIsZoomed() });
             }
             updateSelectionButtons();
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'shift_click', rowIndex, action: adding ? 'add' : 'remove' } }));
         },
     };
 
@@ -215,7 +230,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
                 return;
             }
 
-            const { rows: rawData, directions, groups: groupsFromAPI, measures: measuresFromAPI } = data;
+            const { rows: rawData, directions, groups: groupsFromAPI, measures: measuresFromAPI, fileConstraints: fileConstraintsFromAPI } = data;
             if (!rawData || rawData.length === 0) {
                 errorEl.classed("hidden", false).text("The selected files contain no data.");
                 return;
@@ -234,7 +249,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
             initializeApp();
             renderAllPanels({ animate: true });
             updateSelectionButtons();
-            onDone?.();
+            onDone?.({ fileConstraints: fileConstraintsFromAPI ?? {} });
         })
         .catch(() => {
             errorEl.classed("hidden", false).text("Network error: could not reach the server.");
@@ -249,16 +264,20 @@ function getActiveFiles() {
 // ── Survey event bridge ──────────────────────────────────────────────────
 window.addEventListener('survey:load-data', ({ detail }) => {
     _surveyDisabledCharts = detail.disabledCharts ?? null;
+    _surveyDefaultScreen = detail.defaultScreen ?? null;
+    _activeBenchmark = detail.benchmark ?? null;
+    _activeFrontierFiles = detail.files;
     populateFrontierButtons(detail.files, {}, detail.files);
     loadActiveFiles(detail.files, {
-        benchmark: detail.benchmark,
-        onDone: () => {
+        benchmark: _activeBenchmark,
+        onDone: ({ fileConstraints = {} } = {}) => {
+            populateFrontierButtons(detail.files, fileConstraints, detail.files);
             const objCols = Object.keys(objectiveDirections);
             const decCols = fullData.length > 0
                 ? Object.keys(fullData[0]).filter(k => k.startsWith('dec_'))
                 : [];
             window.dispatchEvent(new CustomEvent('survey:data-ready', {
-                detail: { objectiveColumns: objCols, decisionColumns: decCols },
+                detail: { objectiveColumns: objCols, decisionColumns: decCols, groups },
             }));
         },
     });
@@ -266,8 +285,23 @@ window.addEventListener('survey:load-data', ({ detail }) => {
 
 // ── Survey flow ──────────────────────────────────────────────────────────
 document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
-    const steps = await loadTutorialConfig();
-    startTutorial(steps, { onComplete: showQuestionsIntroScreen });
+    const [intro, { steps, dataset }] = await Promise.all([loadIntroConfig(), loadTutorialConfig()]);
+    const launchTutorial = () => startTutorial(steps, { onComplete: showQuestionsIntroScreen });
+    const launch = () => {
+        if (intro) {
+            showSurveyIntro(intro, launchTutorial);
+        } else {
+            launchTutorial();
+        }
+    };
+    if (dataset) {
+        window.addEventListener('survey:data-ready', () => launch(), { once: true });
+        window.dispatchEvent(new CustomEvent('survey:load-data', {
+            detail: { files: dataset.frontiers, benchmark: dataset.benchmark ?? null, disabledCharts: null, defaultScreen: null },
+        }));
+    } else {
+        launch();
+    }
 });
 
 function showQuestionsIntroScreen() {
@@ -305,6 +339,8 @@ async function finishSurvey(responses, sessionId) {
             document.getElementById('start-tutorial-btn').style.display = '';
             document.getElementById('chart-guide-btn').style.display = '';
             _surveyDisabledCharts = null;
+            _activeBenchmark = null;
+            _activeFrontierFiles = _defaultFrontierFiles;
             populateFrontierButtons(_defaultFrontierFiles, _defaultFileConstraints);
             loadActiveFiles(getActiveFiles());
         },
@@ -313,6 +349,7 @@ async function finishSurvey(responses, sessionId) {
 
 let _defaultFrontierFiles = [];
 let _defaultFileConstraints = {};
+let _activeFrontierFiles = [];
 
 function formatConstraintVal(val) {
     return val.replace(/([<>]=?)(\d+(?:\.\d+)?)/g, (_, op, num) => {
@@ -349,7 +386,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
                 const isActive = d3.select(this).classed("active");
                 if (isActive && getActiveFiles().length === 1) { return; }
                 d3.select(this).classed("active", !isActive);
-                loadActiveFiles(getActiveFiles());
+                loadActiveFiles(getActiveFiles(), { benchmark: _activeBenchmark });
             });
 
         if (tooltipText) {
@@ -362,6 +399,7 @@ d3.json("/api/data-files")
     .then(({ files, fileConstraints = {} }) => {
         _defaultFrontierFiles = files;
         _defaultFileConstraints = fileConstraints;
+        _activeFrontierFiles = files;
         populateFrontierButtons(files, fileConstraints);
         if (files.length > 0) { loadActiveFiles([files[0]]); }
     })

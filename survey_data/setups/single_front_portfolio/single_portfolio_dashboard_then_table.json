@@ -1,0 +1,314 @@
+﻿{
+  "questionnaires": [
+    {
+      "id": "portfolio_3d_block_1",
+      "type": "single_frontier",
+      "title": "Portfolio 3D – Block 1",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Return is above 0.09.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.09, "max": null },
+          "defaultScreen": "You've switched to the following dataset: equity heavy 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q2",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which decision variable is most strongly correlated (negatively) with Return?",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Return", "candidateColumns": [], "direction": "negative" }
+        },
+        {
+          "id": "q3",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_3d_block_2",
+      "type": "single_frontier",
+      "title": "Portfolio 3D – Block 2",
+      "questions": [
+        {
+          "id": "q4",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Fixed Income allocation is above 25%.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "Fixed_Income", "min": 0.25, "max": null },
+          "defaultScreen": "You've switched to the following dataset: unconstrained 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q5",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" }
+        },
+        {
+          "id": "q6",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_3d_block_3",
+      "type": "single_frontier",
+      "title": "Portfolio 3D – Block 3",
+      "questions": [
+        {
+          "id": "q7",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Risk is below 0.010.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Risk", "min": null, "max": 0.010 },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: real assets heavy 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q8",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which decision variable is most strongly correlated (positively) with Liquidity?",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "positive" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q9",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_3d_block_4",
+      "type": "single_frontier",
+      "title": "Portfolio 3D – Block 4",
+      "questions": [
+        {
+          "id": "q10",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Cash allocation is above 25%.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "Cash", "min": 0.25, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q11",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q12",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_1",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 1",
+      "questions": [
+        {
+          "id": "q13",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where ESG score is above 0.60.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_ESG", "min": 0.60, "max": null },
+          "defaultScreen": "You've switched to the following dataset: real assets heavy 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q14",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with ESG score (negatively)?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_ESG", "candidateColumns": [], "direction": "negative" }
+        },
+        {
+          "id": "q15",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_2",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 2",
+      "questions": [
+        {
+          "id": "q16",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where Real Assets allocation is above 10%.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "Real_Assets", "min": 0.10, "max": null },
+          "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q17",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Diversity (negatively)?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "negative" }
+        },
+        {
+          "id": "q18",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_3",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 3",
+      "questions": [
+        {
+          "id": "q19",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where Liquidity is above 0.60.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: equity heavy 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q20",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which decision variable is most strongly correlated (positively) with Geopolitical Risk?",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Geopolitical", "candidateColumns": [], "direction": "positive" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q21",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_4",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 4",
+      "questions": [
+        {
+          "id": "q22",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where EU Real Estate (Real Assets) allocation is above 10%.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "dec_RealEstate_EU", "min": 0.10, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q23",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Geopolitical Risk?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Geopolitical", "candidateColumns": [] },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q24",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": {
+    "title": "Experience Questionnaire",
+    "subtitle": "Please rate your agreement with the following statements.",
+    "questions": [
+      { "id": "pq1", "type": "likert", "prompt": "I have to spend too much time correcting things with this system.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq2", "type": "likert", "prompt": "This system's capabilities meet my requirements.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq3", "type": "likert", "prompt": "This system is easy to use.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq4", "type": "likert", "prompt": "Using this system is a frustrating experience.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } }
+    ]
+  }
+}

@@ -205,8 +205,8 @@ body {
 }
 
 .panel-controls button {
-    min-height: 28px;
-    padding: 0.25rem 0.7rem;
+    min-height: 22px;
+    padding: 0.2rem 0.2rem;
     border: 1px solid rgba(194, 202, 214, 0.9);
     border-radius: 999px;
     background: var(--color-surface);
@@ -385,9 +385,9 @@ body.shift-held .is-selection-dim {
     display: flex;
     flex-direction: row;
     align-items: center;
-    overflow: visible;
+    overflow: hidden;
     border-radius: 16px;
-    padding: 10px;
+    padding: 5px;
     background: var(--color-overlay-light);
     border: 1px solid rgba(255, 255, 255, 0.75);
     box-shadow: 0 10px 28px rgba(31, 38, 55, 0.12), 0 2px 8px rgba(31, 38, 55, 0.06);
@@ -466,7 +466,7 @@ body.survey-active .header-frontiers {
     border-right: 1px solid rgba(194, 202, 214, 0.45);
     align-self: stretch;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
 }
 
 body.survey-active #tutorial-zone {
@@ -478,6 +478,7 @@ body.survey-active #tutorial-zone {
     padding-left: 1rem;
     overflow: hidden;
     min-width: 0;
+    max-height: 100%;
 }
 
 
@@ -564,7 +565,22 @@ body.survey-active #tutorial-zone {
     color: var(--color-text-secondary);
 }
 
+.empty-state-chart-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-text-secondary);
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    white-space: pre-line;
+}
+
 .panel-content {
+    position: relative;
     background: var(--color-overlay);
     border-radius: 12px;
     border: 1px solid rgba(212, 218, 227, 0.7);
@@ -660,6 +676,75 @@ body.survey-active #tutorial-zone {
     border-color: var(--color-selection);
     color: var(--color-white);
     box-shadow: 0 1px 4px var(--color-selection-shadow);
+}
+
+/* ── Survey intro overlay ───────────────────────────────────────────── */
+
+#survey-intro-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 22, 31, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+#survey-intro-modal {
+    background: var(--color-surface);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(31, 38, 55, 0.12), 0 2px 8px rgba(31, 38, 55, 0.06);
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+#survey-intro-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+#survey-intro-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+#survey-intro-body p {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+#survey-intro-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#survey-intro-continue-btn {
+    padding: 0.5rem 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--color-selection);
+    color: var(--color-white);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 4px var(--color-selection-shadow);
+    transition: opacity 0.15s ease;
+}
+
+#survey-intro-continue-btn:hover {
+    opacity: 0.88;
 }
 
 /* ── Questions ──────────────────────────────────────────────────────── */
@@ -783,6 +868,36 @@ body.survey-active #tutorial-zone {
     outline: none;
     border-color: var(--color-selection);
     box-shadow: 0 0 0 3px var(--color-selection-tint), 0 2px 8px rgba(33, 40, 56, 0.08);
+}
+
+.question-justification {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+
+.question-justification-input {
+    width: 100%;
+    resize: none;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.question-justification-input:focus {
+    outline: none;
+    border-color: var(--color-selection);
+    box-shadow: 0 0 0 3px var(--color-selection-tint);
 }
 
 /* ── Post-questionnaire modal ───────────────────────────────────────── */

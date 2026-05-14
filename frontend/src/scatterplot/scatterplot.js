@@ -375,6 +375,7 @@ export function renderScatterplot(containerSelector, data, xKey, yKey, options =
 
         if (selectedRows.length > 0) {
             onSelectionChange(selectedRows);
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'lasso_selection', count: selectedRows.length } }));
         }
     };
 

@@ -41,6 +41,8 @@ export function initializeSpacePanel(config) {
         chartRegistry,
         renderOptions = {},
         onAfterRender = () => {},
+        forceEmptyState = false,
+        emptyStateText = null,
     } = config;
 
     const chartSelect = d3.select(chartSelectSelector);
@@ -96,7 +98,8 @@ export function initializeSpacePanel(config) {
     const selectedChart = [previousChart, defaultChart, fallbackChart].find((chartKey) =>
         charts.some((chart) => chart.key === chartKey),
     );
-    chartSelect.property("value", selectedChart);
+    const hasExplicitPreviousChart = !!previousChart && !forceEmptyState;
+    chartSelect.property("value", hasExplicitPreviousChart ? selectedChart : "");
 
     const syncButtonActiveState = () => {
         if (!chartButtons) return;
@@ -117,7 +120,7 @@ export function initializeSpacePanel(config) {
             .attr("type", "button")
             .attr("data-chart-key", (chart) => chart.key)
             .attr("data-tooltip", (chart) => chart.description ? `${chart.label}: ${chart.description}` : chart.label)
-            .classed("active", (chart) => chart.key === selectedChart)
+            .classed("active", (chart) => hasExplicitPreviousChart && chart.key === selectedChart)
             .on("click", function (event, chart) {
                 chartSelect.property("value", chart.key);
                 chartSelect.dispatch("change");
@@ -137,7 +140,7 @@ export function initializeSpacePanel(config) {
 
     const hasChartChoice = charts.length > 1;
     if (chartButtons) {
-        chartButtons.classed("hidden", !hasChartChoice);
+        chartButtons.classed("hidden", false);
     } else {
         chartSelect.classed("hidden", !hasChartChoice);
     }
@@ -257,6 +260,7 @@ export function initializeSpacePanel(config) {
         labelsToggle.on("click", () => {
             showLabels = !showLabels;
             labelsToggle.classed("active", showLabels);
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'labels', active: showLabels });
             updatePanel(true);
         });
     }
@@ -265,6 +269,7 @@ export function initializeSpacePanel(config) {
         surfaceToggle.on("click", () => {
             showSurface = !showSurface;
             surfaceToggle.classed("active", showSurface);
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'surface', active: showSurface });
             updatePanel(true);
         });
     }
@@ -273,6 +278,7 @@ export function initializeSpacePanel(config) {
         dominatedToggle.on("click", () => {
             showDominated = !showDominated;
             dominatedToggle.classed("active", showDominated);
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'dominated_cloud', active: showDominated });
             updatePanel(true);
         });
     }
@@ -281,6 +287,7 @@ export function initializeSpacePanel(config) {
         idealToggle.on("click", () => {
             showIdealPoint = !showIdealPoint;
             idealToggle.classed("active", showIdealPoint);
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'ideal_point', active: showIdealPoint });
             updatePanel(true);
         });
     }
@@ -289,6 +296,7 @@ export function initializeSpacePanel(config) {
         pcaToggle.on("click", () => {
             showPCA = !showPCA;
             pcaToggle.classed("active", showPCA);
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'pca', active: showPCA });
             updatePanel(true);
         });
     }
@@ -301,6 +309,7 @@ export function initializeSpacePanel(config) {
             showFrontierColors = false;
             if (frontierColorsToggle) frontierColorsToggle.classed("active", false);
         }
+        _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'decision_groups', active: showDecGroups });
         updatePanel(true);
     };
     if (decGroupsToggle) decGroupsToggle.on("click", toggleDecGroups);
@@ -322,6 +331,7 @@ export function initializeSpacePanel(config) {
                 if (decGroupsToggle) decGroupsToggle.classed("active", false);
                 if (decGroupsBtn) decGroupsBtn.classed("active", false);
             }
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'frontier_colors', active: showFrontierColors });
             updatePanel(true);
         });
     }
@@ -329,7 +339,9 @@ export function initializeSpacePanel(config) {
     if (optionsBtn) {
         optionsBtn.on("click", (event) => {
             event.stopPropagation();
-            optionsMenu.classed("open", !optionsMenu.classed("open"));
+            const opening = !optionsMenu.classed("open");
+            optionsMenu.classed("open", opening);
+            if (opening) _dispatchAction({ type: 'options_menu_open', panel: _panelId });
         });
         optionsDropdown.on("click", (event) => {
             event.stopPropagation();
@@ -343,17 +355,33 @@ export function initializeSpacePanel(config) {
         spreadSlider.on("click", function () {
             const isActive = spreadSlider.classed("active");
             spreadSlider.classed("active", !isActive);
+            _dispatchAction({ type: 'option_toggle', panel: _panelId, option: 'spread', active: !isActive });
             setRadvizSpread(containerSelector, isActive ? 0 : 1);
         });
     }
 
+    const _panelId = containerSelector.includes('objectives') ? 'objectives' : 'decisions';
+    const _dispatchAction = (detail) =>
+        window.dispatchEvent(new CustomEvent('survey:action', { detail }));
+
     chartSelect.on("change", () => {
         syncButtonActiveState();
+        d3.select(containerSelector).select('.empty-state-chart-hint').classed('hidden', true);
+        _dispatchAction({ type: 'chart_active', panel: _panelId, chartKey: chartSelect.property("value") });
         updatePanel(true);
     });
-    xAxisSelect.on("change", () => updatePanel(true));
-    yAxisSelect.on("change", () => updatePanel(true));
-    if (zAxisSelect) zAxisSelect.on("change", () => updatePanel(true));
+    xAxisSelect.on("change", () => {
+        _dispatchAction({ type: 'axis_change', panel: _panelId, axis: 'x', column: xAxisSelect.property("value") });
+        updatePanel(true);
+    });
+    yAxisSelect.on("change", () => {
+        _dispatchAction({ type: 'axis_change', panel: _panelId, axis: 'y', column: yAxisSelect.property("value") });
+        updatePanel(true);
+    });
+    if (zAxisSelect) zAxisSelect.on("change", () => {
+        _dispatchAction({ type: 'axis_change', panel: _panelId, axis: 'z', column: zAxisSelect.property("value") });
+        updatePanel(true);
+    });
 
     // Re-render when the panel changes size
     if (_observers.has(containerSelector)) {
@@ -376,5 +404,17 @@ export function initializeSpacePanel(config) {
         _observers.set(containerSelector, observer);
     }
 
-    updatePanel(renderOptions.animate === true);
+    const container = d3.select(containerSelector);
+    let emptyHint = container.select('.empty-state-chart-hint');
+    if (emptyHint.empty()) {
+        emptyHint = container.append('div').attr('class', 'empty-state-chart-hint');
+    }
+    emptyHint.text(emptyStateText ?? 'Select a chart type above to get started');
+    emptyHint.classed('hidden', hasExplicitPreviousChart);
+
+    if (hasExplicitPreviousChart) {
+        updatePanel(renderOptions.animate === true);
+    } else {
+        container.selectAll(':not(.empty-state-chart-hint)').remove();
+    }
 }

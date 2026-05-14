@@ -1,0 +1,314 @@
+{
+  "questionnaires": [
+    {
+      "id": "portfolio_3d_block_1",
+      "type": "multi_frontier",
+      "title": "Portfolio 3D – Block 1",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy has a higher average Return?",
+          "options": ["equity heavy 3D", "fixed income cash heavy 3D"],
+          "answerSpec": { "type": "higher_average", "column": "obj_Return" },
+          "defaultScreen": "You've switched to the following datasets: equity heavy 3D, fixed income cash heavy 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q2",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "In which investment group do the two portfolio strategies differ the most on average?",
+          "options": [],
+          "optionSource": "groups",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q3",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["equity heavy 3D", "fixed income cash heavy 3D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_3d_block_2",
+      "type": "multi_frontier",
+      "title": "Portfolio 3D – Block 2",
+      "questions": [
+        {
+          "id": "q4",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy allocates less to Real Assets on average?",
+          "options": ["real assets heavy 3D", "unconstrained 3D"],
+          "answerSpec": { "type": "lower_average", "column": "Real_Assets" },
+          "defaultScreen": "You've switched to the following datasets: real assets heavy 3D, unconstrained 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q5",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q6",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["real assets heavy 3D", "unconstrained 3D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_3d_block_3",
+      "type": "multi_frontier",
+      "title": "Portfolio 3D – Block 3",
+      "questions": [
+        {
+          "id": "q7",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy has a lower average Risk?",
+          "options": ["equity heavy 3D", "real assets heavy 3D"],
+          "answerSpec": { "type": "lower_average", "column": "obj_Risk" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: equity heavy 3D, real assets heavy 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q8",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Among fixed income sources, in which do the two strategies differ the most on average?",
+          "options": [],
+          "optionSource": "group:Fixed_Income",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q9",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["equity heavy 3D", "real assets heavy 3D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_3d_block_4",
+      "type": "multi_frontier",
+      "title": "Portfolio 3D – Block 4",
+      "questions": [
+        {
+          "id": "q10",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy allocates more to Private Equity on average?",
+          "options": ["fixed income cash heavy 3D", "unconstrained 3D"],
+          "answerSpec": { "type": "higher_average", "column": "Private_Equity" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: fixed income cash heavy 3D, unconstrained 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q11",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q12",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["fixed income cash heavy 3D", "unconstrained 3D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_1",
+      "type": "multi_frontier",
+      "title": "Portfolio 6D – Block 1",
+      "questions": [
+        {
+          "id": "q13",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy has a higher average ESG score?",
+          "options": ["equity heavy 6D", "fixed income cash heavy 6D"],
+          "answerSpec": { "type": "higher_average", "column": "obj_ESG" },
+          "defaultScreen": "You've switched to the following datasets: equity heavy 6D, fixed income cash heavy 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q14",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "In which investment group do the two portfolio strategies differ the most on average?",
+          "options": [],
+          "optionSource": "groups",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q15",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["equity heavy 6D", "fixed income cash heavy 6D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_2",
+      "type": "multi_frontier",
+      "title": "Portfolio 6D – Block 2",
+      "questions": [
+        {
+          "id": "q16",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy has a higher average Equity allocation?",
+          "options": ["real assets heavy 6D", "unconstrained 6D"],
+          "answerSpec": { "type": "higher_average", "column": "Equities" },
+          "defaultScreen": "You've switched to the following datasets: real assets heavy 6D, unconstrained 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q17",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q18",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["real assets heavy 6D", "unconstrained 6D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_3",
+      "type": "multi_frontier",
+      "title": "Portfolio 6D – Block 3",
+      "questions": [
+        {
+          "id": "q19",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy has a higher average Return?",
+          "options": ["equity heavy 6D", "real assets heavy 6D"],
+          "answerSpec": { "type": "higher_average", "column": "obj_Return" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: equity heavy 6D, real assets heavy 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q20",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "In which type of equity do the two strategies differ the most on average?",
+          "options": [],
+          "optionSource": "group:Equities",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q21",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["equity heavy 6D", "real assets heavy 6D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_4",
+      "type": "multi_frontier",
+      "title": "Portfolio 6D – Block 4",
+      "questions": [
+        {
+          "id": "q22",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy has a higher average US Bond (Fixed Income) allocation?",
+          "options": ["fixed income cash heavy 6D", "unconstrained 6D"],
+          "answerSpec": { "type": "higher_average", "column": "dec_Bond_US" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: fixed income cash heavy 6D, unconstrained 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q23",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q24",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which portfolio strategy performs better overall across all objectives?",
+          "options": ["fixed income cash heavy 6D", "unconstrained 6D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": {
+    "title": "Experience Questionnaire",
+    "subtitle": "Please rate your agreement with the following statements.",
+    "questions": [
+      { "id": "pq1", "type": "likert", "prompt": "I have to spend too much time correcting things with this system.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq2", "type": "likert", "prompt": "This system's capabilities meet my requirements.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq3", "type": "likert", "prompt": "This system is easy to use.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq4", "type": "likert", "prompt": "Using this system is a frustrating experience.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } }
+    ]
+  }
+}

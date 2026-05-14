@@ -245,13 +245,17 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             .map((p) => p.rowIndex);
         lassoPath.classed('hidden', true);
         lassoPoints = [];
-        if (selected.length > 0) onSelectionChange(selected);
+        if (selected.length > 0) {
+            onSelectionChange(selected);
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'lasso_selection', count: selected.length } }));
+        }
     };
 
     lassoOverlay.on('click', () => {
         if (_expandedIndex.get(containerSelector) !== null) {
             _expandedIndex.set(containerSelector, null);
             rerender();
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radviz_glyph_collapse' } }));
         }
     });
 
@@ -301,8 +305,10 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             onGlyphGroupToggle: (grp) => {
                 const key = `${containerSelector}:${p.rowIndex}`;
                 const cur = _expandedGlyphGroup.get(key) ?? null;
-                _expandedGlyphGroup.set(key, cur === grp ? null : grp);
+                const next = cur === grp ? null : grp;
+                _expandedGlyphGroup.set(key, next);
                 rerender();
+                window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'radviz_dig_in', rowIndex: p.rowIndex, group: grp, expanded: next !== null } }));
             },
         });
     });
@@ -333,8 +339,10 @@ export function renderRadviz(containerSelector, data, columns, options = {}) {
             if (event.shiftKey) { event.stopPropagation(); onShiftClick(p.rowIndex); return; }
             event.stopPropagation();
             const current = _expandedIndex.get(containerSelector);
-            _expandedIndex.set(containerSelector, current === p.rowIndex ? null : p.rowIndex);
+            const expanding = current !== p.rowIndex;
+            _expandedIndex.set(containerSelector, expanding ? p.rowIndex : null);
             rerender();
+            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: expanding ? 'radviz_glyph_expand' : 'radviz_glyph_collapse', rowIndex: p.rowIndex } }));
         })
         .on('mouseenter', function (event, p) {
             if (expandedRowIndex !== null) return;

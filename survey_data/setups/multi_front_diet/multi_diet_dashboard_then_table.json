@@ -1,0 +1,314 @@
+﻿{
+  "questionnaires": [
+    {
+      "id": "diet_3d_block_1",
+      "type": "multi_frontier",
+      "title": "Diet 3D – Block 1",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan has a higher average allocation to Vegetables and Fruits?",
+          "options": ["Budget Diet 3D", "High Protein 3D"],
+          "answerSpec": { "type": "higher_average", "column": "Vegetables_Fruits" },
+          "defaultScreen": "You've switched to the following datasets: Budget Diet 3D, High Protein 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q2",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "In which objective do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q3",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["Budget Diet 3D", "High Protein 3D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "diet_3d_block_2",
+      "type": "multi_frontier",
+      "title": "Diet 3D – Block 2",
+      "questions": [
+        {
+          "id": "q4",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv", "data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan has a lower average Cost?",
+          "options": ["Diverse 3D", "Vegan 3D"],
+          "answerSpec": { "type": "lower_average", "column": "obj_Cost" },
+          "defaultScreen": "You've switched to the following datasets: Diverse 3D, Vegan 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q5",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv", "data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "In which food group do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "groups",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q6",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv", "data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["Diverse 3D", "Vegan 3D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "diet_3d_block_3",
+      "type": "multi_frontier",
+      "title": "Diet 3D – Block 3",
+      "questions": [
+        {
+          "id": "q7",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan has a lower average Oats (Carbohydrates) allocation?",
+          "options": ["Budget Diet 3D", "Diverse 3D"],
+          "answerSpec": { "type": "lower_average", "column": "dec_Oats" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: Budget Diet 3D, Diverse 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q8",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "In which objective do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q9",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["Budget Diet 3D", "Diverse 3D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "diet_3d_block_4",
+      "type": "multi_frontier",
+      "title": "Diet 3D – Block 4",
+      "questions": [
+        {
+          "id": "q10",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv", "data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan has a higher average Nutrient Density?",
+          "options": ["High Protein 3D", "Vegan 3D"],
+          "answerSpec": { "type": "higher_average", "column": "obj_Nutrient_Density" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: High Protein 3D, Vegan 3D. Select a chart type above to get started."
+        },
+        {
+          "id": "q11",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv", "data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which carbohydrate source differs the most between the two diet plans?",
+          "options": [],
+          "optionSource": "group:Carbohydrates",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q12",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv", "data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["High Protein 3D", "Vegan 3D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_1",
+      "type": "multi_frontier",
+      "title": "Diet 6D – Block 1",
+      "questions": [
+        {
+          "id": "q13",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv", "data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan has a lower average Prep Time?",
+          "options": ["Low Carb 6D", "Budget Diet 6D"],
+          "answerSpec": { "type": "lower_average", "column": "obj_Prep_Time" },
+          "defaultScreen": "You've switched to the following datasets: Low Carb 6D, Budget Diet 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q14",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv", "data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "In which food group do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "groups",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q15",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv", "data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["Low Carb 6D", "Budget Diet 6D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_2",
+      "type": "multi_frontier",
+      "title": "Diet 6D – Block 2",
+      "questions": [
+        {
+          "id": "q16",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv", "data/diet_datasets/Diverse_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan has a lower average allocation to Fats?",
+          "options": ["High Protein 6D", "Diverse Diet 6D"],
+          "answerSpec": { "type": "lower_average", "column": "Fats" },
+          "defaultScreen": "You've switched to the following datasets: High Protein 6D, Diverse Diet 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q17",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv", "data/diet_datasets/Diverse_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "In which objective do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" }
+        },
+        {
+          "id": "q18",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv", "data/diet_datasets/Diverse_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["High Protein 6D", "Diverse Diet 6D"],
+          "answerSpec": { "type": "best_average" }
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_3",
+      "type": "multi_frontier",
+      "title": "Diet 6D – Block 3",
+      "questions": [
+        {
+          "id": "q19",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv", "data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan has a lower average Carbon Footprint?",
+          "options": ["Low Carb 6D", "High Protein 6D"],
+          "answerSpec": { "type": "lower_average", "column": "obj_Carbon_Footprint" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: Low Carb 6D, High Protein 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q20",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv", "data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "In which protein source do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "group:Proteins",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q21",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv", "data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["Low Carb 6D", "High Protein 6D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "diet_6d_block_4",
+      "type": "multi_frontier",
+      "title": "Diet 6D – Block 4",
+      "questions": [
+        {
+          "id": "q22",
+          "type": "simple_comparison",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv", "data/diet_datasets/Diverse_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan has a lower average Sweet Potato (Carbohydrates) allocation?",
+          "options": ["Budget Diet 6D", "Diverse Diet 6D"],
+          "answerSpec": { "type": "lower_average", "column": "dec_Sweet_Potato" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've switched to the following datasets: Budget Diet 6D, Diverse Diet 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q23",
+          "type": "most_distinct_objective",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv", "data/diet_datasets/Diverse_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "In which objective do the two diet plans differ the most on average?",
+          "options": [],
+          "optionSource": "objectives",
+          "answerSpec": { "type": "most_distinct_objective" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        },
+        {
+          "id": "q24",
+          "type": "decide_on_frontier",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv", "data/diet_datasets/Diverse_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
+          "prompt": "Which diet plan performs better overall across all objectives?",
+          "options": ["Budget Diet 6D", "Diverse Diet 6D"],
+          "answerSpec": { "type": "best_average" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": {
+    "title": "Experience Questionnaire",
+    "subtitle": "Please rate your agreement with the following statements.",
+    "questions": [
+      { "id": "pq1", "type": "likert", "prompt": "I have to spend too much time correcting things with this system.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq2", "type": "likert", "prompt": "This system's capabilities meet my requirements.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq3", "type": "likert", "prompt": "This system is easy to use.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq4", "type": "likert", "prompt": "Using this system is a frustrating experience.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } }
+    ]
+  }
+}

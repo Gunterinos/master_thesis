@@ -79,7 +79,7 @@ function getCellValue(row, col, isGroupCol, groupMembersMap) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 export function renderTable(containerSelector, columns, data, options = {}) {
-    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, measures = {}, disableBrush = false, frontierOrder = null } = options;
+    const { onHoverStart = () => {}, onHoverEnd = () => {}, onShiftClick = () => {}, onBrushFilterChange = () => {}, animate = false, groups = {}, measures = {}, disableBrush = false, frontierOrder = null, objectiveDirections = {} } = options;
 
     const multiFrontier = (frontierOrder?.length ?? 0) > 1;
     let borderColorMap = null;
@@ -321,6 +321,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                         } else {
                             const [lo, hi] = event.selection.map(xScale.invert);
                             filters.set(col, [lo, hi]);
+                            window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'table_histogram_filter', column: col, min: lo, max: hi } }));
                         }
                         applyColumnFilters();
                     });
@@ -336,6 +337,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                     brush.move(brushG, null);
                     _columnFilters.get(containerSelector).delete(col);
                     applyColumnFilters();
+                    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'table_histogram_filter_clear', column: col } }));
                 });
             }
         });
@@ -359,21 +361,23 @@ export function renderTable(containerSelector, columns, data, options = {}) {
             })
             .html(col => {
                 const measureLabel = measures[col] ? `<span class="col-measure">${measures[col]}</span>` : '';
+                const dir = objectiveDirections[col];
+                const dirLabel = dir ? `<span class="col-direction col-direction--${dir}">${dir}</span>` : '';
                 if (isGroupCol[col]) {
                     const canExpand = (groupMembersMap[col] || []).length > 1;
                     if (!canExpand) {
                         const indicator = col === sortState.col
                             ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                             : `<span class="sort-indicator">↕</span>`;
-                        return `${formatLabel(col)}${indicator}${measureLabel}`;
+                        return `${formatLabel(col)}${indicator}${measureLabel}${dirLabel}`;
                     }
                     const isExpanded = expandedSet.has(col);
-                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>${measureLabel}`;
+                    return `${formatLabel(col)} <span class="expand-indicator">${isExpanded ? '▼' : '▶'}</span>${measureLabel}${dirLabel}`;
                 }
                 const indicator = col === sortState.col
                     ? `<span class="sort-indicator">${sortState.dir === 1 ? '↑' : '↓'}</span>`
                     : `<span class="sort-indicator">↕</span>`;
-                return `${formatLabel(col)}${indicator}${measureLabel}`;
+                return `${formatLabel(col)}${indicator}${measureLabel}${dirLabel}`;
             })
             .on("click", (event, col) => {
                 const rerender = () => {
@@ -386,12 +390,16 @@ export function renderTable(containerSelector, columns, data, options = {}) {
                 if (isGroupCol[col] && (groupMembersMap[col] || []).length > 1) {
                     // Toggle group expansion (multi-member groups only)
                     const next = new Set(expandedSet);
-                    next.has(col) ? next.delete(col) : next.add(col);
+                    const expanding = !next.has(col);
+                    expanding ? next.add(col) : next.delete(col);
                     _expandedGroups.set(containerSelector, next);
+                    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'table_group_expand', group: col, expanded: expanding } }));
                     rerender();
                 } else {
                     // Sort (Point, single-member groups, variable columns)
                     cycleSort(col);
+                    const dir = sortState.col === col ? (sortState.dir === 1 ? 'asc' : 'desc') : 'none';
+                    window.dispatchEvent(new CustomEvent('survey:action', { detail: { type: 'table_sort', column: col, direction: dir } }));
                     rerender();
                 }
             });
