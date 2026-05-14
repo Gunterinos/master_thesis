@@ -54,6 +54,22 @@
       }
     },
     {
+      "type": "value_retrieval",
+      "answerSpec_type": "highest_value",
+      "note": "Works with dec_ columns — use dec_ prefix in column. Same for lowest_value and range.",
+      "interactionType": "record_selection",
+      "scoring": "binary (1 if correct point selected, 0 otherwise)",
+      "example": {
+        "id": "ex3b",
+        "type": "value_retrieval",
+        "interactionType": "record_selection",
+        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "prompt": "Select the portfolio with the highest allocation to Bonds.",
+        "options": [],
+        "answerSpec": { "type": "highest_value", "column": "dec_Bonds" }
+      }
+    },
+    {
       "type": "correlation",
       "answerSpec_type": "strongest_correlation",
       "interactionType": "select_option (dropdown via optionSource)",
@@ -66,6 +82,27 @@
         "prompt": "Which objective is most strongly correlated with Return?",
         "options": [],
         "optionSource": "objectives",
+        "answerSpec": {
+          "type": "strongest_correlation",
+          "targetColumn": "obj_Return",
+          "candidateColumns": []
+        }
+      }
+    },
+    {
+      "type": "correlation",
+      "answerSpec_type": "strongest_correlation",
+      "note": "Decision variables as candidates — optionSource: 'decisions' or 'all'",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - |spearman(correct, target) - spearman(user_pick, target)|",
+      "example": {
+        "id": "ex4b",
+        "type": "correlation",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv"] },
+        "prompt": "Which decision variable is most strongly correlated with Return?",
+        "options": [],
+        "optionSource": "decisions",
         "answerSpec": {
           "type": "strongest_correlation",
           "targetColumn": "obj_Return",
@@ -107,6 +144,7 @@
     {
       "type": "simple_comparison",
       "answerSpec_type": "lower_average",
+      "note": "Works with dec_ columns directly — no backend change needed",
       "interactionType": "select_option",
       "scoring": "binary (1 if correct frontier selected, 0 otherwise)",
       "example": {
@@ -120,10 +158,26 @@
       }
     },
     {
+      "type": "simple_comparison",
+      "answerSpec_type": "higher_average",
+      "note": "Decision variable example with higher_average",
+      "interactionType": "select_option",
+      "scoring": "binary (1 if correct frontier selected, 0 otherwise)",
+      "example": {
+        "id": "ex7b",
+        "type": "simple_comparison",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+        "prompt": "Which frontier allocates more to Bonds on average?",
+        "options": ["portfolio 3D", "portfolio 3D copy"],
+        "answerSpec": { "type": "higher_average", "column": "dec_Bonds" }
+      }
+    },
+    {
       "type": "most_distinct_objective",
       "answerSpec_type": "most_distinct_objective",
       "interactionType": "select_option (dropdown via optionSource)",
-      "scoring": "graded: 1 - rank/(N_objectives - 1), where rank 0 = objective with largest normalised mean difference between frontiers",
+      "scoring": "graded: 1 - rank/(N_columns - 1), where rank 0 = column with largest normalised mean difference between frontiers",
       "example": {
         "id": "ex8",
         "type": "most_distinct_objective",
@@ -132,6 +186,23 @@
         "prompt": "In which objective do the two frontiers differ the most on average?",
         "options": [],
         "optionSource": "objectives",
+        "answerSpec": { "type": "most_distinct_objective" }
+      }
+    },
+    {
+      "type": "most_distinct_objective",
+      "answerSpec_type": "most_distinct_objective",
+      "note": "Decision variables as candidates — set optionSource to 'decisions' or 'all'. candidateColumns is populated automatically by the frontend at submission.",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - rank/(N_columns - 1), where rank 0 = column with largest normalised mean difference between frontiers",
+      "example": {
+        "id": "ex8b",
+        "type": "most_distinct_objective",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["portfolio_3D.csv", "portfolio_3D copy.csv"] },
+        "prompt": "In which decision variable do the two frontiers differ the most on average?",
+        "options": [],
+        "optionSource": "decisions",
         "answerSpec": { "type": "most_distinct_objective" }
       }
     },

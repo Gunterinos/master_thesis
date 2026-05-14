@@ -147,7 +147,7 @@ async function submitAnswer(index) {
     }
 
     let answerSpec = question.answerSpec;
-    if (_dynamicCandidates && answerSpec.type === 'strongest_correlation') {
+    if (_dynamicCandidates && (answerSpec.type === 'strongest_correlation' || answerSpec.type === 'most_distinct_objective')) {
         answerSpec = { ...answerSpec, candidateColumns: _dynamicCandidates };
     }
 

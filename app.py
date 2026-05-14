@@ -383,9 +383,9 @@ def compute_answer():
         if len(frontier_names) < 2:
             return jsonify({"error": "Need at least 2 frontiers"}), 400
         f1, f2 = frontier_names[0], frontier_names[1]
-        obj_cols = [c for c in rows[0] if c.startswith("obj_")]
-        col_mins = {c: min(float(r[c]) for r in rows) for c in obj_cols}
-        col_maxs = {c: max(float(r[c]) for r in rows) for c in obj_cols}
+        candidate_cols = spec.get("candidateColumns") or [c for c in rows[0] if c.startswith("obj_")]
+        col_mins = {c: min(float(r[c]) for r in rows) for c in candidate_cols}
+        col_maxs = {c: max(float(r[c]) for r in rows) for c in candidate_cols}
 
         def norm_val(val, col):
             lo, hi = col_mins[col], col_maxs[col]
@@ -398,15 +398,15 @@ def compute_answer():
                 sum(norm_val(r[col], col) for r in f1_rows) / len(f1_rows)
                 - sum(norm_val(r[col], col) for r in f2_rows) / len(f2_rows)
             )
-            for col in obj_cols
+            for col in candidate_cols
         }
-        sorted_cols = sorted(obj_cols, key=lambda c: distinction[c], reverse=True)
+        sorted_cols = sorted(candidate_cols, key=lambda c: distinction[c], reverse=True)
         best_col = sorted_cols[0]
-        n_obj = len(obj_cols)
+        n_cols = len(candidate_cols)
 
         if user_answer and user_answer in distinction:
             rank = sorted_cols.index(user_answer)
-            score = 1.0 - rank / (n_obj - 1) if n_obj > 1 else 1.0
+            score = 1.0 - rank / (n_cols - 1) if n_cols > 1 else 1.0
         else:
             score = 0.0
         return jsonify({"option": best_col, "score": round(score, 4)})
