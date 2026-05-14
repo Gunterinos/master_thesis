@@ -10,9 +10,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select all portfolios where Return is above 0.9.",
+          "prompt": "Select all portfolios where Return is above 0.09.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.9, "max": null },
+          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.09, "max": null },
           "defaultScreen": "You've switched to the following dataset: equity heavy 3D. Select a chart type above to get started."
         },
         {
@@ -273,7 +273,7 @@
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
           "prompt": "Select all portfolios where EU Real Estate (Real Assets) allocation is above 10%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "dec_EU_Real_Estate", "min": 0.10, "max": null },
+          "answerSpec": { "type": "range", "column": "dec_RealEstate_EU", "min": 0.10, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
         },
