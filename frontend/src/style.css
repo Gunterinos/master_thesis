@@ -466,7 +466,7 @@ body.survey-active .header-frontiers {
     border-right: 1px solid rgba(194, 202, 214, 0.45);
     align-self: stretch;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
 }
 
 body.survey-active #tutorial-zone {

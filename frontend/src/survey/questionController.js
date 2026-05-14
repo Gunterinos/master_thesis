@@ -7,7 +7,7 @@ let _startTime = 0;
 let _responses = [];
 let _sessionId = '';
 let _onComplete = null;
-let _availableColumns = { objectives: [], decisions: [], groups: [] };
+let _availableColumns = { objectives: [], decisions: [], groups: [], groupsMap: {} };
 let _dynamicCandidates = null;
 
 function generateSessionId() {
@@ -31,6 +31,9 @@ function buildCandidates(question) {
         cols = _availableColumns.decisions.slice();
     } else if (source === 'groups') {
         cols = _availableColumns.groups.slice();
+    } else if (source.startsWith('group:')) {
+        const groupName = source.slice(6);
+        cols = _availableColumns.decisions.filter(c => _availableColumns.groupsMap[c] === groupName);
     } else if (source === 'all') {
         cols = [..._availableColumns.objectives, ..._availableColumns.decisions];
     } else {
@@ -63,6 +66,7 @@ function loadAndRender(index) {
             objectives: detail.objectiveColumns ?? [],
             decisions: detail.decisionColumns ?? [],
             groups: uniqueGroups,
+            groupsMap: rawGroups,
         };
         clearSelectionState();
         renderQuestion(index);
