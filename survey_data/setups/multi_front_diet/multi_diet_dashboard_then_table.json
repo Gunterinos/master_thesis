@@ -82,9 +82,9 @@
           "type": "simple_comparison",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which diet plan has a higher average Diversity?",
+          "prompt": "Which diet plan has a lower average Prep Time?",
           "options": ["Budget Diet 3D", "Diverse 3D"],
-          "answerSpec": { "type": "higher_average", "column": "obj_Diversity" },
+          "answerSpec": { "type": "lower_average", "column": "obj_Prep_Time" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following datasets: Budget Diet 3D, Diverse 3D. Select a chart type above to get started."
         },

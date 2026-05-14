@@ -25,6 +25,7 @@ let _externalFilter = null;       // passing row indices from PCP / lasso / etc.
 const _tableFilters = new Map(); // containerSelector → passing row indices (one entry per table)
 let _surveyDisabledCharts = null;
 let _surveyDefaultScreen = null;
+let _activeBenchmark = null;
 
 function getCurrentData() {
     const filteredRowIndices = getFilteredRowIndexSet();
@@ -47,7 +48,7 @@ function renderAllPanels(options = {}) {
         renderOptions: { animate },
         groups,
         measures,
-        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
+        frontierOrder: _activeFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
         onAfterRender: updateSelectionButtons,
         forceEmptyState,
@@ -59,7 +60,7 @@ function renderAllPanels(options = {}) {
         chartRegistry,
         renderOptions: { animate },
         groups,
-        frontierOrder: _defaultFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
+        frontierOrder: _activeFrontierFiles.map(f => f.replace(/^.*[\\/]/, '').replace(/\.csv$/i, '').replace(/_/g, ' ')),
         disabledCharts: _surveyDisabledCharts,
         forceEmptyState,
         emptyStateText,
@@ -264,9 +265,11 @@ function getActiveFiles() {
 window.addEventListener('survey:load-data', ({ detail }) => {
     _surveyDisabledCharts = detail.disabledCharts ?? null;
     _surveyDefaultScreen = detail.defaultScreen ?? null;
+    _activeBenchmark = detail.benchmark ?? null;
+    _activeFrontierFiles = detail.files;
     populateFrontierButtons(detail.files, {}, detail.files);
     loadActiveFiles(detail.files, {
-        benchmark: detail.benchmark,
+        benchmark: _activeBenchmark,
         onDone: () => {
             const objCols = Object.keys(objectiveDirections);
             const decCols = fullData.length > 0
@@ -281,12 +284,22 @@ window.addEventListener('survey:load-data', ({ detail }) => {
 
 // ── Survey flow ──────────────────────────────────────────────────────────
 document.getElementById('start-tutorial-btn').addEventListener('click', async () => {
-    const [intro, { steps }] = await Promise.all([loadIntroConfig(), loadTutorialConfig()]);
+    const [intro, { steps, dataset }] = await Promise.all([loadIntroConfig(), loadTutorialConfig()]);
     const launchTutorial = () => startTutorial(steps, { onComplete: showQuestionsIntroScreen });
-    if (intro) {
-        showSurveyIntro(intro, launchTutorial);
+    const launch = () => {
+        if (intro) {
+            showSurveyIntro(intro, launchTutorial);
+        } else {
+            launchTutorial();
+        }
+    };
+    if (dataset) {
+        window.addEventListener('survey:data-ready', () => launch(), { once: true });
+        window.dispatchEvent(new CustomEvent('survey:load-data', {
+            detail: { files: dataset.frontiers, benchmark: dataset.benchmark ?? null, disabledCharts: null, defaultScreen: null },
+        }));
     } else {
-        launchTutorial();
+        launch();
     }
 });
 
@@ -325,6 +338,8 @@ async function finishSurvey(responses, sessionId) {
             document.getElementById('start-tutorial-btn').style.display = '';
             document.getElementById('chart-guide-btn').style.display = '';
             _surveyDisabledCharts = null;
+            _activeBenchmark = null;
+            _activeFrontierFiles = _defaultFrontierFiles;
             populateFrontierButtons(_defaultFrontierFiles, _defaultFileConstraints);
             loadActiveFiles(getActiveFiles());
         },
@@ -333,6 +348,7 @@ async function finishSurvey(responses, sessionId) {
 
 let _defaultFrontierFiles = [];
 let _defaultFileConstraints = {};
+let _activeFrontierFiles = [];
 
 function formatConstraintVal(val) {
     return val.replace(/([<>]=?)(\d+(?:\.\d+)?)/g, (_, op, num) => {
@@ -369,7 +385,7 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
                 const isActive = d3.select(this).classed("active");
                 if (isActive && getActiveFiles().length === 1) { return; }
                 d3.select(this).classed("active", !isActive);
-                loadActiveFiles(getActiveFiles());
+                loadActiveFiles(getActiveFiles(), { benchmark: _activeBenchmark });
             });
 
         if (tooltipText) {
@@ -382,6 +398,7 @@ d3.json("/api/data-files")
     .then(({ files, fileConstraints = {} }) => {
         _defaultFrontierFiles = files;
         _defaultFileConstraints = fileConstraints;
+        _activeFrontierFiles = files;
         populateFrontierButtons(files, fileConstraints);
         if (files.length > 0) { loadActiveFiles([files[0]]); }
     })

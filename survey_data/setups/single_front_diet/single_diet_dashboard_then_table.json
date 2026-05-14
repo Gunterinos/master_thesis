@@ -46,9 +46,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Diversity is above 0.60.",
+          "prompt": "Select all diets where Prep Time is below 0.50.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.60, "max": null },
+          "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 0.50 },
           "defaultScreen": "You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
         },
         {
@@ -56,10 +56,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Diversity?",
+          "prompt": "Which objective is most strongly correlated with Prep Time?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [] }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [] }
         },
         {
           "id": "q6",
