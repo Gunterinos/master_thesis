@@ -230,7 +230,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
                 return;
             }
 
-            const { rows: rawData, directions, groups: groupsFromAPI, measures: measuresFromAPI } = data;
+            const { rows: rawData, directions, groups: groupsFromAPI, measures: measuresFromAPI, fileConstraints: fileConstraintsFromAPI } = data;
             if (!rawData || rawData.length === 0) {
                 errorEl.classed("hidden", false).text("The selected files contain no data.");
                 return;
@@ -249,7 +249,7 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
             initializeApp();
             renderAllPanels({ animate: true });
             updateSelectionButtons();
-            onDone?.();
+            onDone?.({ fileConstraints: fileConstraintsFromAPI ?? {} });
         })
         .catch(() => {
             errorEl.classed("hidden", false).text("Network error: could not reach the server.");
@@ -270,7 +270,8 @@ window.addEventListener('survey:load-data', ({ detail }) => {
     populateFrontierButtons(detail.files, {}, detail.files);
     loadActiveFiles(detail.files, {
         benchmark: _activeBenchmark,
-        onDone: () => {
+        onDone: ({ fileConstraints = {} } = {}) => {
+            populateFrontierButtons(detail.files, fileConstraints, detail.files);
             const objCols = Object.keys(objectiveDirections);
             const decCols = fullData.length > 0
                 ? Object.keys(fullData[0]).filter(k => k.startsWith('dec_'))
