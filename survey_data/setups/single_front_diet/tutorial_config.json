@@ -1,4 +1,5 @@
 {
+  "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
   "tutorial": [
     {
       "id": "t1",
