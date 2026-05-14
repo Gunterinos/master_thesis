@@ -262,6 +262,23 @@
     {
       "type": "most_distinct_objective",
       "answerSpec_type": "most_distinct_objective",
+      "note": "Members of a single group as candidates — optionSource: 'group:<GroupName>'. Dropdown shows only the dec_ variables belonging to that group.",
+      "interactionType": "select_option (dropdown via optionSource)",
+      "scoring": "graded: 1 - rank/(N_columns - 1), where rank 0 = column with largest normalised mean difference between frontiers",
+      "example": {
+        "id": "ex8d",
+        "type": "most_distinct_objective",
+        "interactionType": "select_option",
+        "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"] },
+        "prompt": "Which carbohydrate source differs the most between the two diet plans?",
+        "options": [],
+        "optionSource": "group:Carbohydrates",
+        "answerSpec": { "type": "most_distinct_objective" }
+      }
+    },
+    {
+      "type": "most_distinct_objective",
+      "answerSpec_type": "most_distinct_objective",
       "note": "Decision variables as candidates — set optionSource to 'decisions' or 'all'. candidateColumns is populated automatically by the frontend at submission.",
       "interactionType": "select_option (dropdown via optionSource)",
       "scoring": "graded: 1 - rank/(N_columns - 1), where rank 0 = column with largest normalised mean difference between frontiers",

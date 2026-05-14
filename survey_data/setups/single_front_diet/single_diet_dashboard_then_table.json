@@ -10,9 +10,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Nutrient Density is above 0.65.",
+          "prompt": "Select all diets where Nutrient Density is above 0.75.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.65, "max": null },
+          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.75, "max": null },
           "defaultScreen": "You've switched to the following dataset: Budget Diet 3D. Select a chart type above to get started."
         },
         {
@@ -20,10 +20,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Nutrient Density?",
+          "prompt": "Which decision variable is most positively correlated with Nutrient Density?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [] }
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "positive" }
         },
         {
           "id": "q3",
@@ -46,9 +46,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Prep Time is below 0.50.",
+          "prompt": "Select all diets where the total Fats allocation is above 20%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 0.50 },
+          "answerSpec": { "type": "range", "column": "Fats", "min": 0.20, "max": null },
           "defaultScreen": "You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
         },
         {
@@ -56,10 +56,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Prep Time?",
+          "prompt": "Which objective is most strongly correlated with Prep Time (negatively)?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [] }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [], "direction": "negative" }
         },
         {
           "id": "q6",
@@ -82,9 +82,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Cost is below 0.40.",
+          "prompt": "Select all diets where Cost is below 0.30.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Cost", "min": null, "max": 0.40 },
+          "answerSpec": { "type": "range", "column": "obj_Cost", "min": null, "max": 0.30 },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: Diverse 3D. Select a chart type above to get started."
         },
@@ -93,10 +93,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Cost?",
+          "prompt": "Which food group is most strongly correlated (negatively) with Fats?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Cost", "candidateColumns": [] },
+          "optionSource": "groups",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "Fats", "candidateColumns": [], "direction": "negative" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
@@ -121,9 +121,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Nutrient Density is above 0.60.",
+          "prompt": "Select all diets where Tofu allocation is above 0.7.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.60, "max": null },
+          "answerSpec": { "type": "range", "column": "dec_Tofu", "min": 0.7, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: Vegan 3D. Select a chart type above to get started."
         },
@@ -132,10 +132,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Nutrient Density?",
+          "prompt": "Which objective is most strongly correlated with Nutrient Density (negatively)?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [] },
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "negative" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
@@ -160,9 +160,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Satiety is above 0.70.",
+          "prompt": "Select all diets where Satiety is above 0.65.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.70, "max": null },
+          "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.65, "max": null },
           "defaultScreen": "You've switched to the following dataset: Vegan 6D. Select a chart type above to get started."
         },
         {
@@ -170,10 +170,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Satiety?",
+          "prompt": "Which decision variable is most positively correlated with Satiety?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Satiety", "candidateColumns": [] }
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Satiety", "candidateColumns": [], "direction": "positive" }
         },
         {
           "id": "q15",
@@ -196,9 +196,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Carbon Footprint is below 0.35.",
+          "prompt": "Select all diets where Chicken Breast (Proteins) allocation is above 0.4.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Carbon_Footprint", "min": null, "max": 0.35 },
+          "answerSpec": { "type": "range", "column": "dec_Chicken_Breast", "min": 0.4, "max": null },
           "defaultScreen": "You've switched to the following dataset: Low Carb 6D. Select a chart type above to get started."
         },
         {
@@ -206,10 +206,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Carbon Footprint?",
+          "prompt": "Which objective is most strongly correlated (positively) with Carbon Footprint?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [] }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" }
         },
         {
           "id": "q18",
@@ -232,9 +232,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Prep Time is below 0.50.",
+          "prompt": "Select all diets where Prep Time is below 10.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 0.50 },
+          "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 10 },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: High Protein 6D. Select a chart type above to get started."
         },
@@ -243,10 +243,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Prep Time?",
+          "prompt": "Which decision variable is most positively correlated with Carbon Footprint?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [] },
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
@@ -271,9 +271,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Diversity is above 0.60.",
+          "prompt": "Select all diets where White Rice (Carbohydrates) allocation is above 10%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.60, "max": null },
+          "answerSpec": { "type": "range", "column": "dec_White_Rice", "min": 0.10, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: Budget Diet 6D. Select a chart type above to get started."
         },
@@ -285,7 +285,7 @@
           "prompt": "Which objective is most strongly correlated with Diversity?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [] },
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "positive" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {

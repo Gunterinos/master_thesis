@@ -334,8 +334,14 @@ def compute_answer():
             and (hi is None or _col_value(row, col, group_members_map) <= hi)
         ]
         correct_set = set(correct)
-        score = 1.0 if user_answer and all(i in correct_set for i in user_answer) else 0.0
-        return jsonify({"rowIndices": correct, "score": score})
+        if user_answer:
+            user_set = set(user_answer)
+            intersection = len(correct_set & user_set)
+            union = len(correct_set | user_set)
+            score = intersection / union if union > 0 else 0.0
+        else:
+            score = 0.0
+        return jsonify({"rowIndices": correct, "score": round(score, 4)})
 
     if spec_type == "knee_point":
         obj_cols = [c for c in rows[0] if c.startswith("obj_")]
@@ -378,17 +384,27 @@ def compute_answer():
     if spec_type == "strongest_correlation":
         target_col = spec["targetColumn"]
         candidates = spec["candidateColumns"]
+        direction = spec.get("direction", "any")
         target_vals = [_col_value(r, target_col, group_members_map) for r in rows]
 
-        corr_map = {}
+        raw_map = {}
         for col in candidates:
             vals = [_col_value(r, col, group_members_map) for r in rows]
-            corr_map[col] = abs(_spearman(target_vals, vals))
+            raw_map[col] = _spearman(target_vals, vals)
 
-        best_col = max(corr_map, key=corr_map.get)
+        if direction == "positive":
+            sorted_candidates = sorted(candidates, key=lambda c: raw_map[c], reverse=True)
+        elif direction == "negative":
+            sorted_candidates = sorted(candidates, key=lambda c: raw_map[c])
+        else:
+            sorted_candidates = sorted(candidates, key=lambda c: abs(raw_map[c]), reverse=True)
 
-        if user_answer and user_answer in corr_map:
-            score = 1.0 - abs(corr_map[best_col] - corr_map[user_answer])
+        best_col = sorted_candidates[0]
+        n = len(candidates)
+
+        if user_answer and user_answer in raw_map:
+            rank = sorted_candidates.index(user_answer)
+            score = 1.0 - rank / (n - 1) if n > 1 else 1.0
         else:
             score = 0.0
         return jsonify({"option": best_col, "score": round(score, 4)})

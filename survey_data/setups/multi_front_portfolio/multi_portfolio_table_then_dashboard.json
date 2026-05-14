@@ -21,9 +21,9 @@
           "type": "most_distinct_objective",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "prompt": "In which investment group do the two portfolio strategies differ the most on average?",
           "options": [],
-          "optionSource": "objectives",
+          "optionSource": "groups",
           "answerSpec": { "type": "most_distinct_objective" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
@@ -49,9 +49,9 @@
           "type": "simple_comparison",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which portfolio strategy has a lower average Risk?",
+          "prompt": "Which portfolio strategy allocates less to Real Assets on average?",
           "options": ["real assets heavy 3D", "unconstrained 3D"],
-          "answerSpec": { "type": "lower_average", "column": "obj_Risk" },
+          "answerSpec": { "type": "lower_average", "column": "Real_Assets" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following datasets: real assets heavy 3D, unconstrained 3D. Select a chart type above to get started."
         },
@@ -98,9 +98,9 @@
           "type": "most_distinct_objective",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv", "data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "prompt": "Among fixed income sources, in which do the two strategies differ the most on average?",
           "options": [],
-          "optionSource": "objectives",
+          "optionSource": "group:Fixed_Income",
           "answerSpec": { "type": "most_distinct_objective" }
         },
         {
@@ -124,9 +124,9 @@
           "type": "simple_comparison",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv", "data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which portfolio strategy has a higher average Liquidity?",
+          "prompt": "Which portfolio strategy allocates more to Private Equity on average?",
           "options": ["fixed income cash heavy 3D", "unconstrained 3D"],
-          "answerSpec": { "type": "higher_average", "column": "obj_Liquidity" },
+          "answerSpec": { "type": "higher_average", "column": "Private_Equity" },
           "defaultScreen": "You've switched to the following datasets: fixed income cash heavy 3D, unconstrained 3D. Select a chart type above to get started."
         },
         {
@@ -171,9 +171,9 @@
           "type": "most_distinct_objective",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "prompt": "In which investment group do the two portfolio strategies differ the most on average?",
           "options": [],
-          "optionSource": "objectives",
+          "optionSource": "groups",
           "answerSpec": { "type": "most_distinct_objective" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
@@ -199,9 +199,9 @@
           "type": "simple_comparison",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which portfolio strategy has a lower average Geopolitical Risk?",
+          "prompt": "Which portfolio strategy has a higher average Equity allocation?",
           "options": ["real assets heavy 6D", "unconstrained 6D"],
-          "answerSpec": { "type": "lower_average", "column": "obj_Geopolitical" },
+          "answerSpec": { "type": "higher_average", "column": "Equities" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following datasets: real assets heavy 6D, unconstrained 6D. Select a chart type above to get started."
         },
@@ -248,9 +248,9 @@
           "type": "most_distinct_objective",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv", "data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "In which objective do the two portfolio strategies differ the most on average?",
+          "prompt": "In which type of equity do the two strategies differ the most on average?",
           "options": [],
-          "optionSource": "objectives",
+          "optionSource": "group:Equities",
           "answerSpec": { "type": "most_distinct_objective" }
         },
         {
@@ -274,9 +274,9 @@
           "type": "simple_comparison",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv", "data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which portfolio strategy has a lower average Geopolitical Risk?",
+          "prompt": "Which portfolio strategy has a higher average US Bond (Fixed Income) allocation?",
           "options": ["fixed income cash heavy 6D", "unconstrained 6D"],
-          "answerSpec": { "type": "lower_average", "column": "obj_Geopolitical" },
+          "answerSpec": { "type": "higher_average", "column": "dec_Bond_US" },
           "defaultScreen": "You've switched to the following datasets: fixed income cash heavy 6D, unconstrained 6D. Select a chart type above to get started."
         },
         {

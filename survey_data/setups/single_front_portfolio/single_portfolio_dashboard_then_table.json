@@ -10,9 +10,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select all portfolios where Return is above 0.07.",
+          "prompt": "Select all portfolios where Return is above 0.9.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.07, "max": null },
+          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.9, "max": null },
           "defaultScreen": "You've switched to the following dataset: equity heavy 3D. Select a chart type above to get started."
         },
         {
@@ -20,10 +20,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Return?",
+          "prompt": "Which decision variable is most strongly correlated (negatively) with Return?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Return", "candidateColumns": [] }
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Return", "candidateColumns": [], "direction": "negative" }
         },
         {
           "id": "q3",
@@ -46,9 +46,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select all portfolios where Liquidity is above 0.60.",
+          "prompt": "Select all portfolios where Fixed Income allocation is above 25%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null },
+          "answerSpec": { "type": "range", "column": "Fixed_Income", "min": 0.25, "max": null },
           "defaultScreen": "You've switched to the following dataset: unconstrained 3D. Select a chart type above to get started."
         },
         {
@@ -56,10 +56,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Liquidity?",
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [] }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" }
         },
         {
           "id": "q6",
@@ -82,9 +82,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select all portfolios where Risk is below 0.40.",
+          "prompt": "Select all portfolios where Risk is below 0.010.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Risk", "min": null, "max": 0.40 },
+          "answerSpec": { "type": "range", "column": "obj_Risk", "min": null, "max": 0.010 },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: real assets heavy 3D. Select a chart type above to get started."
         },
@@ -93,10 +93,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Risk?",
+          "prompt": "Which decision variable is most strongly correlated (positively) with Liquidity?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Risk", "candidateColumns": [] },
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "positive" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
@@ -121,9 +121,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select all portfolios where Liquidity is above 0.55.",
+          "prompt": "Select all portfolios where Cash allocation is above 25%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.55, "max": null },
+          "answerSpec": { "type": "range", "column": "Cash", "min": 0.25, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 3D. Select a chart type above to get started."
         },
@@ -132,10 +132,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Liquidity?",
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [] },
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
@@ -170,10 +170,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with ESG?",
+          "prompt": "Which objective is most strongly correlated with ESG score (negatively)?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_ESG", "candidateColumns": [] }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_ESG", "candidateColumns": [], "direction": "negative" }
         },
         {
           "id": "q15",
@@ -196,9 +196,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select all portfolios where Diversity is above 0.55.",
+          "prompt": "Select all portfolios where Real Assets allocation is above 10%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Diversity", "min": 0.55, "max": null },
+          "answerSpec": { "type": "range", "column": "Real_Assets", "min": 0.10, "max": null },
           "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 6D. Select a chart type above to get started."
         },
         {
@@ -206,10 +206,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Diversity?",
+          "prompt": "Which objective is most strongly correlated with Diversity (negatively)?",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [] }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "negative" }
         },
         {
           "id": "q18",
@@ -243,10 +243,10 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Liquidity?",
+          "prompt": "Which decision variable is most strongly correlated (positively) with Geopolitical Risk?",
           "options": [],
-          "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [] },
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Geopolitical", "candidateColumns": [], "direction": "positive" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
@@ -271,9 +271,9 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select all portfolios where Geopolitical Risk is below 0.35.",
+          "prompt": "Select all portfolios where EU Real Estate (Real Assets) allocation is above 10%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Geopolitical", "min": null, "max": 0.35 },
+          "answerSpec": { "type": "range", "column": "dec_EU_Real_Estate", "min": 0.10, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
           "defaultScreen": "You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
         },
