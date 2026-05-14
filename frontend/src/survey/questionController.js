@@ -116,7 +116,7 @@ function renderQuestion(index) {
 
     const justificationHTML = needsJustification(question) ? `
         <div class="question-justification">
-            <textarea id="question-justification-input" class="question-justification-input" rows="2" placeholder="Briefly explain your reasoning…"></textarea>
+            <textarea id="question-justification-input" class="question-justification-input" rows="2" placeholder="(Optional) Briefly explain your reasoning…"></textarea>
         </div>` : '';
 
     zone.innerHTML = `

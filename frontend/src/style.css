@@ -571,6 +571,7 @@ body.survey-active #tutorial-zone {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 1rem;
+    font-weight: bold;
     color: var(--color-text-secondary);
     text-align: center;
     pointer-events: none;
