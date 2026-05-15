@@ -1,11 +1,11 @@
 {
-  "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
+  "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv", "data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
   "tutorial": [
     {
       "id": "t1",
       "highlight": ".header-panel",
-      "focus": ["#tutorial-chart-guide-btn"],
-      "text": "The header guides you through each step of the tutorial and tasks. The <strong>Chart Guide</strong> is your cheatsheet; open it at any point during the tutorial or questions if you need a reminder of chart interactions."
+      "focus": [".header-frontiers.panel-controls", "#tutorial-chart-guide-btn"],
+      "text": "The header guides you through each step of the tutorial and tasks. Use the <strong>Frontiers</strong> panel to toggle which frontiers are loaded. Across all charts, solutions are <strong>separated by frontier</strong>; charts that support it offer a <strong>Frontier Colours</strong> option to colour-code them. The <strong>Chart Guide</strong> is your cheatsheet; open it at any point if you need a reminder of chart interactions."
     },
     {
       "id": "t2",
@@ -71,14 +71,14 @@
       "highlight": ".table-panel:first-of-type",
       "focus": ["#objectives-chart-buttons button[data-chart-key='correlationHeatmap']"],
       "setChart": { "select": "#objectives-chart-select", "value": "correlationHeatmap" },
-      "text": "The <strong>Correlation Heatmap</strong> shows pairwise correlations between objectives. <strong>Dark</strong> = negative correlation; <strong>light</strong> = positive. Use it to identify which objectives or decision variables move together or pull against each other."
+      "text": "The <strong>Correlation Heatmap</strong> shows pairwise correlations between objectives. <strong>Dark</strong> = negative correlation; <strong>light</strong> = positive. When multiple frontiers are loaded, a <strong>separate heatmap</strong> is shown for each, so you can compare correlation patterns across frontiers."
     },
     {
       "id": "t11",
       "highlight": ".table-panel:last-of-type",
       "focus": ["#decision-chart-buttons button[data-chart-key='barChart']", ".bar-chart-bar:nth-of-type(10)"],
       "setChart": { "select": "#decision-chart-select", "value": "barChart" },
-      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per solution. <strong>Shift + click</strong> a bar to select that solution. Some categories represent <strong>allocation groups</strong>: click a <strong>group bar</strong> to <strong>expand</strong> it and see individual allocations, which also expands the section in the <strong>tooltip</strong>."
+      "text": "The <strong>Column Chart</strong> shows decision variable values as grouped bars, one bar per solution. <strong>Shift + click</strong> a bar to select that solution. Frontiers are grouped and labelled with a <strong>bracket and name</strong> above their columns. Some categories represent <strong>allocation groups</strong>: click a <strong>group bar</strong> to <strong>expand</strong> it and see individual allocations, which also expands the section in the <strong>tooltip</strong>."
     },
     {
       "id": "t12",
@@ -88,7 +88,7 @@
         { "select": "#objectives-chart-select", "value": "table" },
         { "select": "#decision-chart-select", "value": "table" }
       ],
-      "text": "The <strong>Table</strong> lists every solution with raw objective and decision values. <strong>Sort</strong> by any column. <strong>Brush</strong> (click and drag) the mini bars at the top to filter to a range; deselect by <strong>double-clicking</strong> or using <strong>Clear Selection</strong>. Allocation group columns can be <strong>expanded</strong> to show individual allocations."
+      "text": "The <strong>Table</strong> lists every solution with raw objective and decision values. <strong>Sort</strong> by any column. The mini bars at the top show the <strong>distribution per frontier</strong>; <strong>Brush</strong> (click and drag) to filter to a range, deselect by <strong>double-clicking</strong> or using <strong>Clear Selection</strong>. Allocation group columns can be <strong>expanded</strong> to show individual allocations."
     }
   ]
 }

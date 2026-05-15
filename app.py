@@ -230,7 +230,7 @@ def tutorial_config():
 
 @app.get("/api/questions-config")
 def questions_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "questions_config.json").open(encoding="utf-8") as f:
+    with (SURVEY_DATA_DIR / "current_setup" / "questions_config.json").open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
