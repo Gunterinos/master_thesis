@@ -15,7 +15,7 @@
     {
       "id": "t3",
       "highlight": [".table-panel:first-of-type", ".table-panel:last-of-type"],
-      "text": "Every chart supports <strong>hovering</strong>, <strong>selection</strong>, and <strong>filtering</strong>. Hold <strong>Shift + click</strong> a point to select it; selections are <strong>synchronized</strong> between both spaces. <strong>Click</strong> the <strong>zoom in/out</strong> button to zoom in/out. Use <strong>Clear Selection</strong> to reset any active filter."
+      "text": "Every chart supports <strong>hovering</strong>, <strong>selection</strong>, and <strong>filtering</strong>. Hold <strong>Shift + click</strong> a point to select it; selections are <strong>synchronized</strong> between both spaces. Once points are selected or filtered, the <strong>Clear Selection</strong> and <strong>Zoom In</strong> buttons become visible, allowing you to reset the selection or focus the view on the selected points."
     },
     {
       "id": "t4",
