@@ -31,7 +31,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -67,7 +67,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -105,7 +105,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
@@ -144,7 +144,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
@@ -181,7 +181,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -217,7 +217,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -255,7 +255,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
@@ -294,7 +294,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "prompt": "Which portfolio do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]

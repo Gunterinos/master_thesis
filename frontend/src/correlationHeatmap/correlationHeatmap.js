@@ -3,21 +3,38 @@ import './correlationHeatmap.css';
 import { formatLabel } from '../formatLabel.js';
 import { computeFrontierColors } from '../colors.js';
 
-function pearson(xs, ys) {
-    let n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+function rank(vals) {
+    const n = vals.length;
+    const order = [...vals.keys()].sort((a, b) => vals[a] - vals[b]);
+    const ranks = new Array(n);
+    let i = 0;
+    while (i < n) {
+        let j = i;
+        while (j < n && vals[order[j]] === vals[order[i]]) j++;
+        const avg = (i + j + 1) / 2;
+        for (let k = i; k < j; k++) ranks[order[k]] = avg;
+        i = j;
+    }
+    return ranks;
+}
+
+function spearman(xs, ys) {
+    const xf = [], yf = [];
     for (let i = 0; i < xs.length; i++) {
         const x = +xs[i];
         const y = +ys[i];
-        if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
-        n++;
-        sx += x; sy += y;
-        sxx += x * x; syy += y * y;
-        sxy += x * y;
+        if (Number.isFinite(x) && Number.isFinite(y)) { xf.push(x); yf.push(y); }
     }
+    const n = xf.length;
     if (n < 2) return NaN;
-    const cov = sxy - (sx * sy) / n;
-    const vx = sxx - (sx * sx) / n;
-    const vy = syy - (sy * sy) / n;
+    const rx = rank(xf), ry = rank(yf);
+    const mx = rx.reduce((a, b) => a + b, 0) / n;
+    const my = ry.reduce((a, b) => a + b, 0) / n;
+    let cov = 0, vx = 0, vy = 0;
+    for (let i = 0; i < n; i++) {
+        const dx = rx[i] - mx, dy = ry[i] - my;
+        cov += dx * dy; vx += dx * dx; vy += dy * dy;
+    }
     const denom = Math.sqrt(vx * vy);
     if (denom === 0) return NaN;
     return cov / denom;
@@ -30,7 +47,7 @@ function buildMatrix(rows, vars) {
     for (let i = 0; i < n; i++) {
         matrix[i][i] = 1;
         for (let j = i + 1; j < n; j++) {
-            const r = pearson(columnValues[i], columnValues[j]);
+            const r = spearman(columnValues[i], columnValues[j]);
             matrix[i][j] = r;
             matrix[j][i] = r;
         }

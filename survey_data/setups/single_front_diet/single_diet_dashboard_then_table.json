@@ -31,7 +31,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -67,7 +67,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -105,7 +105,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
@@ -144,7 +144,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
@@ -181,7 +181,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -217,7 +217,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
@@ -255,7 +255,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
@@ -294,7 +294,7 @@
           "type": "decision",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "prompt": "Which diet do you think offers the best overall trade-off across all objectives?<br><small>If unsure, multiple selections are also valid.</small>",
           "options": [],
           "answerSpec": { "type": "knee_point" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
