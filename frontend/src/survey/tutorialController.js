@@ -3,6 +3,23 @@ let currentIndex = 0;
 let resizeObserver = null;
 let spotlightPool = [];
 let _onTutorialComplete = null;
+let _reminderTimer = null;
+
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'survey-toast';
+    toast.textContent = message;
+    const close = document.createElement('button');
+    close.className = 'survey-toast-close';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.textContent = '×';
+    close.addEventListener('click', () => toast.remove());
+    toast.appendChild(close);
+    document.body.appendChild(toast);
+    const fadeTimer = setTimeout(() => toast.classList.add('survey-toast--fade'), 8000);
+    const removeTimer = setTimeout(() => toast.remove(), 8500);
+    close.addEventListener('click', () => { clearTimeout(fadeTimer); clearTimeout(removeTimer); });
+}
 
 const PADDING = 8;
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -176,6 +193,10 @@ export function startTutorial(tutorialSteps, { onComplete } = {}) {
     spotlightPool = [];
     document.body.appendChild(buildOverlay());
     document.getElementById('start-tutorial-btn').style.display = 'none';
+    _reminderTimer = setTimeout(
+        () => showToast('5 minutes have passed. Please start wrapping up the tutorial when you\'re ready.'),
+        5 * 60 * 1000
+    );
 
     document.getElementById('tutorial-prev-btn').addEventListener('click', () => {
         if (currentIndex > 0) { currentIndex--; renderStep(currentIndex); }
@@ -192,6 +213,8 @@ export function startTutorial(tutorialSteps, { onComplete } = {}) {
 }
 
 function endTutorial() {
+    clearTimeout(_reminderTimer);
+    _reminderTimer = null;
     closeAllStepMenus();
     clearFocusBorders();
     document.getElementById('tutorial-overlay')?.remove();
