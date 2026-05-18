@@ -1,0 +1,4165 @@
+{
+  "sessionId": "8ca7970d-6048-4aff-a4e3-ce483236b598",
+  "setupName": "single_diet_table_then_dashboard",
+  "responses": [
+    {
+      "questionId": "q1",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        1,
+        2,
+        0,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "correctAnswer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "score": 0.9333,
+      "isCorrect": false,
+      "timeToAnswerMs": 61820,
+      "timePerChart": {
+        "objectives": {
+          "table": 56326
+        },
+        "decisions": {
+          "table": 54952
+        }
+      },
+      "actions": [
+        {
+          "t": 13116,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 13767,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 37992,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 38697,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 39320,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 43748,
+          "type": "shift_click",
+          "rowIndex": 1,
+          "action": "add"
+        },
+        {
+          "t": 45104,
+          "type": "shift_click",
+          "rowIndex": 2,
+          "action": "add"
+        },
+        {
+          "t": 47062,
+          "type": "shift_click",
+          "rowIndex": 0,
+          "action": "add"
+        },
+        {
+          "t": 47878,
+          "type": "shift_click",
+          "rowIndex": 3,
+          "action": "add"
+        },
+        {
+          "t": 48193,
+          "type": "shift_click",
+          "rowIndex": 4,
+          "action": "add"
+        },
+        {
+          "t": 48569,
+          "type": "shift_click",
+          "rowIndex": 5,
+          "action": "add"
+        },
+        {
+          "t": 48928,
+          "type": "shift_click",
+          "rowIndex": 6,
+          "action": "add"
+        },
+        {
+          "t": 49198,
+          "type": "shift_click",
+          "rowIndex": 7,
+          "action": "add"
+        },
+        {
+          "t": 49573,
+          "type": "shift_click",
+          "rowIndex": 8,
+          "action": "add"
+        },
+        {
+          "t": 51027,
+          "type": "shift_click",
+          "rowIndex": 9,
+          "action": "add"
+        },
+        {
+          "t": 51268,
+          "type": "shift_click",
+          "rowIndex": 10,
+          "action": "add"
+        },
+        {
+          "t": 51567,
+          "type": "shift_click",
+          "rowIndex": 11,
+          "action": "add"
+        },
+        {
+          "t": 51898,
+          "type": "shift_click",
+          "rowIndex": 12,
+          "action": "add"
+        },
+        {
+          "t": 52304,
+          "type": "shift_click",
+          "rowIndex": 13,
+          "action": "add"
+        },
+        {
+          "t": 52656,
+          "type": "shift_click",
+          "rowIndex": 14,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q2",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "dec_Berries",
+      "correctAnswer": "dec_Broccoli",
+      "score": 0.6364,
+      "isCorrect": false,
+      "timeToAnswerMs": 252188,
+      "timePerChart": {
+        "objectives": {
+          "table": 252187
+        },
+        "decisions": {
+          "table": 252187
+        }
+      },
+      "actions": [
+        {
+          "t": 19375,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 21227,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 23103,
+          "type": "table_histogram_filter",
+          "column": "Fats",
+          "min": 0.03735914252892291,
+          "max": 0.06706089947736803
+        },
+        {
+          "t": 24100,
+          "type": "table_histogram_filter",
+          "column": "Fats",
+          "min": 0.03735914252892291,
+          "max": 0.06706089947736803
+        },
+        {
+          "t": 26479,
+          "type": "clear_selection"
+        },
+        {
+          "t": 33639,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 34307,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 37855,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 50072,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 61615,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 62274,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 71012,
+          "type": "table_group_expand",
+          "group": "Proteins",
+          "expanded": true
+        },
+        {
+          "t": 75655,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "asc"
+        },
+        {
+          "t": 76247,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "desc"
+        },
+        {
+          "t": 79397,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "none"
+        },
+        {
+          "t": 107799,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 118779,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 119889,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 164843,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": true
+        },
+        {
+          "t": 211380,
+          "type": "table_sort",
+          "column": "dec_Almonds",
+          "direction": "asc"
+        },
+        {
+          "t": 212198,
+          "type": "table_sort",
+          "column": "dec_Almonds",
+          "direction": "desc"
+        },
+        {
+          "t": 215213,
+          "type": "table_sort",
+          "column": "dec_Almonds",
+          "direction": "none"
+        },
+        {
+          "t": 215814,
+          "type": "table_sort",
+          "column": "dec_Avocado",
+          "direction": "asc"
+        },
+        {
+          "t": 216564,
+          "type": "table_sort",
+          "column": "dec_Avocado",
+          "direction": "desc"
+        },
+        {
+          "t": 216893,
+          "type": "table_sort",
+          "column": "dec_Avocado",
+          "direction": "none"
+        }
+      ]
+    },
+    {
+      "questionId": "q3",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          3
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        10
+      ],
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 187387,
+      "timePerChart": {
+        "objectives": {
+          "table": 187387
+        },
+        "decisions": {
+          "table": 187387
+        }
+      },
+      "actions": [
+        {
+          "t": 7426,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 8399,
+          "type": "table_group_expand",
+          "group": "Proteins",
+          "expanded": false
+        },
+        {
+          "t": 8979,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": false
+        },
+        {
+          "t": 9856,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 12742,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 13140,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 13501,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 13718,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 29333,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 8.386004421716656,
+          "max": 14.197708735794526
+        },
+        {
+          "t": 31912,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7269998361673179,
+          "max": 0.818407244014759
+        },
+        {
+          "t": 34537,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.14931045909008533,
+          "max": 0.2227961394760795
+        },
+        {
+          "t": 44506,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7269998361673179,
+          "max": 0.8018761236643394
+        },
+        {
+          "t": 46012,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7474206481156678,
+          "max": 0.8222969356126894
+        },
+        {
+          "t": 46972,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7571448409986542,
+          "max": 0.8222969356126894
+        },
+        {
+          "t": 48442,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 10.916907790831594,
+          "max": 14.197708735794526
+        },
+        {
+          "t": 50655,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.14179487836577104,
+          "max": 0.20860004850398522
+        },
+        {
+          "t": 51870,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.1743623957775277,
+          "max": 0.20860004850398522
+        },
+        {
+          "t": 52740,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.1743623957775277,
+          "max": 0.22196107463791304
+        },
+        {
+          "t": 53827,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.15515591295725067,
+          "max": 0.16851694754873028
+        },
+        {
+          "t": 55140,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.15515591295725067,
+          "max": 0.22697146366691187
+        },
+        {
+          "t": 57518,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7221377446501663,
+          "max": 0.8222969356126894
+        },
+        {
+          "t": 58605,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.16768188271056383,
+          "max": 0.22697146366691187
+        },
+        {
+          "t": 60022,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.14764033223293635,
+          "max": 0.22697146366691187
+        },
+        {
+          "t": 61177,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.1509805887664183,
+          "max": 0.22697146366691187
+        },
+        {
+          "t": 63781,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7590896802318303,
+          "max": 0.8222969356126894
+        },
+        {
+          "t": 64949,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7881552988948066,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 66781,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 10.916907790831594,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 68009,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 13.166599885460881,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 68782,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 15.04134319216617,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 69419,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 16.447401146881155,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 70156,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 15.13508038914717,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 73455,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.1509805887664183,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 74287,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7881552988948066,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 75734,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.14262994320393751,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 76935,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.14262994320393751,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 77835,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.16434162335789793,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 78487,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.17770265513019362,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 79095,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.19106368690248932,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 79972,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.18605330351185834,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 80535,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.1810429144828595,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 84113,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7998243277280747,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 84660,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.813438202360308,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 85349,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8212175461614347,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 85958,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8309417423273157,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 86557,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.844555616959549,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 88552,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 16.541138343862155,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 90142,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8095485238939556,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 91086,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 17.572246244823766,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 91604,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 18.228406623690756,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 92219,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 16.63487554084315,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 95534,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8153830415934842,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 96261,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.844555616959549,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 97012,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8406659384931965,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 109995,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7463412652302022,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 111441,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.23365198237224366,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 112551,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.16350655851973145,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 114675,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 8.760953209640652,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 115979,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.19523901109332167,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 116618,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.23114678785774423,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 117449,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.21862081528524716,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 118667,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.20191952979865344,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 119827,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7687069131288338,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 120450,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7852380466108313,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 121664,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 8.104793147231003,
+          "max": 9.97953613747895
+        },
+        {
+          "t": 122384,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 8.104793147231003,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 123368,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 8.104793147231003,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 124312,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 10.448222122383946,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 124926,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 11.76054288011793,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 126554,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7949622362109232,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 127087,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.803714012760216,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 128639,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 13.447811792861222,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 129262,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 14.103971538813527,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 129778,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 12.229228232108236,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 130807,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.21110524301848466,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 131407,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.22112600979974656,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 131910,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.21862081528524716,
+          "max": 0.2495933737413971
+        },
+        {
+          "t": 132854,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.813438208926097,
+          "max": 0.8513625542756655
+        },
+        {
+          "t": 134257,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 13.54154898984222,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 134811,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 14.66639472069952,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 135674,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 16.1661898723955,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 136298,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 15.510029493528508,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 136807,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 14.57265752371852,
+          "max": 18.94924613683151
+        },
+        {
+          "t": 184260,
+          "type": "shift_click",
+          "rowIndex": 3,
+          "action": "remove"
+        },
+        {
+          "t": 185782,
+          "type": "shift_click",
+          "rowIndex": 3,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q4",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        18,
+        17,
+        12
+      ],
+      "correctAnswer": [
+        12,
+        17,
+        18
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 69869,
+      "timePerChart": {
+        "objectives": {
+          "table": 66779
+        },
+        "decisions": {
+          "table": 65519
+        }
+      },
+      "actions": [
+        {
+          "t": 16949,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 18674,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 56004,
+          "type": "shift_click",
+          "rowIndex": 18,
+          "action": "add"
+        },
+        {
+          "t": 57421,
+          "type": "shift_click",
+          "rowIndex": 17,
+          "action": "add"
+        },
+        {
+          "t": 59085,
+          "type": "shift_click",
+          "rowIndex": 12,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q5",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Cost",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 102338,
+      "timePerChart": {
+        "objectives": {
+          "table": 102338
+        },
+        "decisions": {
+          "table": 102338
+        }
+      },
+      "actions": [
+        {
+          "t": 2558,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "asc"
+        },
+        {
+          "t": 4673,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "desc"
+        },
+        {
+          "t": 11732,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 12698,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 13935,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": true
+        },
+        {
+          "t": 14438,
+          "type": "table_group_expand",
+          "group": "Proteins",
+          "expanded": true
+        }
+      ]
+    },
+    {
+      "questionId": "q6",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          3
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        11
+      ],
+      "score": 0.4211,
+      "isCorrect": false,
+      "timeToAnswerMs": 60011,
+      "timePerChart": {
+        "objectives": {
+          "table": 60011
+        },
+        "decisions": {
+          "table": 60011
+        }
+      },
+      "actions": [
+        {
+          "t": 21386,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "none"
+        },
+        {
+          "t": 26582,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.21511186252688383,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 28278,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7075342497340766,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 29417,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 6.939146922033394,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 30819,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.288868965802846,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 31659,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.3508919896476185,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 32971,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.777999590743054,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 33581,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.790434647831066,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 35147,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 12.269735429293863,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 36033,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 13.363189368184566,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 37014,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.790434647831066,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 37765,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8101234992986988,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 39310,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.33412900864802364,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 40059,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.3743601589441359,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 40901,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.350891992654065,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 42099,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7800721014238575,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 43808,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 13.363189368184566,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 45166,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 9.672782151388976,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 46651,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.3743601589441359,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 48084,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8039059672562885,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 49368,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 11.176281490403161,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 49951,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 11.65466732910864,
+          "max": 17.852501925115668
+        },
+        {
+          "t": 51182,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.3844179493477607,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 51788,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.4078861269562186,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 52540,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.3961520381519896,
+          "max": 0.48682300324766103
+        },
+        {
+          "t": 53779,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8111597476422918,
+          "max": 0.8773660983516086
+        },
+        {
+          "t": 54386,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8246310670675142,
+          "max": 0.8773660983516086
+        }
+      ]
+    },
+    {
+      "questionId": "q7",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        18,
+        15,
+        20,
+        19,
+        17,
+        16,
+        6,
+        5,
+        13,
+        9,
+        14
+      ],
+      "correctAnswer": [
+        5,
+        6,
+        9,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 62528,
+      "timePerChart": {
+        "decisions": {
+          "table": 1628,
+          "barChart": 57457
+        },
+        "objectives": {
+          "table": 17957,
+          "scatter": 3645,
+          "scatter3dGL": 1408,
+          "pcp": 5452,
+          "radar": 1689,
+          "radviz": 1529,
+          "correlationHeatmap": 2101
+        }
+      },
+      "actions": [
+        {
+          "t": 4413,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 10149,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 12848,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 13785,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 14670,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 17355,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 18052,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 21015,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 21674,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 24443,
+          "type": "barchart_group_expand",
+          "group": "Carbohydrates",
+          "expanded": true
+        },
+        {
+          "t": 25111,
+          "type": "barchart_group_expand",
+          "group": "Carbohydrates",
+          "expanded": false
+        },
+        {
+          "t": 29483,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 32205,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 33195,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 35692,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 37380,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 38909,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 41010,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 41933,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 43689,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 44108,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 47062,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 48315,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "asc"
+        },
+        {
+          "t": 49058,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "desc"
+        },
+        {
+          "t": 54551,
+          "type": "shift_click",
+          "rowIndex": 18,
+          "action": "add"
+        },
+        {
+          "t": 55786,
+          "type": "shift_click",
+          "rowIndex": 15,
+          "action": "add"
+        },
+        {
+          "t": 56312,
+          "type": "shift_click",
+          "rowIndex": 20,
+          "action": "add"
+        },
+        {
+          "t": 56665,
+          "type": "shift_click",
+          "rowIndex": 19,
+          "action": "add"
+        },
+        {
+          "t": 56995,
+          "type": "shift_click",
+          "rowIndex": 17,
+          "action": "add"
+        },
+        {
+          "t": 57274,
+          "type": "shift_click",
+          "rowIndex": 16,
+          "action": "add"
+        },
+        {
+          "t": 57579,
+          "type": "shift_click",
+          "rowIndex": 6,
+          "action": "add"
+        },
+        {
+          "t": 57835,
+          "type": "shift_click",
+          "rowIndex": 5,
+          "action": "add"
+        },
+        {
+          "t": 58121,
+          "type": "shift_click",
+          "rowIndex": 13,
+          "action": "add"
+        },
+        {
+          "t": 58487,
+          "type": "shift_click",
+          "rowIndex": 9,
+          "action": "add"
+        },
+        {
+          "t": 59770,
+          "type": "shift_click",
+          "rowIndex": 14,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q8",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "Vegetables_Fruits",
+      "correctAnswer": "Carbohydrates",
+      "score": 0.5,
+      "isCorrect": false,
+      "timeToAnswerMs": 188721,
+      "timePerChart": {
+        "objectives": {
+          "table": 2392,
+          "correlationHeatmap": 181738,
+          "radviz": 3540,
+          "radar": 1051
+        },
+        "decisions": {
+          "barChart": 188721
+        }
+      },
+      "actions": [
+        {
+          "t": 2392,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 38556,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 39358,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 57230,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 58281,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 88798,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 90478,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 105928,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 109468,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 110519,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 132537,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 133370,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 185750,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 186567,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        }
+      ]
+    },
+    {
+      "questionId": "q9",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          11
+        ],
+        "justification": "It was at the center of radviz"
+      },
+      "correctAnswer": [
+        13
+      ],
+      "score": 0.6842,
+      "isCorrect": false,
+      "timeToAnswerMs": 87006,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 5451,
+          "scatter": 459,
+          "scatter3dGL": 28866,
+          "radar": 983,
+          "radviz": 51248
+        },
+        "decisions": {
+          "barChart": 87006
+        }
+      },
+      "actions": [
+        {
+          "t": 5451,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 5910,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 11383,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 12239,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 13281,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": false
+        },
+        {
+          "t": 13625,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 14218,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": false
+        },
+        {
+          "t": 14676,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "surface",
+          "active": false
+        },
+        {
+          "t": 15621,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "ideal_point",
+          "active": true
+        },
+        {
+          "t": 20458,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 21292,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "ideal_point",
+          "active": false
+        },
+        {
+          "t": 21666,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "dominated_cloud",
+          "active": true
+        },
+        {
+          "t": 22394,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "dominated_cloud",
+          "active": false
+        },
+        {
+          "t": 23219,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "surface",
+          "active": true
+        },
+        {
+          "t": 23729,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "surface",
+          "active": false
+        },
+        {
+          "t": 24501,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 24808,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": false
+        },
+        {
+          "t": 25311,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "labels",
+          "active": true
+        },
+        {
+          "t": 26166,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "labels",
+          "active": false
+        },
+        {
+          "t": 34776,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 35758,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 59207,
+          "type": "radviz_glyph_expand",
+          "rowIndex": 11
+        },
+        {
+          "t": 63195,
+          "type": "radviz_glyph_collapse"
+        },
+        {
+          "t": 64569,
+          "type": "shift_click",
+          "rowIndex": 11,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q10",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        20,
+        19
+      ],
+      "correctAnswer": [
+        19,
+        20
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 22399,
+      "timePerChart": {
+        "objectives": {
+          "table": 19026
+        },
+        "decisions": {
+          "table": 17295
+        }
+      },
+      "actions": [
+        {
+          "t": 9416,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "asc"
+        },
+        {
+          "t": 10174,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "desc"
+        },
+        {
+          "t": 10932,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "none"
+        },
+        {
+          "t": 11344,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "asc"
+        },
+        {
+          "t": 12874,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "desc"
+        },
+        {
+          "t": 19003,
+          "type": "shift_click",
+          "rowIndex": 20,
+          "action": "add"
+        },
+        {
+          "t": 19738,
+          "type": "shift_click",
+          "rowIndex": 19,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q11",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Prep_Time",
+      "correctAnswer": "obj_Prep_Time",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 39555,
+      "timePerChart": {
+        "objectives": {
+          "table": 4643,
+          "correlationHeatmap": 34912
+        },
+        "decisions": {
+          "table": 39555
+        }
+      },
+      "actions": [
+        {
+          "t": 4643,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        }
+      ]
+    },
+    {
+      "questionId": "q12",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          16
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        14
+      ],
+      "score": 0.8421,
+      "isCorrect": false,
+      "timeToAnswerMs": 12776,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 2584,
+          "pcp": 540,
+          "scatter3dGL": 390,
+          "scatter": 435,
+          "table": 1268,
+          "radar": 509,
+          "radviz": 7050
+        },
+        "decisions": {
+          "table": 12776
+        }
+      },
+      "actions": [
+        {
+          "t": 2584,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 3124,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 3514,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 3949,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 5217,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 5726,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 8165,
+          "type": "radviz_glyph_expand",
+          "rowIndex": 16
+        },
+        {
+          "t": 8885,
+          "type": "radviz_glyph_collapse"
+        },
+        {
+          "t": 11098,
+          "type": "shift_click",
+          "rowIndex": 16,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q13",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        86,
+        81,
+        84,
+        77,
+        75,
+        76,
+        69,
+        91,
+        88,
+        94,
+        90,
+        83,
+        63,
+        95
+      ],
+      "correctAnswer": [
+        63,
+        69,
+        75,
+        76,
+        77,
+        81,
+        83,
+        84,
+        86,
+        88,
+        90,
+        91,
+        94,
+        95
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 27583,
+      "timePerChart": {
+        "objectives": {
+          "table": 23200
+        },
+        "decisions": {
+          "table": 21827
+        }
+      },
+      "actions": [
+        {
+          "t": 10519,
+          "type": "table_sort",
+          "column": "obj_Satiety",
+          "direction": "asc"
+        },
+        {
+          "t": 11583,
+          "type": "table_sort",
+          "column": "obj_Satiety",
+          "direction": "desc"
+        },
+        {
+          "t": 13926,
+          "type": "shift_click",
+          "rowIndex": 86,
+          "action": "add"
+        },
+        {
+          "t": 14262,
+          "type": "shift_click",
+          "rowIndex": 86,
+          "action": "remove"
+        },
+        {
+          "t": 14983,
+          "type": "shift_click",
+          "rowIndex": 86,
+          "action": "add"
+        },
+        {
+          "t": 15680,
+          "type": "shift_click",
+          "rowIndex": 81,
+          "action": "add"
+        },
+        {
+          "t": 16024,
+          "type": "shift_click",
+          "rowIndex": 84,
+          "action": "add"
+        },
+        {
+          "t": 16493,
+          "type": "shift_click",
+          "rowIndex": 77,
+          "action": "add"
+        },
+        {
+          "t": 16837,
+          "type": "shift_click",
+          "rowIndex": 75,
+          "action": "add"
+        },
+        {
+          "t": 17367,
+          "type": "shift_click",
+          "rowIndex": 76,
+          "action": "add"
+        },
+        {
+          "t": 17692,
+          "type": "shift_click",
+          "rowIndex": 69,
+          "action": "add"
+        },
+        {
+          "t": 17997,
+          "type": "shift_click",
+          "rowIndex": 91,
+          "action": "add"
+        },
+        {
+          "t": 19100,
+          "type": "shift_click",
+          "rowIndex": 88,
+          "action": "add"
+        },
+        {
+          "t": 19431,
+          "type": "shift_click",
+          "rowIndex": 94,
+          "action": "add"
+        },
+        {
+          "t": 20907,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "add"
+        },
+        {
+          "t": 21269,
+          "type": "shift_click",
+          "rowIndex": 83,
+          "action": "add"
+        },
+        {
+          "t": 21687,
+          "type": "shift_click",
+          "rowIndex": 63,
+          "action": "add"
+        },
+        {
+          "t": 23375,
+          "type": "shift_click",
+          "rowIndex": 95,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q14",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "dec_Chicken_Breast",
+      "correctAnswer": "dec_Almonds",
+      "score": 0.6364,
+      "isCorrect": false,
+      "timeToAnswerMs": 368493,
+      "timePerChart": {
+        "objectives": {
+          "table": 368493
+        },
+        "decisions": {
+          "table": 368493
+        }
+      },
+      "actions": [
+        {
+          "t": 9368,
+          "type": "table_sort",
+          "column": "obj_Satiety",
+          "direction": "none"
+        },
+        {
+          "t": 10243,
+          "type": "table_sort",
+          "column": "obj_Satiety",
+          "direction": "asc"
+        },
+        {
+          "t": 33642,
+          "type": "table_sort",
+          "column": "dec_Almonds",
+          "direction": "asc"
+        },
+        {
+          "t": 47773,
+          "type": "table_sort",
+          "column": "dec_Almonds",
+          "direction": "desc"
+        },
+        {
+          "t": 48343,
+          "type": "table_sort",
+          "column": "dec_Almonds",
+          "direction": "none"
+        },
+        {
+          "t": 48943,
+          "type": "table_sort",
+          "column": "dec_Avocado",
+          "direction": "asc"
+        },
+        {
+          "t": 61002,
+          "type": "table_sort",
+          "column": "dec_Avocado",
+          "direction": "desc"
+        },
+        {
+          "t": 61445,
+          "type": "table_sort",
+          "column": "dec_Avocado",
+          "direction": "none"
+        },
+        {
+          "t": 62143,
+          "type": "table_sort",
+          "column": "dec_Olive_Oil",
+          "direction": "asc"
+        },
+        {
+          "t": 77345,
+          "type": "table_sort",
+          "column": "dec_Olive_Oil",
+          "direction": "desc"
+        },
+        {
+          "t": 78013,
+          "type": "table_sort",
+          "column": "dec_Olive_Oil",
+          "direction": "none"
+        },
+        {
+          "t": 79220,
+          "type": "table_sort",
+          "column": "dec_Berries",
+          "direction": "asc"
+        },
+        {
+          "t": 102770,
+          "type": "table_sort",
+          "column": "dec_Berries",
+          "direction": "desc"
+        },
+        {
+          "t": 103332,
+          "type": "table_sort",
+          "column": "dec_Berries",
+          "direction": "none"
+        },
+        {
+          "t": 103768,
+          "type": "table_sort",
+          "column": "dec_Broccoli",
+          "direction": "asc"
+        },
+        {
+          "t": 124565,
+          "type": "table_sort",
+          "column": "dec_Broccoli",
+          "direction": "desc"
+        },
+        {
+          "t": 125340,
+          "type": "table_sort",
+          "column": "dec_Broccoli",
+          "direction": "none"
+        },
+        {
+          "t": 125984,
+          "type": "table_sort",
+          "column": "dec_Spinach",
+          "direction": "asc"
+        },
+        {
+          "t": 147515,
+          "type": "table_sort",
+          "column": "dec_Spinach",
+          "direction": "desc"
+        },
+        {
+          "t": 147650,
+          "type": "table_sort",
+          "column": "dec_Spinach",
+          "direction": "none"
+        },
+        {
+          "t": 148423,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "asc"
+        },
+        {
+          "t": 217079,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "desc"
+        },
+        {
+          "t": 217437,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "none"
+        },
+        {
+          "t": 217857,
+          "type": "table_sort",
+          "column": "dec_Eggs",
+          "direction": "asc"
+        },
+        {
+          "t": 239060,
+          "type": "table_sort",
+          "column": "dec_Eggs",
+          "direction": "desc"
+        },
+        {
+          "t": 239374,
+          "type": "table_sort",
+          "column": "dec_Eggs",
+          "direction": "none"
+        },
+        {
+          "t": 239869,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "asc"
+        },
+        {
+          "t": 322235,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "desc"
+        },
+        {
+          "t": 322833,
+          "type": "table_sort",
+          "column": "dec_Tofu",
+          "direction": "none"
+        },
+        {
+          "t": 323455,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "asc"
+        },
+        {
+          "t": 353997,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "desc"
+        },
+        {
+          "t": 354529,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "none"
+        },
+        {
+          "t": 354918,
+          "type": "table_sort",
+          "column": "dec_Sweet_Potato",
+          "direction": "asc"
+        }
+      ]
+    },
+    {
+      "questionId": "q15",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          57
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        49
+      ],
+      "score": 0.7778,
+      "isCorrect": false,
+      "timeToAnswerMs": 61432,
+      "timePerChart": {
+        "objectives": {
+          "table": 61432
+        },
+        "decisions": {
+          "table": 61432
+        }
+      },
+      "actions": [
+        {
+          "t": 5551,
+          "type": "table_sort",
+          "column": "obj_Satiety",
+          "direction": "desc"
+        },
+        {
+          "t": 5969,
+          "type": "table_sort",
+          "column": "obj_Satiety",
+          "direction": "none"
+        },
+        {
+          "t": 10574,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 35.516303942538485,
+          "max": 119.49725448447079
+        },
+        {
+          "t": 11595,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.19063741068543053,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 12516,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.17235787143252088,
+          "max": 0.9852096872353414
+        },
+        {
+          "t": 13514,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.6947940996194819,
+          "max": 0.8999994816891205
+        },
+        {
+          "t": 14414,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 4.733831019570436,
+          "max": 19.99984238746521
+        },
+        {
+          "t": 15502,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5066971591880611,
+          "max": 0.7122853957142397
+        },
+        {
+          "t": 17146,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 52.317534400984016,
+          "max": 119.49725448447079
+        },
+        {
+          "t": 20235,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.25396042271753405,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 21413,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.297130462153868,
+          "max": 0.9852096872353414
+        },
+        {
+          "t": 22416,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7290934953976378,
+          "max": 0.8999994816891205
+        },
+        {
+          "t": 23549,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 7.101387540352098,
+          "max": 19.99984238746521
+        },
+        {
+          "t": 24659,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5458680076324423,
+          "max": 0.7122853957142397
+        },
+        {
+          "t": 25222,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5654534283244689,
+          "max": 0.7122853957142397
+        },
+        {
+          "t": 26169,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 6.312202033424878,
+          "max": 9.468943681810293
+        },
+        {
+          "t": 27208,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 9.468943681810293,
+          "max": 19.99984238746521
+        },
+        {
+          "t": 28665,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7686697191493944,
+          "max": 0.8999994816891205
+        },
+        {
+          "t": 29954,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.4323007596062443,
+          "max": 0.9852096872353414
+        },
+        {
+          "t": 31140,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.34894492047480796,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 32932,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.34894492047480796,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 34244,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.34894492047480796,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 35116,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.28034500091880316,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 36180,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 52.317534400984016,
+          "max": 119.49725448447079
+        },
+        {
+          "t": 36968,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 62.81830204952854,
+          "max": 119.49725448447079
+        },
+        {
+          "t": 38806,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7343703208349202,
+          "max": 0.8999994816891205
+        },
+        {
+          "t": 40237,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 6.312202033424878,
+          "max": 8.285165421419462
+        },
+        {
+          "t": 41129,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 6.312202033424878,
+          "max": 19.99984238746521
+        },
+        {
+          "t": 43079,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.526282577526645,
+          "max": 0.6731145449164158
+        },
+        {
+          "t": 44069,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.6756214320726922,
+          "max": 0.7122853957142397
+        },
+        {
+          "t": 45937,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5287307439342955,
+          "max": 0.7122853957142397
+        },
+        {
+          "t": 47513,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7660312988217982,
+          "max": 0.8999994816891205
+        },
+        {
+          "t": 49064,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.32783724979744006,
+          "max": 0.5999995844056365
+        },
+        {
+          "t": 50205,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 69.11876384998668,
+          "max": 119.49725448447079
+        },
+        {
+          "t": 50977,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 75.41922565044482,
+          "max": 119.49725448447079
+        },
+        {
+          "t": 52268,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 7.495979914492242,
+          "max": 19.99984238746521
+        },
+        {
+          "t": 53542,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 5.917609279961267,
+          "max": 19.99984238746521
+        },
+        {
+          "t": 56514,
+          "type": "shift_click",
+          "rowIndex": 56,
+          "action": "remove"
+        },
+        {
+          "t": 58517,
+          "type": "shift_click",
+          "rowIndex": 57,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q16",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        21,
+        19,
+        26,
+        25,
+        35,
+        29,
+        31,
+        32,
+        38,
+        34,
+        42,
+        37,
+        47,
+        46,
+        17,
+        27,
+        44,
+        20,
+        59,
+        30,
+        50,
+        64,
+        62,
+        48,
+        41,
+        40,
+        22,
+        56,
+        51,
+        23,
+        43,
+        39
+      ],
+      "correctAnswer": [
+        17,
+        19,
+        20,
+        21,
+        22,
+        23,
+        25,
+        26,
+        27,
+        29,
+        30,
+        31,
+        32,
+        34,
+        35,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        46,
+        47,
+        48,
+        50,
+        51,
+        56,
+        59,
+        62,
+        64
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 28247,
+      "timePerChart": {
+        "decisions": {
+          "table": 24854
+        }
+      },
+      "actions": [
+        {
+          "t": 7412,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "asc"
+        },
+        {
+          "t": 7944,
+          "type": "table_sort",
+          "column": "dec_Chicken_Breast",
+          "direction": "desc"
+        },
+        {
+          "t": 11230,
+          "type": "shift_click",
+          "rowIndex": 21,
+          "action": "add"
+        },
+        {
+          "t": 11822,
+          "type": "shift_click",
+          "rowIndex": 19,
+          "action": "add"
+        },
+        {
+          "t": 12183,
+          "type": "shift_click",
+          "rowIndex": 26,
+          "action": "add"
+        },
+        {
+          "t": 12536,
+          "type": "shift_click",
+          "rowIndex": 25,
+          "action": "add"
+        },
+        {
+          "t": 12948,
+          "type": "shift_click",
+          "rowIndex": 35,
+          "action": "add"
+        },
+        {
+          "t": 13285,
+          "type": "shift_click",
+          "rowIndex": 29,
+          "action": "add"
+        },
+        {
+          "t": 13653,
+          "type": "shift_click",
+          "rowIndex": 31,
+          "action": "add"
+        },
+        {
+          "t": 13923,
+          "type": "shift_click",
+          "rowIndex": 32,
+          "action": "add"
+        },
+        {
+          "t": 15130,
+          "type": "shift_click",
+          "rowIndex": 38,
+          "action": "add"
+        },
+        {
+          "t": 15324,
+          "type": "shift_click",
+          "rowIndex": 34,
+          "action": "add"
+        },
+        {
+          "t": 15610,
+          "type": "shift_click",
+          "rowIndex": 42,
+          "action": "add"
+        },
+        {
+          "t": 15933,
+          "type": "shift_click",
+          "rowIndex": 37,
+          "action": "add"
+        },
+        {
+          "t": 17208,
+          "type": "shift_click",
+          "rowIndex": 47,
+          "action": "add"
+        },
+        {
+          "t": 17501,
+          "type": "shift_click",
+          "rowIndex": 46,
+          "action": "add"
+        },
+        {
+          "t": 17792,
+          "type": "shift_click",
+          "rowIndex": 17,
+          "action": "add"
+        },
+        {
+          "t": 18116,
+          "type": "shift_click",
+          "rowIndex": 27,
+          "action": "add"
+        },
+        {
+          "t": 18431,
+          "type": "shift_click",
+          "rowIndex": 44,
+          "action": "add"
+        },
+        {
+          "t": 18656,
+          "type": "shift_click",
+          "rowIndex": 20,
+          "action": "add"
+        },
+        {
+          "t": 18977,
+          "type": "shift_click",
+          "rowIndex": 59,
+          "action": "add"
+        },
+        {
+          "t": 19263,
+          "type": "shift_click",
+          "rowIndex": 30,
+          "action": "add"
+        },
+        {
+          "t": 20562,
+          "type": "shift_click",
+          "rowIndex": 50,
+          "action": "add"
+        },
+        {
+          "t": 20929,
+          "type": "shift_click",
+          "rowIndex": 64,
+          "action": "add"
+        },
+        {
+          "t": 21220,
+          "type": "shift_click",
+          "rowIndex": 62,
+          "action": "add"
+        },
+        {
+          "t": 22645,
+          "type": "shift_click",
+          "rowIndex": 48,
+          "action": "add"
+        },
+        {
+          "t": 23020,
+          "type": "shift_click",
+          "rowIndex": 41,
+          "action": "add"
+        },
+        {
+          "t": 23290,
+          "type": "shift_click",
+          "rowIndex": 40,
+          "action": "add"
+        },
+        {
+          "t": 24850,
+          "type": "shift_click",
+          "rowIndex": 22,
+          "action": "add"
+        },
+        {
+          "t": 25195,
+          "type": "shift_click",
+          "rowIndex": 56,
+          "action": "add"
+        },
+        {
+          "t": 25578,
+          "type": "shift_click",
+          "rowIndex": 51,
+          "action": "add"
+        },
+        {
+          "t": 25870,
+          "type": "shift_click",
+          "rowIndex": 23,
+          "action": "add"
+        },
+        {
+          "t": 26252,
+          "type": "shift_click",
+          "rowIndex": 43,
+          "action": "add"
+        },
+        {
+          "t": 26545,
+          "type": "shift_click",
+          "rowIndex": 39,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q17",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Satiety",
+      "correctAnswer": "obj_Satiety",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 105962,
+      "timePerChart": {
+        "decisions": {
+          "table": 105962
+        },
+        "objectives": {
+          "table": 99938
+        }
+      },
+      "actions": [
+        {
+          "t": 9780,
+          "type": "table_sort",
+          "column": "obj_Carbon_Footprint",
+          "direction": "asc"
+        },
+        {
+          "t": 21897,
+          "type": "table_sort",
+          "column": "obj_Carbon_Footprint",
+          "direction": "desc"
+        },
+        {
+          "t": 45308,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "asc"
+        },
+        {
+          "t": 46380,
+          "type": "table_sort",
+          "column": "obj_Carbon_Footprint",
+          "direction": "asc"
+        }
+      ]
+    },
+    {
+      "questionId": "q18",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          40
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        67
+      ],
+      "score": 0.4646,
+      "isCorrect": false,
+      "timeToAnswerMs": 57194,
+      "timePerChart": {
+        "objectives": {
+          "table": 57194
+        },
+        "decisions": {
+          "table": 57194
+        }
+      },
+      "actions": [
+        {
+          "t": 5209,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 150.48301437056318,
+          "max": 539.999710329705
+        },
+        {
+          "t": 6560,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.17250929942033938,
+          "max": 0.4999999136872812
+        },
+        {
+          "t": 7723,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.215652871092658,
+          "max": 0.9930716663825333
+        },
+        {
+          "t": 8646,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7412575085580673,
+          "max": 0.899999941042915
+        },
+        {
+          "t": 9282,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 4.935566052778637,
+          "max": 19.999998182848827
+        },
+        {
+          "t": 10197,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5382216495053291,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 13437,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 117.55497814238109,
+          "max": 539.999710329705
+        },
+        {
+          "t": 14412,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 216.3390762756465,
+          "max": 539.999710329705
+        },
+        {
+          "t": 15470,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.23161092716273052,
+          "max": 0.4999999136872812
+        },
+        {
+          "t": 16909,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.215652871092658,
+          "max": 0.9930716663825333
+        },
+        {
+          "t": 17825,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.38334458149318545,
+          "max": 0.9930716663825333
+        },
+        {
+          "t": 19603,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7251007526469824,
+          "max": 0.899999941042915
+        },
+        {
+          "t": 20488,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7251007526469824,
+          "max": 0.899999941042915
+        },
+        {
+          "t": 21365,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7689547977492629,
+          "max": 0.899999941042915
+        },
+        {
+          "t": 22797,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 8.485891087077341,
+          "max": 19.999998182848827
+        },
+        {
+          "t": 24326,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5382216495053291,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 25452,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5212177643695804,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 26742,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.5824317593581436,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 27410,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.6028364254440581,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 28670,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 12.233456422126842,
+          "max": 19.999998182848827
+        },
+        {
+          "t": 30575,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 9.669332891582128,
+          "max": 19.999998182848827
+        },
+        {
+          "t": 31775,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7920358776222411,
+          "max": 0.899999941042915
+        },
+        {
+          "t": 32975,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.498632666397238,
+          "max": 0.9930716663825333
+        },
+        {
+          "t": 34093,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.3075987284626803,
+          "max": 0.4999999136872812
+        },
+        {
+          "t": 35262,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 216.3390762756465,
+          "max": 539.999710329705
+        },
+        {
+          "t": 36193,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 309.63516837088156,
+          "max": 539.999710329705
+        },
+        {
+          "t": 39724,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.6300426468919441,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 40438,
+          "type": "table_histogram_filter",
+          "column": "obj_Satiety",
+          "min": 0.6470465287585125,
+          "max": 0.7999999518208901
+        },
+        {
+          "t": 41563,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 11.050014617622058,
+          "max": 19.999998182848827
+        },
+        {
+          "t": 43077,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.8105007415206238,
+          "max": 0.899999941042915
+        },
+        {
+          "t": 44495,
+          "type": "table_histogram_filter",
+          "column": "obj_Diversity",
+          "min": 0.5929592849824328,
+          "max": 0.9930716663825333
+        },
+        {
+          "t": 45791,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.29071256302149606,
+          "max": 0.4999999136872812
+        },
+        {
+          "t": 46887,
+          "type": "table_histogram_filter",
+          "column": "obj_Cost",
+          "min": 0.34981418264751285,
+          "max": 0.4999999136872812
+        },
+        {
+          "t": 48320,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 337.0751880097525,
+          "max": 539.999710329705
+        },
+        {
+          "t": 49003,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 353.53919557256273,
+          "max": 539.999710329705
+        },
+        {
+          "t": 51261,
+          "type": "table_histogram_filter",
+          "column": "obj_Carbon_Footprint",
+          "min": 315.1231638576311,
+          "max": 539.999710329705
+        }
+      ]
+    },
+    {
+      "questionId": "q19",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        100,
+        76,
+        77,
+        68,
+        84,
+        69,
+        94,
+        91,
+        96,
+        75,
+        49,
+        74,
+        66,
+        22,
+        71,
+        73,
+        88,
+        72,
+        50,
+        21,
+        83,
+        79,
+        59,
+        33,
+        51,
+        54,
+        56,
+        65,
+        32,
+        31,
+        85,
+        25,
+        26,
+        61,
+        58
+      ],
+      "correctAnswer": [
+        21,
+        22,
+        25,
+        26,
+        31,
+        32,
+        33,
+        49,
+        50,
+        51,
+        54,
+        56,
+        58,
+        59,
+        61,
+        65,
+        66,
+        68,
+        69,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        79,
+        83,
+        84,
+        85,
+        88,
+        91,
+        94,
+        96,
+        100
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 35607,
+      "timePerChart": {
+        "decisions": {
+          "table": 818,
+          "barChart": 31973
+        },
+        "objectives": {
+          "table": 30504
+        }
+      },
+      "actions": [
+        {
+          "t": 3634,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 6724,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "asc"
+        },
+        {
+          "t": 8982,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "desc"
+        },
+        {
+          "t": 13790,
+          "type": "shift_click",
+          "rowIndex": 100,
+          "action": "add"
+        },
+        {
+          "t": 15956,
+          "type": "shift_click",
+          "rowIndex": 76,
+          "action": "add"
+        },
+        {
+          "t": 16345,
+          "type": "shift_click",
+          "rowIndex": 77,
+          "action": "add"
+        },
+        {
+          "t": 16647,
+          "type": "shift_click",
+          "rowIndex": 68,
+          "action": "add"
+        },
+        {
+          "t": 16938,
+          "type": "shift_click",
+          "rowIndex": 84,
+          "action": "add"
+        },
+        {
+          "t": 17402,
+          "type": "shift_click",
+          "rowIndex": 69,
+          "action": "add"
+        },
+        {
+          "t": 17830,
+          "type": "shift_click",
+          "rowIndex": 94,
+          "action": "add"
+        },
+        {
+          "t": 19578,
+          "type": "shift_click",
+          "rowIndex": 91,
+          "action": "add"
+        },
+        {
+          "t": 20230,
+          "type": "shift_click",
+          "rowIndex": 96,
+          "action": "add"
+        },
+        {
+          "t": 21257,
+          "type": "shift_click",
+          "rowIndex": 75,
+          "action": "add"
+        },
+        {
+          "t": 21670,
+          "type": "shift_click",
+          "rowIndex": 49,
+          "action": "add"
+        },
+        {
+          "t": 21963,
+          "type": "shift_click",
+          "rowIndex": 74,
+          "action": "add"
+        },
+        {
+          "t": 22301,
+          "type": "shift_click",
+          "rowIndex": 66,
+          "action": "add"
+        },
+        {
+          "t": 24137,
+          "type": "shift_click",
+          "rowIndex": 22,
+          "action": "add"
+        },
+        {
+          "t": 24407,
+          "type": "shift_click",
+          "rowIndex": 71,
+          "action": "add"
+        },
+        {
+          "t": 24705,
+          "type": "shift_click",
+          "rowIndex": 73,
+          "action": "add"
+        },
+        {
+          "t": 25083,
+          "type": "shift_click",
+          "rowIndex": 88,
+          "action": "add"
+        },
+        {
+          "t": 25480,
+          "type": "shift_click",
+          "rowIndex": 72,
+          "action": "add"
+        },
+        {
+          "t": 25774,
+          "type": "shift_click",
+          "rowIndex": 50,
+          "action": "add"
+        },
+        {
+          "t": 26115,
+          "type": "shift_click",
+          "rowIndex": 21,
+          "action": "add"
+        },
+        {
+          "t": 26710,
+          "type": "shift_click",
+          "rowIndex": 83,
+          "action": "add"
+        },
+        {
+          "t": 27926,
+          "type": "shift_click",
+          "rowIndex": 79,
+          "action": "add"
+        },
+        {
+          "t": 28347,
+          "type": "shift_click",
+          "rowIndex": 59,
+          "action": "add"
+        },
+        {
+          "t": 28672,
+          "type": "shift_click",
+          "rowIndex": 33,
+          "action": "add"
+        },
+        {
+          "t": 29027,
+          "type": "shift_click",
+          "rowIndex": 51,
+          "action": "add"
+        },
+        {
+          "t": 29304,
+          "type": "shift_click",
+          "rowIndex": 54,
+          "action": "add"
+        },
+        {
+          "t": 29635,
+          "type": "shift_click",
+          "rowIndex": 56,
+          "action": "add"
+        },
+        {
+          "t": 30885,
+          "type": "shift_click",
+          "rowIndex": 65,
+          "action": "add"
+        },
+        {
+          "t": 31175,
+          "type": "shift_click",
+          "rowIndex": 32,
+          "action": "add"
+        },
+        {
+          "t": 31488,
+          "type": "shift_click",
+          "rowIndex": 31,
+          "action": "add"
+        },
+        {
+          "t": 31876,
+          "type": "shift_click",
+          "rowIndex": 85,
+          "action": "add"
+        },
+        {
+          "t": 32223,
+          "type": "shift_click",
+          "rowIndex": 25,
+          "action": "add"
+        },
+        {
+          "t": 32466,
+          "type": "shift_click",
+          "rowIndex": 26,
+          "action": "add"
+        },
+        {
+          "t": 32845,
+          "type": "shift_click",
+          "rowIndex": 61,
+          "action": "add"
+        },
+        {
+          "t": 33194,
+          "type": "shift_click",
+          "rowIndex": 58,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q20",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "dec_Chicken_Breast",
+      "correctAnswer": "dec_Chicken_Breast",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 36995,
+      "timePerChart": {
+        "objectives": {
+          "table": 4011,
+          "correlationHeatmap": 32984
+        },
+        "decisions": {
+          "barChart": 36995
+        }
+      },
+      "actions": [
+        {
+          "t": 4011,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        }
+      ]
+    },
+    {
+      "questionId": "q21",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          90
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        73
+      ],
+      "score": 0.798,
+      "isCorrect": false,
+      "timeToAnswerMs": 32524,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 1880,
+          "radviz": 30644
+        },
+        "decisions": {
+          "barChart": 32524
+        }
+      },
+      "actions": [
+        {
+          "t": 1880,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 7070,
+          "type": "lasso_selection",
+          "count": 16
+        },
+        {
+          "t": 10888,
+          "type": "clear_selection"
+        },
+        {
+          "t": 13452,
+          "type": "lasso_selection",
+          "count": 26
+        },
+        {
+          "t": 14439,
+          "type": "zoom_toggle",
+          "zoomed": true
+        },
+        {
+          "t": 19526,
+          "type": "radviz_glyph_expand",
+          "rowIndex": 90
+        },
+        {
+          "t": 20563,
+          "type": "radviz_glyph_collapse"
+        },
+        {
+          "t": 21989,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "remove"
+        },
+        {
+          "t": 23953,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "add"
+        },
+        {
+          "t": 24486,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "remove"
+        },
+        {
+          "t": 24661,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "add"
+        },
+        {
+          "t": 27008,
+          "type": "radviz_glyph_expand",
+          "rowIndex": 90
+        },
+        {
+          "t": 27250,
+          "type": "radviz_glyph_collapse"
+        },
+        {
+          "t": 27997,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "remove"
+        },
+        {
+          "t": 28341,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "add"
+        },
+        {
+          "t": 30842,
+          "type": "lasso_selection",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "questionId": "q22",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        100,
+        82,
+        99,
+        94,
+        36,
+        50,
+        98,
+        79,
+        97,
+        77,
+        89,
+        76,
+        96,
+        80,
+        86,
+        87,
+        90,
+        93,
+        92,
+        95,
+        45,
+        75,
+        67,
+        65,
+        17
+      ],
+      "correctAnswer": [
+        17,
+        36,
+        45,
+        50,
+        65,
+        67,
+        75,
+        76,
+        77,
+        79,
+        80,
+        82,
+        86,
+        87,
+        89,
+        90,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 28685,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 25125
+        },
+        "decisions": {
+          "table": 23543
+        }
+      },
+      "actions": [
+        {
+          "t": 9124,
+          "type": "table_sort",
+          "column": "dec_White_Rice",
+          "direction": "asc"
+        },
+        {
+          "t": 9642,
+          "type": "table_sort",
+          "column": "dec_White_Rice",
+          "direction": "desc"
+        },
+        {
+          "t": 14653,
+          "type": "shift_click",
+          "rowIndex": 100,
+          "action": "add"
+        },
+        {
+          "t": 15216,
+          "type": "shift_click",
+          "rowIndex": 82,
+          "action": "add"
+        },
+        {
+          "t": 15689,
+          "type": "shift_click",
+          "rowIndex": 99,
+          "action": "add"
+        },
+        {
+          "t": 16132,
+          "type": "shift_click",
+          "rowIndex": 94,
+          "action": "add"
+        },
+        {
+          "t": 16662,
+          "type": "shift_click",
+          "rowIndex": 36,
+          "action": "add"
+        },
+        {
+          "t": 16978,
+          "type": "shift_click",
+          "rowIndex": 50,
+          "action": "add"
+        },
+        {
+          "t": 17307,
+          "type": "shift_click",
+          "rowIndex": 98,
+          "action": "add"
+        },
+        {
+          "t": 17661,
+          "type": "shift_click",
+          "rowIndex": 79,
+          "action": "add"
+        },
+        {
+          "t": 17945,
+          "type": "shift_click",
+          "rowIndex": 97,
+          "action": "add"
+        },
+        {
+          "t": 20150,
+          "type": "shift_click",
+          "rowIndex": 77,
+          "action": "add"
+        },
+        {
+          "t": 20384,
+          "type": "shift_click",
+          "rowIndex": 89,
+          "action": "add"
+        },
+        {
+          "t": 20758,
+          "type": "shift_click",
+          "rowIndex": 76,
+          "action": "add"
+        },
+        {
+          "t": 21013,
+          "type": "shift_click",
+          "rowIndex": 96,
+          "action": "add"
+        },
+        {
+          "t": 21261,
+          "type": "shift_click",
+          "rowIndex": 86,
+          "action": "add"
+        },
+        {
+          "t": 21605,
+          "type": "shift_click",
+          "rowIndex": 86,
+          "action": "remove"
+        },
+        {
+          "t": 22086,
+          "type": "shift_click",
+          "rowIndex": 80,
+          "action": "add"
+        },
+        {
+          "t": 22333,
+          "type": "shift_click",
+          "rowIndex": 86,
+          "action": "add"
+        },
+        {
+          "t": 22708,
+          "type": "shift_click",
+          "rowIndex": 87,
+          "action": "add"
+        },
+        {
+          "t": 23038,
+          "type": "shift_click",
+          "rowIndex": 90,
+          "action": "add"
+        },
+        {
+          "t": 24328,
+          "type": "shift_click",
+          "rowIndex": 93,
+          "action": "add"
+        },
+        {
+          "t": 24591,
+          "type": "shift_click",
+          "rowIndex": 92,
+          "action": "add"
+        },
+        {
+          "t": 24876,
+          "type": "shift_click",
+          "rowIndex": 95,
+          "action": "add"
+        },
+        {
+          "t": 25108,
+          "type": "shift_click",
+          "rowIndex": 45,
+          "action": "add"
+        },
+        {
+          "t": 25378,
+          "type": "shift_click",
+          "rowIndex": 75,
+          "action": "add"
+        },
+        {
+          "t": 25634,
+          "type": "shift_click",
+          "rowIndex": 75,
+          "action": "remove"
+        },
+        {
+          "t": 26256,
+          "type": "shift_click",
+          "rowIndex": 75,
+          "action": "add"
+        },
+        {
+          "t": 26512,
+          "type": "shift_click",
+          "rowIndex": 67,
+          "action": "add"
+        },
+        {
+          "t": 26766,
+          "type": "shift_click",
+          "rowIndex": 65,
+          "action": "add"
+        },
+        {
+          "t": 27239,
+          "type": "shift_click",
+          "rowIndex": 17,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q23",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Nutrient_Density",
+      "correctAnswer": "obj_Nutrient_Density",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 39220,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 39220
+        },
+        "decisions": {
+          "table": 39220
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q24",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          63
+        ],
+        "justification": ""
+      },
+      "correctAnswer": [
+        51
+      ],
+      "score": 0.9697,
+      "isCorrect": false,
+      "timeToAnswerMs": 44341,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 5582,
+          "radviz": 16800,
+          "pcp": 982,
+          "radar": 7425,
+          "scatter3dGL": 5491,
+          "scatter": 8062
+        },
+        "decisions": {
+          "table": 44341
+        }
+      },
+      "actions": [
+        {
+          "t": 3932,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 7803,
+          "type": "radviz_glyph_expand",
+          "rowIndex": 63
+        },
+        {
+          "t": 11929,
+          "type": "radviz_glyph_collapse"
+        },
+        {
+          "t": 15387,
+          "type": "shift_click",
+          "rowIndex": 63,
+          "action": "add"
+        },
+        {
+          "t": 18077,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 19059,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 23718,
+          "type": "clear_selection"
+        },
+        {
+          "t": 26484,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 28134,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 29793,
+          "type": "shift_click",
+          "rowIndex": 63,
+          "action": "add"
+        },
+        {
+          "t": 30789,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 36279,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 38981,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 39842,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "pca",
+          "active": true
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": [
+    {
+      "questionId": "pq1",
+      "type": "likert",
+      "answer": "2"
+    },
+    {
+      "questionId": "pq2",
+      "type": "likert",
+      "answer": "5"
+    },
+    {
+      "questionId": "pq3",
+      "type": "likert",
+      "answer": "6"
+    },
+    {
+      "questionId": "pq4",
+      "type": "likert",
+      "answer": "2"
+    }
+  ]
+}

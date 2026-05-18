@@ -1,0 +1,1828 @@
+{
+  "sessionId": "812db990-49d7-49ce-afe5-75ece7fd374f",
+  "setupName": "multi_diet_dashboard_then_table",
+  "responses": [
+    {
+      "questionId": "q1",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "Budget Diet 3D",
+      "correctAnswer": "Budget Diet 3D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 333492,
+      "timePerChart": {
+        "decisions": {
+          "barChart": 66058,
+          "table": 248191
+        },
+        "objectives": {
+          "scatter": 166170,
+          "radar": 2881,
+          "pcp": 2122,
+          "scatter3dGL": 88192,
+          "correlationHeatmap": 4957,
+          "radviz": 9690
+        }
+      },
+      "actions": [
+        {
+          "t": 24697,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 27759,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 29294,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 30451,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 31192,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 53182,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 57967,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 74917,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.11917365158642798,
+          "max": 0.49191053393553774
+        },
+        {
+          "t": 78824,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.06462678613987863,
+          "max": 0.6919156785707846
+        },
+        {
+          "t": 79972,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.06462678613987863,
+          "max": 0.6919156785707846
+        },
+        {
+          "t": 81412,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.024407899808828796,
+          "max": 0.6516967922397349
+        },
+        {
+          "t": 81794,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.024407899808828796,
+          "max": 0.6516967922397349
+        },
+        {
+          "t": 84182,
+          "type": "clear_selection"
+        },
+        {
+          "t": 85213,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 86121,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 101250,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 102111,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 108591,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 109177,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 110084,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 110751,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 112626,
+          "type": "table_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 113392,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 114456,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 115386,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 119819,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 123090,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.08614152498166419,
+          "max": 0.4814692656276783
+        },
+        {
+          "t": 126382,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.08614152498166419,
+          "max": 0.4814692656276783
+        },
+        {
+          "t": 128722,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 130447,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 131804,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 133094,
+          "type": "barchart_group_expand",
+          "group": "Proteins",
+          "expanded": false
+        },
+        {
+          "t": 135554,
+          "type": "barchart_group_expand",
+          "group": "Carbohydrates",
+          "expanded": false
+        },
+        {
+          "t": 145161,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 163126,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 169207,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 188316,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 189351,
+          "type": "table_sort",
+          "column": "dec_Berries",
+          "direction": "asc"
+        },
+        {
+          "t": 193079,
+          "type": "table_sort",
+          "column": "dec_Broccoli",
+          "direction": "asc"
+        },
+        {
+          "t": 195824,
+          "type": "table_sort",
+          "column": "dec_Broccoli",
+          "direction": "desc"
+        },
+        {
+          "t": 200850,
+          "type": "table_sort",
+          "column": "dec_Berries",
+          "direction": "asc"
+        },
+        {
+          "t": 201411,
+          "type": "table_sort",
+          "column": "dec_Berries",
+          "direction": "desc"
+        },
+        {
+          "t": 206984,
+          "type": "table_sort",
+          "column": "dec_Spinach",
+          "direction": "asc"
+        },
+        {
+          "t": 207448,
+          "type": "table_sort",
+          "column": "dec_Spinach",
+          "direction": "desc"
+        },
+        {
+          "t": 224976,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 226544,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 227226,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 227856,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 232813,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 238543,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 239271,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 241475,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 243231,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 243816,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 245256,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 245900,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 246576,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 259680,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 266705,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": true
+        },
+        {
+          "t": 267643,
+          "type": "barchart_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        },
+        {
+          "t": 268491,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": true
+        },
+        {
+          "t": 269608,
+          "type": "barchart_group_expand",
+          "group": "Fats",
+          "expanded": false
+        },
+        {
+          "t": 270380,
+          "type": "barchart_group_expand",
+          "group": "Proteins",
+          "expanded": true
+        },
+        {
+          "t": 271161,
+          "type": "barchart_group_expand",
+          "group": "Proteins",
+          "expanded": false
+        },
+        {
+          "t": 289918,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 294313,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.1282647929606428,
+          "max": 0.4737282511871081
+        },
+        {
+          "t": 309380,
+          "type": "table_histogram_filter",
+          "column": "Vegetables_Fruits",
+          "min": 0.024407899808828796,
+          "max": 0.36987135803529414
+        },
+        {
+          "t": 314435,
+          "type": "clear_selection"
+        }
+      ]
+    },
+    {
+      "questionId": "q2",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Cost",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 110,
+      "timePerChart": {
+        "objectives": {
+          "scatter3dGL": 110
+        },
+        "decisions": {
+          "table": 110
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q3",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "High Protein 3D",
+        "justification": "In the 3D Scatterplot, High Protein 3D points are overall above the Budget Diet 3D points"
+      },
+      "correctAnswer": "Budget Diet 3D",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 153057,
+      "timePerChart": {
+        "decisions": {
+          "table": 8114,
+          "barChart": 144944
+        },
+        "objectives": {
+          "scatter3dGL": 153057
+        }
+      },
+      "actions": [
+        {
+          "t": 8114,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 16140,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "z",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 36510,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 40207,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 42321,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "labels",
+          "active": true
+        },
+        {
+          "t": 43476,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "labels",
+          "active": false
+        },
+        {
+          "t": 44257,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        }
+      ]
+    },
+    {
+      "questionId": "q4",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "Diverse 3D",
+      "correctAnswer": "Diverse 3D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 173990,
+      "timePerChart": {
+        "objectives": {
+          "table": 24435,
+          "scatter": 42239,
+          "radviz": 10884,
+          "radar": 7578,
+          "scatter3dGL": 78112,
+          "correlationHeatmap": 885,
+          "pcp": 5796
+        }
+      },
+      "actions": [
+        {
+          "t": 4836,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 5399,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 6861,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "asc"
+        },
+        {
+          "t": 7799,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "desc"
+        },
+        {
+          "t": 17887,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "none"
+        },
+        {
+          "t": 20241,
+          "type": "table_sort",
+          "column": "obj_Cost",
+          "direction": "asc"
+        },
+        {
+          "t": 29061,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 30794,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 31408,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 35205,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 39951,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 46663,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 74219,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "z",
+          "column": "obj_Cost"
+        },
+        {
+          "t": 77429,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 84472,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Cost"
+        },
+        {
+          "t": 85799,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "z",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 97409,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 99060,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "z",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 122278,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 127423,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 128308,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 128683,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 129449,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 130161,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 133177,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 138261,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 140758,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 146511,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 152369,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Cost"
+        }
+      ]
+    },
+    {
+      "questionId": "q5",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "Vegetables_Fruits",
+      "correctAnswer": "Carbohydrates",
+      "score": 0.6667,
+      "isCorrect": false,
+      "timeToAnswerMs": 64789,
+      "timePerChart": {
+        "decisions": {
+          "barChart": 20324,
+          "table": 15885
+        },
+        "objectives": {
+          "scatter": 64789
+        }
+      },
+      "actions": [
+        {
+          "t": 14360,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 15950,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 18058,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 21343,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 22596,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 25752,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 27222,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Nutrient_Density"
+        },
+        {
+          "t": 48903,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 55834,
+          "type": "table_group_expand",
+          "group": "Vegetables_Fruits",
+          "expanded": false
+        }
+      ]
+    },
+    {
+      "questionId": "q6",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Diverse 3D",
+        "justification": "on 3D scatterplot, diverse 3D points are lower on the cost & prep time axis, and similar to vegan 3D on nutrient density"
+      },
+      "correctAnswer": "Vegan 3D",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 235536,
+      "timePerChart": {
+        "objectives": {
+          "scatter": 14384,
+          "scatter3dGL": 168301,
+          "table": 13500,
+          "pcp": 39353
+        },
+        "decisions": {
+          "table": 235536
+        }
+      },
+      "actions": [
+        {
+          "t": 4709,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 10471,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Cost"
+        },
+        {
+          "t": 37448,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 41168,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 41939,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "pca",
+          "active": true
+        },
+        {
+          "t": 47123,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 49035,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 49717,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 53317,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 54443,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 55080,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 55499,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 56032,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 56722,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 58741,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 60622,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 66869,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Cost",
+            "obj_Nutrient_Density",
+            "obj_Prep_Time"
+          ]
+        },
+        {
+          "t": 69967,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Cost",
+            "obj_Prep_Time",
+            "obj_Nutrient_Density"
+          ]
+        },
+        {
+          "t": 72322,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Cost",
+          "min": 0.3119446897611712,
+          "max": 0.5942995641843831
+        },
+        {
+          "t": 74407,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Prep_Time",
+          "min": 7.878579295356086,
+          "max": 18.065025005256167
+        },
+        {
+          "t": 77722,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Nutrient_Density",
+          "min": 0.7891601338799685,
+          "max": 0.8844976085854626
+        },
+        {
+          "t": 82717,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Prep_Time",
+          "min": 5.057717382029176,
+          "max": 18.065025005256167
+        },
+        {
+          "t": 84698,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Cost",
+          "min": 0.21058653902343882,
+          "max": 0.3047048194931942
+        },
+        {
+          "t": 88065,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Cost",
+          "min": 0.20479464941184636,
+          "max": 0.5711319617194188
+        },
+        {
+          "t": 90382,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Nutrient_Density",
+          "min": 0.7696037267875766,
+          "max": 0.7879378526308605
+        },
+        {
+          "t": 93666,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Nutrient_Density",
+          "min": 0.7799930663136598,
+          "max": 0.8863310216052284
+        },
+        {
+          "t": 99975,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 106958,
+          "type": "clear_selection"
+        }
+      ]
+    },
+    {
+      "questionId": "q7",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "Diverse 3D",
+      "correctAnswer": "Budget Diet 3D",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 50024,
+      "timePerChart": {
+        "objectives": {
+          "table": 44099
+        },
+        "decisions": {
+          "table": 42148
+        }
+      },
+      "actions": [
+        {
+          "t": 13439,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": true
+        },
+        {
+          "t": 14347,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "asc"
+        },
+        {
+          "t": 16769,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "desc"
+        },
+        {
+          "t": 31754,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "none"
+        },
+        {
+          "t": 32948,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "asc"
+        },
+        {
+          "t": 33359,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "desc"
+        },
+        {
+          "t": 33742,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "none"
+        },
+        {
+          "t": 37777,
+          "type": "table_histogram_filter",
+          "column": "dec_Oats",
+          "min": 0.055464156323728864,
+          "max": 0.13011369917429305
+        }
+      ]
+    },
+    {
+      "questionId": "q8",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Cost",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 20193,
+      "timePerChart": {
+        "objectives": {
+          "table": 20193
+        },
+        "decisions": {
+          "table": 20193
+        }
+      },
+      "actions": [
+        {
+          "t": 7196,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": false
+        }
+      ]
+    },
+    {
+      "questionId": "q9",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Budget Diet 3D",
+        "justification": "better cost, similar prep time, and on nutrient density the difference is maybe minimal"
+      },
+      "correctAnswer": "Budget Diet 3D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 113758,
+      "timePerChart": {
+        "objectives": {
+          "table": 113758
+        },
+        "decisions": {
+          "table": 113758
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q10",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "High Protein 3D",
+      "correctAnswer": "Vegan 3D",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 51094,
+      "timePerChart": {
+        "objectives": {
+          "table": 42465
+        },
+        "decisions": {
+          "table": 41580
+        }
+      },
+      "actions": [
+        {
+          "t": 11944,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 18192,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 20450,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 24478,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7262013317221123,
+          "max": 0.874486936906635
+        },
+        {
+          "t": 25789,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7262013317221123,
+          "max": 0.874486936906635
+        },
+        {
+          "t": 26741,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7262013317221123,
+          "max": 0.874486936906635
+        },
+        {
+          "t": 27146,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7262013317221123,
+          "max": 0.874486936906635
+        },
+        {
+          "t": 27528,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "asc"
+        },
+        {
+          "t": 28106,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "desc"
+        },
+        {
+          "t": 28428,
+          "type": "table_sort",
+          "column": "obj_Nutrient_Density",
+          "direction": "none"
+        },
+        {
+          "t": 29209,
+          "type": "table_histogram_filter",
+          "column": "obj_Nutrient_Density",
+          "min": 0.7262013317221123,
+          "max": 0.874486936906635
+        },
+        {
+          "t": 29967,
+          "type": "clear_selection"
+        }
+      ]
+    },
+    {
+      "questionId": "q11",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "dec_Oats",
+      "correctAnswer": "dec_Oats",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 71922,
+      "timePerChart": {
+        "objectives": {
+          "table": 71922
+        },
+        "decisions": {
+          "table": 71922
+        }
+      },
+      "actions": [
+        {
+          "t": 15447,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": true
+        },
+        {
+          "t": 46564,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "asc"
+        },
+        {
+          "t": 57260,
+          "type": "table_sort",
+          "column": "dec_Oats",
+          "direction": "desc"
+        }
+      ]
+    },
+    {
+      "questionId": "q12",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Vegan 3D",
+        "justification": "prep time is better for vegan 3D, similar on nutrient density, and the cost average seems similar"
+      },
+      "correctAnswer": "Vegan 3D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 60527,
+      "timePerChart": {
+        "objectives": {
+          "table": 60527
+        },
+        "decisions": {
+          "table": 60527
+        }
+      },
+      "actions": [
+        {
+          "t": 20716,
+          "type": "table_histogram_filter",
+          "column": "obj_Prep_Time",
+          "min": 2.119175446761429,
+          "max": 6.030392018181147
+        },
+        {
+          "t": 22608,
+          "type": "clear_selection"
+        }
+      ]
+    },
+    {
+      "questionId": "q13",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "Low Carb 6D",
+      "correctAnswer": "Low Carb 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 106357,
+      "timePerChart": {
+        "objectives": {
+          "table": 22290,
+          "scatter": 35618,
+          "scatter3dGL": 2878,
+          "pcp": 25222,
+          "radar": 5438,
+          "radviz": 8175,
+          "correlationHeatmap": 1313
+        }
+      },
+      "actions": [
+        {
+          "t": 9629,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "asc"
+        },
+        {
+          "t": 10327,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "desc"
+        },
+        {
+          "t": 10807,
+          "type": "table_sort",
+          "column": "obj_Prep_Time",
+          "direction": "none"
+        },
+        {
+          "t": 15562,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 18367,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 19127,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "pca",
+          "active": false
+        },
+        {
+          "t": 22472,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 24187,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Prep_Time"
+        },
+        {
+          "t": 32199,
+          "type": "lasso_selection",
+          "count": 131
+        },
+        {
+          "t": 34380,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 37258,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 39945,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Carbon_Footprint"
+        },
+        {
+          "t": 43437,
+          "type": "lasso_selection",
+          "count": 20
+        },
+        {
+          "t": 46611,
+          "type": "clear_selection"
+        },
+        {
+          "t": 49568,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Cost"
+        },
+        {
+          "t": 51286,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "y",
+          "column": "obj_Carbon_Footprint"
+        },
+        {
+          "t": 54059,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 56422,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Cost",
+            "obj_Prep_Time",
+            "obj_Nutrient_Density",
+            "obj_Carbon_Footprint",
+            "obj_Diversity",
+            "obj_Satiety"
+          ]
+        },
+        {
+          "t": 57066,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Cost",
+            "obj_Prep_Time",
+            "obj_Nutrient_Density",
+            "obj_Carbon_Footprint",
+            "obj_Diversity",
+            "obj_Satiety"
+          ]
+        },
+        {
+          "t": 57502,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Cost",
+            "obj_Prep_Time",
+            "obj_Nutrient_Density",
+            "obj_Carbon_Footprint",
+            "obj_Diversity",
+            "obj_Satiety"
+          ]
+        },
+        {
+          "t": 59069,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Prep_Time",
+            "obj_Cost",
+            "obj_Nutrient_Density",
+            "obj_Carbon_Footprint",
+            "obj_Diversity",
+            "obj_Satiety"
+          ]
+        },
+        {
+          "t": 62669,
+          "type": "pcp_axis_reorder",
+          "newOrder": [
+            "obj_Prep_Time",
+            "obj_Cost",
+            "obj_Nutrient_Density",
+            "obj_Carbon_Footprint",
+            "obj_Diversity",
+            "obj_Satiety"
+          ]
+        },
+        {
+          "t": 79281,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 84719,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 92894,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 94207,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        }
+      ]
+    },
+    {
+      "questionId": "q14",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "Carbohydrates",
+      "correctAnswer": "Carbohydrates",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 51758,
+      "timePerChart": {
+        "decisions": {
+          "barChart": 1860,
+          "table": 34297
+        },
+        "objectives": {
+          "table": 51758
+        }
+      },
+      "actions": [
+        {
+          "t": 17461,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 21450,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": false
+        }
+      ]
+    },
+    {
+      "questionId": "q15",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Budget Diet 6D",
+        "justification": "overall better cost for Budget Diet, better carbon footprint, but a bit lower average nutrient density, and a bit higher prep time"
+      },
+      "correctAnswer": "Budget Diet 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 134218,
+      "timePerChart": {
+        "objectives": {
+          "table": 134218
+        },
+        "decisions": {
+          "table": 134218
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q16",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "High Protein 6D",
+      "correctAnswer": "High Protein 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 17478,
+      "timePerChart": {
+        "decisions": {
+          "barChart": 1530,
+          "table": 12038
+        }
+      },
+      "actions": [
+        {
+          "t": 5440,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        }
+      ]
+    },
+    {
+      "questionId": "q17",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "obj_Diversity",
+      "correctAnswer": "obj_Carbon_Footprint",
+      "score": 0.8,
+      "isCorrect": false,
+      "timeToAnswerMs": 28237,
+      "timePerChart": {
+        "objectives": {
+          "scatter3dGL": 3855,
+          "table": 13036
+        },
+        "decisions": {
+          "table": 28237
+        }
+      },
+      "actions": [
+        {
+          "t": 15201,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        }
+      ]
+    },
+    {
+      "questionId": "q18",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Diverse Diet 6D",
+        "justification": "lower carbon footprint, whole better diversity, and the rest of the dimensions have negligible differences compared to these"
+      },
+      "correctAnswer": "Diverse Diet 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 73004,
+      "timePerChart": {
+        "objectives": {
+          "table": 73004
+        },
+        "decisions": {
+          "table": 73004
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q19",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "Low Carb 6D",
+      "correctAnswer": "Low Carb 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 17376,
+      "timePerChart": {
+        "decisions": {
+          "table": 14354
+        },
+        "objectives": {
+          "table": 13040
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q20",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "dec_Chicken_Breast",
+      "correctAnswer": "dec_Chicken_Breast",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 23256,
+      "timePerChart": {
+        "objectives": {
+          "table": 23256
+        },
+        "decisions": {
+          "table": 23256
+        }
+      },
+      "actions": [
+        {
+          "t": 3425,
+          "type": "table_group_expand",
+          "group": "Proteins",
+          "expanded": true
+        }
+      ]
+    },
+    {
+      "questionId": "q21",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Low Carb 6D",
+        "justification": "lower carbon footprint, cost and prep time."
+      },
+      "correctAnswer": "Low Carb 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 81289,
+      "timePerChart": {
+        "objectives": {
+          "table": 81289
+        },
+        "decisions": {
+          "table": 81289
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q22",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "Diverse Diet 6D",
+      "correctAnswer": "Budget Diet 6D",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 40632,
+      "timePerChart": {
+        "objectives": {
+          "table": 36418
+        },
+        "decisions": {
+          "table": 34567
+        }
+      },
+      "actions": [
+        {
+          "t": 8931,
+          "type": "table_group_expand",
+          "group": "Proteins",
+          "expanded": false
+        },
+        {
+          "t": 10251,
+          "type": "table_group_expand",
+          "group": "Carbohydrates",
+          "expanded": true
+        }
+      ]
+    },
+    {
+      "questionId": "q23",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "obj_Cost",
+      "correctAnswer": "obj_Cost",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 52326,
+      "timePerChart": {
+        "objectives": {
+          "table": 52326
+        },
+        "decisions": {
+          "table": 52326
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q24",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "Diverse Diet 6D",
+        "justification": "I would say diverse due to the diversity difference and maybe prep time and nutrient density. but the cost is a big drawback"
+      },
+      "correctAnswer": "Diverse Diet 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 111830,
+      "timePerChart": {
+        "objectives": {
+          "table": 111830
+        },
+        "decisions": {
+          "table": 111830
+        }
+      },
+      "actions": [
+        {
+          "t": 9139,
+          "type": "table_sort",
+          "column": "obj_Diversity",
+          "direction": "asc"
+        },
+        {
+          "t": 9312,
+          "type": "table_sort",
+          "column": "obj_Diversity",
+          "direction": "desc"
+        },
+        {
+          "t": 9852,
+          "type": "table_sort",
+          "column": "obj_Diversity",
+          "direction": "none"
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": [
+    {
+      "questionId": "pq1",
+      "type": "likert",
+      "answer": "2"
+    },
+    {
+      "questionId": "pq2",
+      "type": "likert",
+      "answer": "6"
+    },
+    {
+      "questionId": "pq3",
+      "type": "likert",
+      "answer": "7"
+    },
+    {
+      "questionId": "pq4",
+      "type": "likert",
+      "answer": "2"
+    }
+  ]
+}
