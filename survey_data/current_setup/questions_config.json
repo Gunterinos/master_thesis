@@ -1,303 +1,303 @@
 ﻿{
-  "setupName": "single_diet_dashboard_then_table",
+  "setupName": "single_portfolio_table_then_dashboard",
   "questionnaires": [
     {
-      "id": "diet_3d_block_1",
+      "id": "portfolio_3d_block_1",
       "type": "single_frontier",
-      "title": "Diet 3D – Block 1",
+      "title": "Portfolio 3D – Block 1",
       "questions": [
         {
           "id": "q1",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Nutrient Density is above 0.75.",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Return is above 0.09.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.75, "max": null },
-          "defaultScreen": "You've switched to the following dataset: Budget Diet 3D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "obj_Return", "min": 0.09, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: equity heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q2",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which decision variable is most positively correlated with Nutrient Density?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which decision variable is most strongly correlated with Return (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "decisions",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "positive" }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Return", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
           "id": "q3",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
-          "answerSpec": { "type": "knee_point" }
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         }
       ]
     },
     {
-      "id": "diet_3d_block_2",
+      "id": "portfolio_3d_block_2",
       "type": "single_frontier",
-      "title": "Diet 3D – Block 2",
+      "title": "Portfolio 3D – Block 2",
       "questions": [
         {
           "id": "q4",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where the total Fats allocation is above 20%.",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Fixed Income allocation is above 25%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "Fats", "min": 0.20, "max": null },
-          "defaultScreen": "You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "Fixed_Income", "min": 0.25, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: unconstrained 3D. Select a chart type above to get started."
         },
         {
           "id": "q5",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Prep Time (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [], "direction": "negative" }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
           "id": "q6",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
-          "answerSpec": { "type": "knee_point" }
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         }
       ]
     },
     {
-      "id": "diet_3d_block_3",
+      "id": "portfolio_3d_block_3",
       "type": "single_frontier",
-      "title": "Diet 3D – Block 3",
+      "title": "Portfolio 3D – Block 3",
       "questions": [
         {
           "id": "q7",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Cost is below 0.30.",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Risk is below 0.010.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Cost", "min": null, "max": 0.30 },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: Diverse 3D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "obj_Risk", "min": null, "max": 0.010 },
+          "defaultScreen": "You've switched to the following dataset: real assets heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q8",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which food group is most strongly correlated (negatively) with Fats?<br><small>Negative: as one variable increases, the other decreases.</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which decision variable is most strongly correlated with Liquidity (positively)?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
-          "optionSource": "groups",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "Fats", "candidateColumns": [], "direction": "negative" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "positive" }
         },
         {
           "id": "q9",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
-          "answerSpec": { "type": "knee_point" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "answerSpec": { "type": "knee_point" }
         }
       ]
     },
     {
-      "id": "diet_3d_block_4",
+      "id": "portfolio_3d_block_4",
       "type": "single_frontier",
-      "title": "Diet 3D – Block 4",
+      "title": "Portfolio 3D – Block 4",
       "questions": [
         {
           "id": "q10",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select all diets where Tofu allocation is above 0.7.",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select all portfolios where Cash allocation is above 25%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "dec_Tofu", "min": 0.7, "max": null },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: Vegan 3D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "Cash", "min": 0.25, "max": null },
+          "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q11",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Nutrient Density (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "negative" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" }
         },
         {
           "id": "q12",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
-          "answerSpec": { "type": "knee_point" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "answerSpec": { "type": "knee_point" }
         }
       ]
     },
     {
-      "id": "diet_6d_block_1",
+      "id": "portfolio_6d_block_1",
       "type": "single_frontier",
-      "title": "Diet 6D – Block 1",
+      "title": "Portfolio 6D – Block 1",
       "questions": [
         {
           "id": "q13",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Satiety is above 0.65.",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where ESG score is above 0.60.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.65, "max": null },
-          "defaultScreen": "You've switched to the following dataset: Vegan 6D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "obj_ESG", "min": 0.60, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: real assets heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q14",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which decision variable is most positively correlated with Satiety?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with ESG score (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
-          "optionSource": "decisions",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Satiety", "candidateColumns": [], "direction": "positive" }
+          "optionSource": "objectives",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_ESG", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
           "id": "q15",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
-          "answerSpec": { "type": "knee_point" }
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         }
       ]
     },
     {
-      "id": "diet_6d_block_2",
+      "id": "portfolio_6d_block_2",
       "type": "single_frontier",
-      "title": "Diet 6D – Block 2",
+      "title": "Portfolio 6D – Block 2",
       "questions": [
         {
           "id": "q16",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Chicken Breast (Proteins) allocation is above 0.4.",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where Real Assets allocation is above 10%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "dec_Chicken_Breast", "min": 0.4, "max": null },
-          "defaultScreen": "You've switched to the following dataset: Low Carb 6D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "Real_Assets", "min": 0.10, "max": null },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: fixed income cash heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q17",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated (positively) with Carbon Footprint?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Diversity (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" }
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "negative" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
         },
         {
           "id": "q18",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
+          "options": [],
+          "answerSpec": { "type": "knee_point" },
+          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+        }
+      ]
+    },
+    {
+      "id": "portfolio_6d_block_3",
+      "type": "single_frontier",
+      "title": "Portfolio 6D – Block 3",
+      "questions": [
+        {
+          "id": "q19",
+          "type": "value_retrieval",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where Liquidity is above 0.60.",
+          "options": [],
+          "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null },
+          "defaultScreen": "You've switched to the following dataset: equity heavy 6D. Select a chart type above to get started."
+        },
+        {
+          "id": "q20",
+          "type": "correlation",
+          "interactionType": "select_option",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which decision variable is most strongly correlated with Geopolitical Risk (positively)?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
+          "options": [],
+          "optionSource": "decisions",
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Geopolitical", "candidateColumns": [], "direction": "positive" }
+        },
+        {
+          "id": "q21",
+          "type": "decision",
+          "interactionType": "record_selection",
+          "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
           "answerSpec": { "type": "knee_point" }
         }
       ]
     },
     {
-      "id": "diet_6d_block_3",
+      "id": "portfolio_6d_block_4",
       "type": "single_frontier",
-      "title": "Diet 6D – Block 3",
-      "questions": [
-        {
-          "id": "q19",
-          "type": "value_retrieval",
-          "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where Prep Time is below 10.",
-          "options": [],
-          "answerSpec": { "type": "range", "column": "obj_Prep_Time", "min": null, "max": 10 },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: High Protein 6D. Select a chart type above to get started."
-        },
-        {
-          "id": "q20",
-          "type": "correlation",
-          "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which decision variable is most positively correlated with Carbon Footprint?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
-          "options": [],
-          "optionSource": "decisions",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
-        },
-        {
-          "id": "q21",
-          "type": "decision",
-          "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
-          "options": [],
-          "answerSpec": { "type": "knee_point" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
-        }
-      ]
-    },
-    {
-      "id": "diet_6d_block_4",
-      "type": "single_frontier",
-      "title": "Diet 6D – Block 4",
+      "title": "Portfolio 6D – Block 4",
       "questions": [
         {
           "id": "q22",
           "type": "value_retrieval",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select all diets where White Rice (Carbohydrates) allocation is above 10%.",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select all portfolios where EU Real Estate (Real Assets) allocation is above 10%.",
           "options": [],
-          "answerSpec": { "type": "range", "column": "dec_White_Rice", "min": 0.10, "max": null },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: Budget Diet 6D. Select a chart type above to get started."
+          "answerSpec": { "type": "range", "column": "dec_RealEstate_EU", "min": 0.10, "max": null },
+          "defaultScreen": "You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
         },
         {
           "id": "q23",
           "type": "correlation",
           "interactionType": "select_option",
-          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Diversity?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Which objective is most strongly correlated with Geopolitical Risk (positively)?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "objectives",
-          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "positive" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Geopolitical", "candidateColumns": [], "direction": "positive" }
         },
         {
           "id": "q24",
           "type": "decision",
           "interactionType": "record_selection",
-          "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Select the diet that best balances all objectives (the knee point).",
+          "dataset": { "frontiers": ["data/portfolio_data/unconstrained_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
+          "prompt": "Select the portfolio that best balances all objectives (the knee point).",
           "options": [],
-          "answerSpec": { "type": "knee_point" },
-          "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"]
+          "answerSpec": { "type": "knee_point" }
         }
       ]
     }
