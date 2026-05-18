@@ -330,7 +330,7 @@ async function finishSurvey(responses, sessionId) {
                 await fetch('/api/save-responses', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId, responses, postQuestionnaire }),
+                    body: JSON.stringify({ sessionId, setupName: config?.setupName ?? null, responses, postQuestionnaire }),
                 });
             } catch { /* non-critical */ }
 
