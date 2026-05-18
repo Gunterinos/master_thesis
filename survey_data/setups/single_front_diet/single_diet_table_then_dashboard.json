@@ -15,14 +15,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Nutrient_Density", "min": 0.75, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: Budget Diet 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: Budget Diet 3D. Select a chart type above to get started."
         },
         {
           "id": "q2",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which decision variable is most positively correlated with Nutrient Density?",
+          "prompt": "Which decision variable is most positively correlated with Nutrient Density?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "decisions",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "positive" },
@@ -54,14 +54,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "Fats", "min": 0.20, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: High Protein 3D. Select a chart type above to get started."
         },
         {
           "id": "q5",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Prep Time (negatively)?",
+          "prompt": "Which objective is most strongly correlated with Prep Time (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Prep_Time", "candidateColumns": [], "direction": "negative" },
@@ -99,7 +99,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Diverse_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which food group is most strongly correlated (negatively) with Fats?",
+          "prompt": "Which food group is most strongly correlated (negatively) with Fats?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "groups",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "Fats", "candidateColumns": [], "direction": "negative" }
@@ -135,7 +135,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_3D.csv"], "benchmark": "data/diet_datasets/diet_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Nutrient Density (negatively)?",
+          "prompt": "Which objective is most strongly correlated with Nutrient Density (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Nutrient_Density", "candidateColumns": [], "direction": "negative" }
@@ -165,14 +165,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Satiety", "min": 0.65, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: Vegan 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: Vegan 6D. Select a chart type above to get started."
         },
         {
           "id": "q14",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Vegan_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which decision variable is most positively correlated with Satiety?",
+          "prompt": "Which decision variable is most positively correlated with Satiety?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "decisions",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Satiety", "candidateColumns": [], "direction": "positive" },
@@ -204,14 +204,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "dec_Chicken_Breast", "min": 0.4, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: Low Carb 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: Low Carb 6D. Select a chart type above to get started."
         },
         {
           "id": "q17",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Low_Carb_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated (positively) with Carbon Footprint?",
+          "prompt": "Which objective is most strongly correlated (positively) with Carbon Footprint?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" },
@@ -249,7 +249,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/High_Protein_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which decision variable is most positively correlated with Carbon Footprint?",
+          "prompt": "Which decision variable is most positively correlated with Carbon Footprint?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "decisions",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Carbon_Footprint", "candidateColumns": [], "direction": "positive" }
@@ -285,7 +285,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/diet_datasets/Budget_Diet_6D.csv"], "benchmark": "data/diet_datasets/diet_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Diversity?",
+          "prompt": "Which objective is most strongly correlated with Diversity?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "positive" }

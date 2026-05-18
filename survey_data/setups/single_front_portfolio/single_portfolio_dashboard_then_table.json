@@ -21,7 +21,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which decision variable is most strongly correlated (negatively) with Return?",
+          "prompt": "Which decision variable is most strongly correlated (negatively) with Return?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "decisions",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Return", "candidateColumns": [], "direction": "negative" }
@@ -57,7 +57,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/unconstrained_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?",
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" }
@@ -87,14 +87,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Risk", "min": null, "max": 0.010 },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: real assets heavy 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: real assets heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q8",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which decision variable is most strongly correlated (positively) with Liquidity?",
+          "prompt": "Which decision variable is most strongly correlated (positively) with Liquidity?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "decisions",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "positive" },
@@ -126,14 +126,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "Cash", "min": 0.25, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: fixed income cash heavy 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: fixed income cash heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q11",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_3D.csv"], "benchmark": "data/portfolio_data/portfolio_3D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?",
+          "prompt": "Which objective is most strongly correlated with Liquidity (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Liquidity", "candidateColumns": [], "direction": "negative" },
@@ -171,7 +171,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/real_assets_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with ESG score (negatively)?",
+          "prompt": "Which objective is most strongly correlated with ESG score (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_ESG", "candidateColumns": [], "direction": "negative" }
@@ -207,7 +207,7 @@
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which objective is most strongly correlated with Diversity (negatively)?",
+          "prompt": "Which objective is most strongly correlated with Diversity (negatively)?<br><small>Negative: as one variable increases, the other decreases.</small>",
           "options": [],
           "optionSource": "objectives",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Diversity", "candidateColumns": [], "direction": "negative" }
@@ -237,14 +237,14 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "obj_Liquidity", "min": 0.60, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: equity heavy 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: equity heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q20",
           "type": "correlation",
           "interactionType": "select_option",
           "dataset": { "frontiers": ["data/portfolio_data/equity_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Which decision variable is most strongly correlated (positively) with Geopolitical Risk?",
+          "prompt": "Which decision variable is most strongly correlated (positively) with Geopolitical Risk?<br><small>Positive: both variables move in the same direction (both increase or decrease together).</small>",
           "options": [],
           "optionSource": "decisions",
           "answerSpec": { "type": "strongest_correlation", "targetColumn": "obj_Geopolitical", "candidateColumns": [], "direction": "positive" },
@@ -276,7 +276,7 @@
           "options": [],
           "answerSpec": { "type": "range", "column": "dec_RealEstate_EU", "min": 0.10, "max": null },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following dataset: unconstrained 6D. Select a chart type above to get started."
         },
         {
           "id": "q23",

@@ -87,7 +87,7 @@
           "options": ["Budget Diet 3D", "Diverse 3D"],
           "answerSpec": { "type": "lower_average", "column": "dec_Oats" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: Budget Diet 3D, Diverse 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: Budget Diet 3D, Diverse 3D. Select a chart type above to get started."
         },
         {
           "id": "q8",
@@ -126,7 +126,7 @@
           "options": ["High Protein 3D", "Vegan 3D"],
           "answerSpec": { "type": "higher_average", "column": "obj_Nutrient_Density" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: High Protein 3D, Vegan 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: High Protein 3D, Vegan 3D. Select a chart type above to get started."
         },
         {
           "id": "q11",
@@ -237,7 +237,7 @@
           "options": ["Low Carb 6D", "High Protein 6D"],
           "answerSpec": { "type": "lower_average", "column": "obj_Carbon_Footprint" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: Low Carb 6D, High Protein 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: Low Carb 6D, High Protein 6D. Select a chart type above to get started."
         },
         {
           "id": "q20",
@@ -276,7 +276,7 @@
           "options": ["Budget Diet 6D", "Diverse Diet 6D"],
           "answerSpec": { "type": "lower_average", "column": "dec_Sweet_Potato" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: Budget Diet 6D, Diverse Diet 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: Budget Diet 6D, Diverse Diet 6D. Select a chart type above to get started."
         },
         {
           "id": "q23",

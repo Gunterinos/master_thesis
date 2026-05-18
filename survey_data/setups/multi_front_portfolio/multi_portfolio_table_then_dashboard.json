@@ -15,7 +15,7 @@
           "options": ["equity heavy 3D", "fixed income cash heavy 3D"],
           "answerSpec": { "type": "higher_average", "column": "obj_Return" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: equity heavy 3D, fixed income cash heavy 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: equity heavy 3D, fixed income cash heavy 3D. Select a chart type above to get started."
         },
         {
           "id": "q2",
@@ -54,7 +54,7 @@
           "options": ["real assets heavy 3D", "unconstrained 3D"],
           "answerSpec": { "type": "lower_average", "column": "Real_Assets" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: real assets heavy 3D, unconstrained 3D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: real assets heavy 3D, unconstrained 3D. Select a chart type above to get started."
         },
         {
           "id": "q5",
@@ -165,7 +165,7 @@
           "options": ["equity heavy 6D", "fixed income cash heavy 6D"],
           "answerSpec": { "type": "higher_average", "column": "obj_ESG" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: equity heavy 6D, fixed income cash heavy 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: equity heavy 6D, fixed income cash heavy 6D. Select a chart type above to get started."
         },
         {
           "id": "q14",
@@ -204,7 +204,7 @@
           "options": ["real assets heavy 6D", "unconstrained 6D"],
           "answerSpec": { "type": "higher_average", "column": "Equities" },
           "disabledCharts": ["scatter", "scatter3dGL", "pcp", "radar", "radviz", "correlationHeatmap", "barChart"],
-          "defaultScreen": "You've switched to the following datasets: real assets heavy 6D, unconstrained 6D. Select a chart type above to get started."
+          "defaultScreen": "You've been switched to the reduced benchmark screen. You've switched to the following datasets: real assets heavy 6D, unconstrained 6D. Select a chart type above to get started."
         },
         {
           "id": "q17",
