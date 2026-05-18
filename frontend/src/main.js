@@ -245,6 +245,8 @@ function loadActiveFiles(activeFiles, { onDone, benchmark } = {}) {
                 __isBenchmark: index === 0,
             }));
 
+            _externalFilter = null;
+            _tableFilters.clear();
             clearSelectionState();
             initializeApp();
             renderAllPanels({ animate: true });

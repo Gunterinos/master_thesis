@@ -200,6 +200,7 @@ export function renderTable(containerSelector, columns, data, options = {}) {
         if (filters.size === 0) { onBrushFilterChange(null); return; }
         const passing = data
             .filter(r => {
+                if (r.__isBenchmark) return false;
                 for (const [col, [lo, hi]] of filters) {
                     const v = isGroupCol[col]
                         ? (groupMembersMap[col] || []).reduce((s, c) => s + (Number(r[c]) || 0), 0)
