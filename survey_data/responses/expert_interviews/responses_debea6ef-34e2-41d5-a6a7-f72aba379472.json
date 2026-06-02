@@ -1,0 +1,1748 @@
+{
+  "sessionId": "debea6ef-34e2-41d5-a6a7-f72aba379472",
+  "setupName": "expert_interviews",
+  "responses": [
+    {
+      "questionId": "q1",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "correctAnswer": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 41656,
+      "timePerChart": {
+        "objectives": {
+          "table": 28664
+        }
+      },
+      "actions": [
+        {
+          "t": 19845,
+          "type": "table_histogram_filter",
+          "column": "obj_Return",
+          "min": 0.07825486510861082,
+          "max": 0.1179895355429521
+        },
+        {
+          "t": 25321,
+          "type": "table_histogram_filter",
+          "column": "obj_Return",
+          "min": 0.08352238293947321,
+          "max": 0.1179895355429521
+        },
+        {
+          "t": 27008,
+          "type": "table_histogram_filter",
+          "column": "obj_Return",
+          "min": 0.08644878392985177,
+          "max": 0.1179895355429521
+        },
+        {
+          "t": 28763,
+          "type": "table_histogram_filter",
+          "column": "obj_Return",
+          "min": 0.0876193443260032,
+          "max": 0.1179895355429521
+        }
+      ]
+    },
+    {
+      "questionId": "q2",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "dec_Private_Equity",
+      "correctAnswer": "dec_Cash",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 49875,
+      "timePerChart": {
+        "objectives": {
+          "table": 8063,
+          "correlationHeatmap": 41813
+        }
+      },
+      "actions": [
+        {
+          "t": 8063,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        }
+      ]
+    },
+    {
+      "questionId": "q3",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13
+      ],
+      "correctAnswer": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 164981,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 25099,
+          "radviz": 1694,
+          "radar": 1844,
+          "pcp": 2228,
+          "scatter3dGL": 1417,
+          "scatter": 130471,
+          "table": 2227
+        },
+        "decisions": {
+          "barChart": 56024,
+          "table": 95483
+        }
+      },
+      "actions": [
+        {
+          "t": 16533,
+          "type": "barchart_group_expand",
+          "group": "Fixed_Income",
+          "expanded": true
+        },
+        {
+          "t": 18281,
+          "type": "barchart_group_expand",
+          "group": "Fixed_Income",
+          "expanded": false
+        },
+        {
+          "t": 20350,
+          "type": "barchart_group_expand",
+          "group": "Equities",
+          "expanded": true
+        },
+        {
+          "t": 21153,
+          "type": "barchart_group_expand",
+          "group": "Equities",
+          "expanded": false
+        },
+        {
+          "t": 24131,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 25053,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 25585,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 26118,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 26965,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 55780,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 58007,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 62125,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 62695,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 64391,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 65703,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 66475,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 67443,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 69497,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 79135,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.23991967170075623,
+          "max": 0.9017045445010238
+        },
+        {
+          "t": 86867,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.23991967170075623,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 94697,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.2660427531250467,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 107262,
+          "type": "shift_click",
+          "rowIndex": 13,
+          "action": "add"
+        },
+        {
+          "t": 107501,
+          "type": "shift_click",
+          "rowIndex": 13,
+          "action": "remove"
+        },
+        {
+          "t": 108071,
+          "type": "shift_click",
+          "rowIndex": 13,
+          "action": "add"
+        },
+        {
+          "t": 113831,
+          "type": "shift_click",
+          "rowIndex": 15,
+          "action": "add"
+        },
+        {
+          "t": 115503,
+          "type": "shift_click",
+          "rowIndex": 15,
+          "action": "remove"
+        },
+        {
+          "t": 129984,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.2660427531250467,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 131492,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.23991965214826866,
+          "max": 0.9393065198623285
+        },
+        {
+          "t": 139329,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.9539506682446296,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 141078,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.9539506682446296,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 141371,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.9539506682446296,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 141373,
+          "type": "table_histogram_filter_clear",
+          "column": "Fixed_Income"
+        },
+        {
+          "t": 145007,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.2747504534506394,
+          "max": 0.9654296208391064
+        },
+        {
+          "t": 149162,
+          "type": "table_histogram_filter",
+          "column": "Fixed_Income",
+          "min": 0.2486273720263489,
+          "max": 0.9654296208391064
+        }
+      ]
+    },
+    {
+      "questionId": "q4",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Return",
+      "correctAnswer": "obj_Return",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 43385,
+      "timePerChart": {
+        "objectives": {
+          "scatter": 5331,
+          "correlationHeatmap": 38055
+        },
+        "decisions": {
+          "table": 43385
+        }
+      },
+      "actions": [
+        {
+          "t": 5331,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        }
+      ]
+    },
+    {
+      "questionId": "q5",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          11
+        ],
+        "justification": "Little less interested in Liquidity, thus prefer higher return and lower std dev"
+      },
+      "correctAnswer": [
+        10
+      ],
+      "score": 0.6316,
+      "isCorrect": false,
+      "timeToAnswerMs": 320431,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 21709,
+          "scatter3dGL": 298364,
+          "scatter": 359
+        },
+        "decisions": {
+          "table": 320431
+        }
+      },
+      "actions": [
+        {
+          "t": 21709,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 48926,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 51994,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "dominated_cloud",
+          "active": true
+        },
+        {
+          "t": 53023,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "dominated_cloud",
+          "active": false
+        },
+        {
+          "t": 54004,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "surface",
+          "active": false
+        },
+        {
+          "t": 55954,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "surface",
+          "active": true
+        },
+        {
+          "t": 56808,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 58423,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": false
+        },
+        {
+          "t": 151325,
+          "type": "shift_click",
+          "rowIndex": 10,
+          "action": "add"
+        },
+        {
+          "t": 227425,
+          "type": "shift_click",
+          "rowIndex": 10,
+          "action": "remove"
+        },
+        {
+          "t": 268240,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 268599,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 287477,
+          "type": "shift_click",
+          "rowIndex": 11,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q6",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        15,
+        17,
+        37,
+        39,
+        44,
+        12,
+        23,
+        14
+      ],
+      "correctAnswer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        14,
+        15,
+        17,
+        23,
+        37,
+        39,
+        44
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 55620,
+      "timePerChart": {
+        "objectives": {
+          "table": 45299
+        }
+      },
+      "actions": [
+        {
+          "t": 16028,
+          "type": "table_histogram_filter",
+          "column": "obj_ESG",
+          "min": 0.6816970174185175,
+          "max": 0.718953630696183
+        },
+        {
+          "t": 22075,
+          "type": "table_histogram_filter",
+          "column": "obj_ESG",
+          "min": 0.6816970174185175,
+          "max": 0.718953630696183
+        },
+        {
+          "t": 23566,
+          "type": "table_histogram_filter",
+          "column": "obj_ESG",
+          "min": 0.6919901637461153,
+          "max": 0.718953630696183
+        },
+        {
+          "t": 25380,
+          "type": "table_histogram_filter",
+          "column": "obj_ESG",
+          "min": 0.7022833012783021,
+          "max": 0.718953630696183
+        },
+        {
+          "t": 28434,
+          "type": "shift_click",
+          "rowIndex": 12,
+          "action": "add"
+        },
+        {
+          "t": 35340,
+          "type": "table_sort",
+          "column": "obj_ESG",
+          "direction": "asc"
+        },
+        {
+          "t": 38528,
+          "type": "table_sort",
+          "column": "obj_ESG",
+          "direction": "desc"
+        },
+        {
+          "t": 43651,
+          "type": "shift_click",
+          "rowIndex": 23,
+          "action": "add"
+        },
+        {
+          "t": 45392,
+          "type": "shift_click",
+          "rowIndex": 14,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q7",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "obj_Risk",
+      "correctAnswer": "obj_Risk",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 38337,
+      "timePerChart": {
+        "objectives": {
+          "table": 5083,
+          "correlationHeatmap": 33254
+        }
+      },
+      "actions": [
+        {
+          "t": 5083,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        }
+      ]
+    },
+    {
+      "questionId": "q8",
+      "questionType": "value_retrieval",
+      "interactionType": "record_selection",
+      "answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        16,
+        17,
+        19
+      ],
+      "correctAnswer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        16,
+        17,
+        19
+      ],
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 39275,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 15725,
+          "table": 23550
+        },
+        "decisions": {
+          "barChart": 5655,
+          "table": 21959
+        }
+      },
+      "actions": [
+        {
+          "t": 15725,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 17316,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 18614,
+          "type": "table_sort",
+          "column": "Cash",
+          "direction": "asc"
+        },
+        {
+          "t": 22182,
+          "type": "table_sort",
+          "column": "Cash",
+          "direction": "desc"
+        },
+        {
+          "t": 23457,
+          "type": "table_sort",
+          "column": "Cash",
+          "direction": "none"
+        },
+        {
+          "t": 24082,
+          "type": "table_sort",
+          "column": "Cash",
+          "direction": "asc"
+        },
+        {
+          "t": 25033,
+          "type": "table_sort",
+          "column": "Cash",
+          "direction": "desc"
+        },
+        {
+          "t": 32623,
+          "type": "table_histogram_filter",
+          "column": "Cash",
+          "min": 0.35050606978843274,
+          "max": 0.39870598371567023
+        }
+      ]
+    },
+    {
+      "questionId": "q9",
+      "questionType": "correlation",
+      "interactionType": "select_option",
+      "answer": "dec_Cash",
+      "correctAnswer": "dec_Cash",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 41499,
+      "timePerChart": {
+        "objectives": {
+          "table": 6460,
+          "correlationHeatmap": 35040
+        },
+        "decisions": {
+          "table": 41499
+        }
+      },
+      "actions": [
+        {
+          "t": 6460,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        }
+      ]
+    },
+    {
+      "questionId": "q10",
+      "questionType": "decision",
+      "interactionType": "record_selection",
+      "answer": {
+        "value": [
+          100
+        ],
+        "justification": "Most diversified, while still caring about return."
+      },
+      "correctAnswer": [
+        46
+      ],
+      "score": 0.0202,
+      "isCorrect": false,
+      "timeToAnswerMs": 159194,
+      "timePerChart": {
+        "objectives": {
+          "correlationHeatmap": 10412,
+          "radviz": 148783
+        },
+        "decisions": {
+          "table": 159194
+        }
+      },
+      "actions": [
+        {
+          "t": 10411,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 70399,
+          "type": "radviz_glyph_expand",
+          "rowIndex": 100
+        },
+        {
+          "t": 71590,
+          "type": "radviz_glyph_collapse"
+        },
+        {
+          "t": 73068,
+          "type": "shift_click",
+          "rowIndex": 100,
+          "action": "add"
+        }
+      ]
+    },
+    {
+      "questionId": "q11",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "unconstrained 3D",
+      "correctAnswer": "equity heavy 3D",
+      "score": 0,
+      "isCorrect": false,
+      "timeToAnswerMs": 83824,
+      "timePerChart": {
+        "objectives": {
+          "radviz": 3720,
+          "table": 53377
+        },
+        "decisions": {
+          "table": 1246,
+          "barChart": 33434
+        }
+      },
+      "actions": [
+        {
+          "t": 30447,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 33492,
+          "type": "table_sort",
+          "column": "obj_Return",
+          "direction": "asc"
+        },
+        {
+          "t": 41480,
+          "type": "table_sort",
+          "column": "obj_Return",
+          "direction": "desc"
+        },
+        {
+          "t": 42656,
+          "type": "table_sort",
+          "column": "obj_Return",
+          "direction": "none"
+        },
+        {
+          "t": 43039,
+          "type": "table_sort",
+          "column": "obj_Return",
+          "direction": "asc"
+        },
+        {
+          "t": 43797,
+          "type": "table_sort",
+          "column": "obj_Return",
+          "direction": "desc"
+        },
+        {
+          "t": 50390,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        }
+      ]
+    },
+    {
+      "questionId": "q12",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "dec_Equity_Developed_Markets",
+      "correctAnswer": "dec_Equity_Developed_Markets",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 227755,
+      "timePerChart": {
+        "objectives": {
+          "table": 19150,
+          "scatter": 555,
+          "scatter3dGL": 1500,
+          "pcp": 203812,
+          "radar": 2737
+        },
+        "decisions": {
+          "barChart": 181623,
+          "table": 46132
+        }
+      },
+      "actions": [
+        {
+          "t": 19150,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 19705,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 21205,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 29895,
+          "type": "pcp_brush_filter",
+          "axis": "obj_Return",
+          "min": 0.024246355871092022,
+          "max": 0.0245199241176716
+        },
+        {
+          "t": 35890,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 37758,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        },
+        {
+          "t": 39010,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 40585,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        },
+        {
+          "t": 79787,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 82524,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 181623,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        },
+        {
+          "t": 208636,
+          "type": "table_group_expand",
+          "group": "Equities",
+          "expanded": true
+        }
+      ]
+    },
+    {
+      "questionId": "q13",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "unconstrained 3D",
+      "correctAnswer": "unconstrained 3D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 122478,
+      "timePerChart": {
+        "objectives": {
+          "pcp": 62487,
+          "table": 1222,
+          "scatter": 6533,
+          "scatter3dGL": 480,
+          "radviz": 50407,
+          "correlationHeatmap": 1057,
+          "radar": 293
+        },
+        "decisions": {
+          "table": 122478
+        }
+      },
+      "actions": [
+        {
+          "t": 8779,
+          "type": "table_group_expand",
+          "group": "Equities",
+          "expanded": false
+        },
+        {
+          "t": 10526,
+          "type": "table_sort",
+          "column": "Private_Equity",
+          "direction": "asc"
+        },
+        {
+          "t": 11404,
+          "type": "table_sort",
+          "column": "Private_Equity",
+          "direction": "desc"
+        },
+        {
+          "t": 12409,
+          "type": "table_sort",
+          "column": "Private_Equity",
+          "direction": "none"
+        },
+        {
+          "t": 13084,
+          "type": "table_sort",
+          "column": "Private_Equity",
+          "direction": "asc"
+        },
+        {
+          "t": 16421,
+          "type": "table_sort",
+          "column": "Private_Equity",
+          "direction": "desc"
+        },
+        {
+          "t": 28677,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 29899,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 36432,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 36911,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 41780,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 43226,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 57424,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 60520,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 61106,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        },
+        {
+          "t": 61804,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 68944,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 72581,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 73638,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 73931,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 75708,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 78409,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 79706,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        },
+        {
+          "t": 94000,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        }
+      ]
+    },
+    {
+      "questionId": "q14",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "obj_Return",
+      "correctAnswer": "obj_Return",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 99923,
+      "timePerChart": {
+        "objectives": {
+          "radviz": 16501,
+          "pcp": 17784,
+          "scatter3dGL": 2288,
+          "scatter": 11678,
+          "table": 47564,
+          "radar": 4108
+        },
+        "decisions": {
+          "table": 63495,
+          "barChart": 36428
+        }
+      },
+      "actions": [
+        {
+          "t": 14454,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 25569,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 27173,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 34382,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 55741,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 56020,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 59536,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 61583,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 62175,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 63495,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 68565,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 69248,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 73717,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        }
+      ]
+    },
+    {
+      "questionId": "q15",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "equity heavy 3D",
+        "justification": "I would say Equity heavy 3D because this is more consistent across the objectives. Consistency is key for Portfolio managers"
+      },
+      "correctAnswer": "equity heavy 3D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 109067,
+      "timePerChart": {
+        "objectives": {
+          "table": 70290,
+          "correlationHeatmap": 473,
+          "radviz": 13620,
+          "scatter3dGL": 19170,
+          "scatter": 5513
+        },
+        "decisions": {
+          "barChart": 109066
+        }
+      },
+      "actions": [
+        {
+          "t": 18347,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "correlationHeatmap"
+        },
+        {
+          "t": 18821,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 21295,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 21843,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": false
+        },
+        {
+          "t": 22885,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "spread",
+          "active": true
+        },
+        {
+          "t": 24565,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "spread",
+          "active": false
+        },
+        {
+          "t": 25900,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "spread",
+          "active": true
+        },
+        {
+          "t": 26545,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "spread",
+          "active": false
+        },
+        {
+          "t": 32441,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 33528,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 39040,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 52165,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 57124,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        }
+      ]
+    },
+    {
+      "questionId": "q16",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "unconstrained 6D",
+      "correctAnswer": "unconstrained 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 51548,
+      "timePerChart": {
+        "decisions": {
+          "table": 29962,
+          "barChart": 5475
+        },
+        "objectives": {
+          "table": 36547
+        }
+      },
+      "actions": [
+        {
+          "t": 18990,
+          "type": "table_group_expand",
+          "group": "Equities",
+          "expanded": true
+        },
+        {
+          "t": 19764,
+          "type": "table_group_expand",
+          "group": "Equities",
+          "expanded": false
+        },
+        {
+          "t": 30533,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 36008,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "table"
+        }
+      ]
+    },
+    {
+      "questionId": "q17",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "obj_Diversity",
+      "correctAnswer": "obj_Diversity",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 27803,
+      "timePerChart": {
+        "objectives": {
+          "table": 27803
+        },
+        "decisions": {
+          "table": 27803
+        }
+      },
+      "actions": []
+    },
+    {
+      "questionId": "q18",
+      "questionType": "simple_comparison",
+      "interactionType": "select_option",
+      "answer": "unconstrained 6D",
+      "correctAnswer": "unconstrained 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 133760,
+      "timePerChart": {
+        "objectives": {
+          "table": 24547,
+          "scatter": 35175,
+          "pcp": 49792,
+          "radviz": 24246
+        },
+        "decisions": {
+          "table": 133760
+        }
+      },
+      "actions": [
+        {
+          "t": 24547,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 29648,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Return"
+        },
+        {
+          "t": 33404,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 35773,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        },
+        {
+          "t": 38084,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "pca",
+          "active": true
+        },
+        {
+          "t": 44166,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "pca",
+          "active": false
+        },
+        {
+          "t": 47400,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "labels",
+          "active": true
+        },
+        {
+          "t": 48375,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "labels",
+          "active": false
+        },
+        {
+          "t": 54703,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 55417,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": false
+        },
+        {
+          "t": 59722,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "pcp"
+        },
+        {
+          "t": 63433,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 65708,
+          "type": "pcp_dimension_toggle",
+          "column": "obj_Diversity",
+          "enabled": false
+        },
+        {
+          "t": 66130,
+          "type": "pcp_dimension_toggle",
+          "column": "obj_ESG",
+          "enabled": false
+        },
+        {
+          "t": 66530,
+          "type": "pcp_dimension_toggle",
+          "column": "obj_Geopolitical",
+          "enabled": false
+        },
+        {
+          "t": 66925,
+          "type": "pcp_dimension_toggle",
+          "column": "obj_Liquidity",
+          "enabled": false
+        },
+        {
+          "t": 67544,
+          "type": "pcp_dimension_toggle",
+          "column": "obj_Risk",
+          "enabled": false
+        },
+        {
+          "t": 70860,
+          "type": "pcp_dimension_toggle",
+          "column": "obj_Risk",
+          "enabled": true
+        },
+        {
+          "t": 72223,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 73206,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "decision_groups",
+          "active": true
+        },
+        {
+          "t": 74571,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": true
+        },
+        {
+          "t": 109514,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        }
+      ]
+    },
+    {
+      "questionId": "q19",
+      "questionType": "most_distinct_objective",
+      "interactionType": "select_option",
+      "answer": "dec_Equity_Emerging_Markets",
+      "correctAnswer": "dec_Equity_Emerging_Markets",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 24268,
+      "timePerChart": {
+        "objectives": {
+          "radviz": 24268
+        },
+        "decisions": {
+          "table": 24268
+        }
+      },
+      "actions": [
+        {
+          "t": 10510,
+          "type": "table_group_expand",
+          "group": "Equities",
+          "expanded": true
+        }
+      ]
+    },
+    {
+      "questionId": "q20",
+      "questionType": "decide_on_frontier",
+      "interactionType": "select_option",
+      "answer": {
+        "value": "real assets heavy 6D",
+        "justification": "Real assets heavy 6D because, in line with my previous point of view, consistency is preferred"
+      },
+      "correctAnswer": "real assets heavy 6D",
+      "score": 1,
+      "isCorrect": true,
+      "timeToAnswerMs": 135214,
+      "timePerChart": {
+        "objectives": {
+          "radviz": 64284,
+          "radar": 2933,
+          "scatter3dGL": 3759,
+          "scatter": 5900,
+          "table": 58337
+        },
+        "decisions": {
+          "table": 85077,
+          "barChart": 50137
+        }
+      },
+      "actions": [
+        {
+          "t": 25805,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 28701,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 32031,
+          "type": "options_menu_open",
+          "panel": "objectives"
+        },
+        {
+          "t": 33485,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "spread",
+          "active": true
+        },
+        {
+          "t": 38301,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "frontier_colors",
+          "active": false
+        },
+        {
+          "t": 38795,
+          "type": "option_toggle",
+          "panel": "objectives",
+          "option": "spread",
+          "active": false
+        },
+        {
+          "t": 43033,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter3dGL"
+        },
+        {
+          "t": 46792,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "scatter"
+        },
+        {
+          "t": 49424,
+          "type": "axis_change",
+          "panel": "objectives",
+          "axis": "x",
+          "column": "obj_Risk"
+        },
+        {
+          "t": 52693,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        },
+        {
+          "t": 62250,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radar"
+        },
+        {
+          "t": 62289,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "radviz"
+        },
+        {
+          "t": 85077,
+          "type": "chart_switch",
+          "panel": "decisions",
+          "to": "barChart"
+        },
+        {
+          "t": 86435,
+          "type": "chart_switch",
+          "panel": "objectives",
+          "to": "table"
+        }
+      ]
+    }
+  ],
+  "postQuestionnaire": [
+    {
+      "questionId": "pq1",
+      "type": "likert",
+      "answer": "1"
+    },
+    {
+      "questionId": "pq2",
+      "type": "likert",
+      "answer": "6"
+    },
+    {
+      "questionId": "pq3",
+      "type": "likert",
+      "answer": "6"
+    },
+    {
+      "questionId": "pq4",
+      "type": "likert",
+      "answer": "2"
+    }
+  ]
+}

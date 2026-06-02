@@ -86,7 +86,7 @@
           "type": "value_retrieval",
           "interactionType": "record_selection",
           "dataset": { "frontiers": ["data/portfolio_data/fixed_income_cash_heavy_6D.csv"], "benchmark": "data/portfolio_data/portfolio_6D_benchmark.csv" },
-          "prompt": "Select all portfolios where Cash allocation is above 35%.",
+          "prompt": "Select all portfolios where Cash allocation is above 10%.",
           "options": [],
           "answerSpec": { "type": "range", "column": "Cash", "min": 0.35, "max": null }
         },
