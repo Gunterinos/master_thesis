@@ -575,6 +575,33 @@ def save_responses():
     return jsonify({"ok": True})
 
 
+@app.get("/api/test-email")
+def test_email():
+    host = os.environ.get("SMTP_HOST", "")
+    port = os.environ.get("SMTP_PORT", "")
+    user = os.environ.get("SMTP_USER", "")
+    password = os.environ.get("SMTP_PASSWORD", "")
+    notify = os.environ.get("NOTIFY_EMAIL", "")
+
+    missing = [k for k, v in {"SMTP_HOST": host, "SMTP_PORT": port, "SMTP_USER": user, "SMTP_PASSWORD": password, "NOTIFY_EMAIL": notify}.items() if not v]
+    if missing:
+        return jsonify({"ok": False, "error": f"Missing env vars: {', '.join(missing)}"}), 500
+
+    try:
+        with smtplib.SMTP(host, int(port)) as smtp:
+            smtp.starttls()
+            smtp.login(user, password)
+            msg = MIMEMultipart()
+            msg["From"] = user
+            msg["To"] = notify
+            msg["Subject"] = "[Survey] Test email"
+            msg.attach(MIMEText("Email config is working correctly.", "plain"))
+            smtp.sendmail(user, notify, msg.as_string())
+        return jsonify({"ok": True, "message": f"Test email sent to {notify}"})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 @app.get("/<path:path>")
 def spa_catchall(path):
     try:
