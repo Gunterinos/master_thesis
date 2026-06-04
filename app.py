@@ -4,6 +4,7 @@ import json
 import os
 import re
 import smtplib
+import threading
 import uuid
 from datetime import datetime
 from email.mime.application import MIMEApplication
@@ -86,7 +87,7 @@ def _send_response_email(session_id: str, payload: dict, setup_name: str = "") -
         attachment["Content-Disposition"] = f'attachment; filename="responses_{session_id}.json"'
         msg.attach(attachment)
 
-        with smtplib.SMTP(host, port) as smtp:
+        with smtplib.SMTP(host, port, timeout=15) as smtp:
             smtp.starttls()
             smtp.login(user, password)
             smtp.sendmail(user, notify, msg.as_string())
@@ -571,7 +572,7 @@ def save_responses():
     out_path = responses_dir / f"responses_{session_id}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(body, f, indent=2)
-    _send_response_email(session_id, body, setup_name)
+    threading.Thread(target=_send_response_email, args=(session_id, body, setup_name), daemon=True).start()
     return jsonify({"ok": True})
 
 
