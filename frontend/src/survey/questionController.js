@@ -10,6 +10,40 @@ let _onComplete = null;
 let _availableColumns = { objectives: [], decisions: [], groups: [], groupsMap: {} };
 let _dynamicCandidates = null;
 
+const _STORAGE_KEY = 'survey_progress_' + window.location.search;
+
+function _saveProgress() {
+    try {
+        localStorage.setItem(_STORAGE_KEY, JSON.stringify({
+            sessionId: _sessionId,
+            currentIndex: _currentIndex,
+            responses: _responses,
+        }));
+    } catch { }
+}
+
+function _clearProgress() {
+    localStorage.removeItem(_STORAGE_KEY);
+}
+
+function _loadProgress() {
+    try {
+        const raw = localStorage.getItem(_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+export function hasSavedProgress() {
+    try {
+        const saved = _loadProgress();
+        return !!(saved && saved.currentIndex > 0);
+    } catch {
+        return false;
+    }
+}
+
 function generateSessionId() {
     return crypto.randomUUID
         ? crypto.randomUUID()
@@ -46,11 +80,19 @@ function buildCandidates(question) {
 
 export function startQuestions(questions, { onComplete } = {}) {
     _questions = questions;
-    _currentIndex = 0;
-    _responses = [];
-    _sessionId = generateSessionId();
     _onComplete = onComplete ?? null;
-    loadAndRender(0);
+
+    const saved = _loadProgress();
+    if (saved && saved.currentIndex > 0 && saved.currentIndex < questions.length) {
+        _sessionId = saved.sessionId;
+        _currentIndex = saved.currentIndex;
+        _responses = saved.responses;
+    } else {
+        _currentIndex = 0;
+        _responses = [];
+        _sessionId = generateSessionId();
+    }
+    loadAndRender(_currentIndex);
 }
 
 function loadAndRender(index) {
@@ -203,8 +245,10 @@ async function submitAnswer(index) {
 
     if (index < _questions.length - 1) {
         _currentIndex++;
+        _saveProgress();
         loadAndRender(_currentIndex);
     } else {
+        _clearProgress();
         _onComplete?.(_responses, _sessionId);
     }
 }
