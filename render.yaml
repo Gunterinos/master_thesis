@@ -6,11 +6,6 @@ services:
     startCommand: gunicorn app:app
     plan: free
 
-    disk:
-      name: responses
-      mountPath: /opt/render/project/src/survey_data/responses
-      sizeGB: 1
-
     envVars:
       - key: SMTP_HOST
         value: smtp.gmail.com
