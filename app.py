@@ -4,11 +4,15 @@ import csv
 import json
 import os
 import re
+import smtplib
 import threading
 import urllib.error
 import urllib.request
 import uuid
 from datetime import datetime
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from sklearn.decomposition import PCA
 from flask import Flask, jsonify, render_template, request
@@ -571,35 +575,47 @@ def save_responses():
     out_path = responses_dir / f"responses_{session_id}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(body, f, indent=2)
+    print(f"SURVEY_RESPONSE setup={setup_name} session={session_id} data={json.dumps(body)}", flush=True)
     threading.Thread(target=_send_response_email, args=(session_id, body, setup_name), daemon=True).start()
     return jsonify({"ok": True})
 
 
+@app.get("/api/responses")
+def list_responses():
+    result = {}
+    responses_root = SURVEY_DATA_DIR / "responses"
+    if responses_root.exists():
+        for setup_dir in sorted(responses_root.iterdir()):
+            if setup_dir.is_dir():
+                files = []
+                for f in sorted(setup_dir.glob("responses_*.json")):
+                    with f.open(encoding="utf-8") as fh:
+                        files.append(json.load(fh))
+                result[setup_dir.name] = files
+    return jsonify(result)
+
+
 @app.get("/api/test-email")
 def test_email():
-    api_key = os.environ.get("RESEND_API_KEY", "")
+    host = os.environ.get("SMTP_HOST", "")
+    port = os.environ.get("SMTP_PORT", "587")
+    user = os.environ.get("SMTP_USER", "")
+    password = os.environ.get("SMTP_PASSWORD", "")
     notify = os.environ.get("NOTIFY_EMAIL", "")
-    missing = [k for k, v in {"RESEND_API_KEY": api_key, "NOTIFY_EMAIL": notify}.items() if not v]
+    missing = [k for k, v in {"SMTP_HOST": host, "SMTP_PORT": port, "SMTP_USER": user, "SMTP_PASSWORD": password, "NOTIFY_EMAIL": notify}.items() if not v]
     if missing:
         return jsonify({"ok": False, "error": f"Missing env vars: {', '.join(missing)}"}), 500
     try:
-        payload_data = json.dumps({
-            "from": "Survey <onboarding@resend.dev>",
-            "to": [notify],
-            "subject": "[Survey] Test email",
-            "text": "Email config is working correctly.",
-        }).encode()
-        req = urllib.request.Request(
-            "https://api.resend.com/emails",
-            data=payload_data,
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            result = json.loads(resp.read())
-        return jsonify({"ok": True, "message": f"Test email sent to {notify}", "resend_id": result.get("id")})
-    except urllib.error.HTTPError as e:
-        return jsonify({"ok": False, "error": e.read().decode()}), 500
+        with smtplib.SMTP(host, int(port), timeout=15) as smtp:
+            smtp.starttls()
+            smtp.login(user, password)
+            msg = MIMEMultipart()
+            msg["From"] = user
+            msg["To"] = notify
+            msg["Subject"] = "[Survey] Test email"
+            msg.attach(MIMEText("Email config is working correctly.", "plain"))
+            smtp.sendmail(user, notify, msg.as_string())
+        return jsonify({"ok": True, "message": f"Test email sent to {notify}"})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
