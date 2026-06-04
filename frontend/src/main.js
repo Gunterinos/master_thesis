@@ -5,7 +5,7 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
-import { loadIntroConfig, loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
+import { loadIntroConfig, loadTutorialConfig, loadQuestionsConfig, getSurveyContext } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
 import { startQuestions } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
@@ -332,7 +332,7 @@ async function finishSurvey(responses, sessionId) {
                 await fetch('/api/save-responses', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId, setupName: config?.setupName ?? null, responses, postQuestionnaire }),
+                    body: JSON.stringify({ sessionId, setupName: config?.setupName ?? null, surveySetup: getSurveyContext()?.setup ?? null, responses, postQuestionnaire }),
                 });
             } catch { /* non-critical */ }
 

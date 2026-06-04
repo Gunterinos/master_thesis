@@ -1,23 +1,97 @@
 from pathlib import Path
 import csv
 import json
+import os
 import re
+import smtplib
 import uuid
 from datetime import datetime
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from sklearn.decomposition import PCA
 from flask import Flask, jsonify, render_template, request
 from jinja2 import TemplateNotFound
 
+_BASE = Path(__file__).resolve().parent
+_DIST = _BASE / "frontend" / "dist"
+_has_dist = _DIST.is_dir()
+
 app = Flask(
     __name__,
-    template_folder="frontend",
-    static_folder="frontend",
-    static_url_path="/frontend",
+    template_folder="frontend/dist" if _has_dist else "frontend",
+    static_folder="frontend/dist" if _has_dist else "frontend",
+    static_url_path="" if _has_dist else "/frontend",
 )
 DATA_DIR = Path(__file__).resolve().parent / "data"
 BENCHMARK_PATH = DATA_DIR / "benchmark.csv"
 SURVEY_DATA_DIR = Path(__file__).resolve().parent / "survey_data"
+
+_SAFE_NAME_RE = re.compile(r'^[\w\-]+$')
+_SAFE_FILE_RE = re.compile(r'^[\w\-.]+$')
+
+
+def _safe_name(value: str) -> str | None:
+    v = (value or "").strip()
+    return v if v and _SAFE_NAME_RE.match(v) else None
+
+
+def _safe_filename(value: str) -> str | None:
+    v = (value or "").strip()
+    return v if v and _SAFE_FILE_RE.match(v) else None
+
+
+def _resolve_setup_dir(setup: str | None = None) -> Path:
+    s = setup or os.environ.get("SURVEY_SETUP", "").strip()
+    if s:
+        return SURVEY_DATA_DIR / "setups" / s
+    return SURVEY_DATA_DIR / "current_setup"
+
+
+def _resolve_questions_path(setup: str | None = None, filename: str | None = None) -> Path:
+    d = _resolve_setup_dir(setup)
+    fn = filename or os.environ.get("SURVEY_QUESTIONS_FILE", "questions_config.json").strip()
+    return d / fn
+
+
+def _send_response_email(session_id: str, payload: dict, setup_name: str = "") -> None:
+    host = os.environ.get("SMTP_HOST", "")
+    port_str = os.environ.get("SMTP_PORT", "587")
+    user = os.environ.get("SMTP_USER", "")
+    password = os.environ.get("SMTP_PASSWORD", "")
+    notify = os.environ.get("NOTIFY_EMAIL", "")
+
+    if not all([host, user, password, notify]):
+        return
+
+    try:
+        port = int(port_str)
+        setup_name = setup_name or os.environ.get("SURVEY_SETUP", "default")
+
+        msg = MIMEMultipart()
+        msg["From"] = user
+        msg["To"] = notify
+        msg["Subject"] = f"[Survey] New response – {setup_name} – {session_id}"
+
+        body = (
+            f"A new survey response has been submitted.\n\n"
+            f"Setup:      {setup_name}\n"
+            f"Session ID: {session_id}\n"
+            f"Time:       {datetime.utcnow().isoformat()} UTC\n"
+        )
+        msg.attach(MIMEText(body, "plain"))
+
+        attachment = MIMEApplication(json.dumps(payload, indent=2).encode("utf-8"), Name=f"responses_{session_id}.json")
+        attachment["Content-Disposition"] = f'attachment; filename="responses_{session_id}.json"'
+        msg.attach(attachment)
+
+        with smtplib.SMTP(host, port) as smtp:
+            smtp.starttls()
+            smtp.login(user, password)
+            smtp.sendmail(user, notify, msg.as_string())
+    except Exception:  # never let email failure break the response save
+        pass
 
 
 def _is_numeric(val):
@@ -216,21 +290,25 @@ def pca():
 
 @app.get("/api/intro-config")
 def intro_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "intro_config.json").open(encoding="utf-8-sig") as f:
+    setup = _safe_name(request.args.get("setup", ""))
+    with (_resolve_setup_dir(setup) / "intro_config.json").open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
 
 @app.get("/api/tutorial-config")
 def tutorial_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "tutorial_config.json").open(encoding="utf-8-sig") as f:
+    setup = _safe_name(request.args.get("setup", ""))
+    with (_resolve_setup_dir(setup) / "tutorial_config.json").open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
 
 @app.get("/api/questions-config")
 def questions_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "questions_config.json").open(encoding="utf-8-sig") as f:
+    setup = _safe_name(request.args.get("setup", ""))
+    file_param = _safe_filename(request.args.get("file", ""))
+    with _resolve_questions_path(setup, file_param).open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
@@ -486,12 +564,23 @@ def compute_answer():
 def save_responses():
     body = request.get_json(force=True)
     session_id = body.get("sessionId", "unknown")
-    responses_dir = SURVEY_DATA_DIR / "responses"
-    responses_dir.mkdir(exist_ok=True)
+    raw_setup = body.get("surveySetup") or os.environ.get("SURVEY_SETUP", "default")
+    setup_name = _safe_name(str(raw_setup)) or "default"
+    responses_dir = SURVEY_DATA_DIR / "responses" / setup_name
+    responses_dir.mkdir(parents=True, exist_ok=True)
     out_path = responses_dir / f"responses_{session_id}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(body, f, indent=2)
+    _send_response_email(session_id, body, setup_name)
     return jsonify({"ok": True})
+
+
+@app.get("/<path:path>")
+def spa_catchall(path):
+    try:
+        return render_template("index.html")
+    except TemplateNotFound:
+        return "Frontend not built. Run: cd frontend && npm run build", 404
 
 
 if __name__ == "__main__":
