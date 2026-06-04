@@ -7,13 +7,7 @@ services:
     plan: free
 
     envVars:
-      - key: SMTP_HOST
-        value: smtp.gmail.com
-      - key: SMTP_PORT
-        value: "587"
-      - key: SMTP_USER
-        value: vlad12vranceanu@gmail.com
-      - key: SMTP_PASSWORD
+      - key: RESEND_API_KEY
         sync: false
       - key: NOTIFY_EMAIL
         value: vlad12vranceanu@gmail.com
