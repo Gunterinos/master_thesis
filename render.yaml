@@ -2,7 +2,7 @@ services:
   - type: web
     name: high_dim_survey
     runtime: python
-    buildCommand: cd frontend && npm ci && npm run build && cd .. && pip install -r requirements.txt
+    buildCommand: cd frontend && npm install && npm run build && cd .. && pip install -r requirements.txt
     startCommand: gunicorn app:app
     plan: free
 
