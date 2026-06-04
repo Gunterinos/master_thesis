@@ -3,6 +3,9 @@ let _questionStartTime = 0;
 let _panelChartState = {};
 let _timePerChart = {};
 let _actions = [];
+let _isPaused = false;
+let _pauseStartTime = 0;
+let _totalPausedMs = 0;
 
 export function startTracking() {
     _active = true;
@@ -10,6 +13,9 @@ export function startTracking() {
     _panelChartState = {};
     _timePerChart = {};
     _actions = [];
+    _isPaused = false;
+    _pauseStartTime = 0;
+    _totalPausedMs = 0;
 
     // Capture whichever chart is currently shown in each panel
     const objChart = document.querySelector('#objectives-chart-select')?.value;
@@ -21,10 +27,37 @@ export function startTracking() {
 export function stopTracking() {
     if (!_active) return;
     const now = performance.now();
-    for (const [panel, state] of Object.entries(_panelChartState)) {
-        if (state.chartKey) _accumulate(panel, state.chartKey, now - state.startTime);
+    if (!_isPaused) {
+        for (const [panel, state] of Object.entries(_panelChartState)) {
+            if (state.chartKey) _accumulate(panel, state.chartKey, now - state.startTime);
+        }
     }
     _active = false;
+}
+
+export function pauseTracking() {
+    if (!_active || _isPaused) return;
+    const now = performance.now();
+    for (const [panel, state] of Object.entries(_panelChartState)) {
+        if (state.chartKey) {
+            _accumulate(panel, state.chartKey, now - state.startTime);
+            _panelChartState[panel] = { ...state, startTime: now };
+        }
+    }
+    _isPaused = true;
+    _pauseStartTime = now;
+}
+
+export function resumeTracking() {
+    if (!_active || !_isPaused) return;
+    const now = performance.now();
+    _totalPausedMs += now - _pauseStartTime;
+    for (const panel of Object.keys(_panelChartState)) {
+        if (_panelChartState[panel].chartKey) {
+            _panelChartState[panel] = { ..._panelChartState[panel], startTime: now };
+        }
+    }
+    _isPaused = false;
 }
 
 export function getResult() {
@@ -44,9 +77,9 @@ function _accumulate(panel, chartKey, ms) {
 }
 
 window.addEventListener('survey:action', (event) => {
-    if (!_active) return;
+    if (!_active || _isPaused) return;
     const detail = event.detail ?? {};
-    const tMs = Math.round(performance.now() - _questionStartTime);
+    const tMs = Math.round(performance.now() - _questionStartTime - _totalPausedMs);
 
     if (detail.type === 'chart_active') {
         const { panel, chartKey } = detail;
