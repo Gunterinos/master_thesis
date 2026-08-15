@@ -1,23 +1,56 @@
 from pathlib import Path
+import base64
 import csv
 import json
+import os
 import re
+import urllib.error
+import urllib.request
 import uuid
-from datetime import datetime
 
 from sklearn.decomposition import PCA
 from flask import Flask, jsonify, render_template, request
 from jinja2 import TemplateNotFound
 
+_BASE = Path(__file__).resolve().parent
+_DIST = _BASE / "frontend" / "dist"
+_has_dist = _DIST.is_dir()
+
 app = Flask(
     __name__,
-    template_folder="frontend",
-    static_folder="frontend",
-    static_url_path="/frontend",
+    template_folder="frontend/dist" if _has_dist else "frontend",
+    static_folder="frontend/dist" if _has_dist else "frontend",
+    static_url_path="" if _has_dist else "/frontend",
 )
 DATA_DIR = Path(__file__).resolve().parent / "data"
 BENCHMARK_PATH = DATA_DIR / "benchmark.csv"
 SURVEY_DATA_DIR = Path(__file__).resolve().parent / "survey_data"
+
+_SAFE_NAME_RE = re.compile(r'^[\w\-]+$')
+_SAFE_FILE_RE = re.compile(r'^[\w\-.]+$')
+
+
+def _safe_name(value: str) -> str | None:
+    v = (value or "").strip()
+    return v if v and _SAFE_NAME_RE.match(v) else None
+
+
+def _safe_filename(value: str) -> str | None:
+    v = (value or "").strip()
+    return v if v and _SAFE_FILE_RE.match(v) else None
+
+
+def _resolve_setup_dir(setup: str | None = None) -> Path:
+    s = setup or os.environ.get("SURVEY_SETUP", "").strip()
+    if s:
+        return SURVEY_DATA_DIR / "setups" / s
+    return SURVEY_DATA_DIR / "current_setup"
+
+
+def _resolve_questions_path(setup: str | None = None, filename: str | None = None) -> Path:
+    d = _resolve_setup_dir(setup)
+    fn = filename or os.environ.get("SURVEY_QUESTIONS_FILE", "questions_config.json").strip()
+    return d / fn
 
 
 def _is_numeric(val):
@@ -216,21 +249,25 @@ def pca():
 
 @app.get("/api/intro-config")
 def intro_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "intro_config.json").open(encoding="utf-8-sig") as f:
+    setup = _safe_name(request.args.get("setup", ""))
+    with (_resolve_setup_dir(setup) / "intro_config.json").open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
 
 @app.get("/api/tutorial-config")
 def tutorial_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "tutorial_config.json").open(encoding="utf-8-sig") as f:
+    setup = _safe_name(request.args.get("setup", ""))
+    with (_resolve_setup_dir(setup) / "tutorial_config.json").open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
 
 @app.get("/api/questions-config")
 def questions_config():
-    with (SURVEY_DATA_DIR / "current_setup" / "questions_config.json").open(encoding="utf-8-sig") as f:
+    setup = _safe_name(request.args.get("setup", ""))
+    file_param = _safe_filename(request.args.get("file", ""))
+    with _resolve_questions_path(setup, file_param).open(encoding="utf-8-sig") as f:
         config = json.load(f)
     return jsonify(config)
 
@@ -486,12 +523,38 @@ def compute_answer():
 def save_responses():
     body = request.get_json(force=True)
     session_id = body.get("sessionId", "unknown")
-    responses_dir = SURVEY_DATA_DIR / "responses"
-    responses_dir.mkdir(exist_ok=True)
+    raw_setup = body.get("surveySetup") or os.environ.get("SURVEY_SETUP", "default")
+    setup_name = _safe_name(str(raw_setup)) or "default"
+    responses_dir = SURVEY_DATA_DIR / "responses" / setup_name
+    responses_dir.mkdir(parents=True, exist_ok=True)
     out_path = responses_dir / f"responses_{session_id}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(body, f, indent=2)
+    print(f"SURVEY_RESPONSE setup={setup_name} session={session_id} data={json.dumps(body)}", flush=True)
     return jsonify({"ok": True})
+
+
+@app.get("/api/responses")
+def list_responses():
+    result = {}
+    responses_root = SURVEY_DATA_DIR / "responses"
+    if responses_root.exists():
+        for setup_dir in sorted(responses_root.iterdir()):
+            if setup_dir.is_dir():
+                files = []
+                for f in sorted(setup_dir.glob("responses_*.json")):
+                    with f.open(encoding="utf-8") as fh:
+                        files.append(json.load(fh))
+                result[setup_dir.name] = files
+    return jsonify(result)
+
+
+@app.get("/<path:path>")
+def spa_catchall(path):
+    try:
+        return render_template("index.html")
+    except TemplateNotFound:
+        return "Frontend not built. Run: cd frontend && npm run build", 404
 
 
 if __name__ == "__main__":

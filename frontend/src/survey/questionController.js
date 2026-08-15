@@ -1,14 +1,50 @@
 import { getSelectedRowIndexSet, clearSelectionState } from '../state/appState.js';
-import { startTracking, stopTracking, getResult as getTelemetryResult } from './telemetry.js';
+import { startTracking, stopTracking, pauseTracking, resumeTracking, getResult as getTelemetryResult } from './telemetry.js';
 
 let _questions = [];
 let _currentIndex = 0;
 let _startTime = 0;
+let _pausedMs = 0;
+let _pauseStartTime = 0;
 let _responses = [];
 let _sessionId = '';
 let _onComplete = null;
 let _availableColumns = { objectives: [], decisions: [], groups: [], groupsMap: {} };
 let _dynamicCandidates = null;
+
+const _STORAGE_KEY = 'survey_progress_' + window.location.search;
+
+function _saveProgress() {
+    try {
+        localStorage.setItem(_STORAGE_KEY, JSON.stringify({
+            sessionId: _sessionId,
+            currentIndex: _currentIndex,
+            responses: _responses,
+        }));
+    } catch { }
+}
+
+function _clearProgress() {
+    localStorage.removeItem(_STORAGE_KEY);
+}
+
+function _loadProgress() {
+    try {
+        const raw = localStorage.getItem(_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+export function hasSavedProgress() {
+    try {
+        const saved = _loadProgress();
+        return !!(saved && saved.currentIndex > 0);
+    } catch {
+        return false;
+    }
+}
 
 function generateSessionId() {
     return crypto.randomUUID
@@ -46,11 +82,19 @@ function buildCandidates(question) {
 
 export function startQuestions(questions, { onComplete } = {}) {
     _questions = questions;
-    _currentIndex = 0;
-    _responses = [];
-    _sessionId = generateSessionId();
     _onComplete = onComplete ?? null;
-    loadAndRender(0);
+
+    const saved = _loadProgress();
+    if (saved && saved.currentIndex > 0 && saved.currentIndex < questions.length) {
+        _sessionId = saved.sessionId;
+        _currentIndex = saved.currentIndex;
+        _responses = saved.responses;
+    } else {
+        _currentIndex = 0;
+        _responses = [];
+        _sessionId = generateSessionId();
+    }
+    loadAndRender(_currentIndex);
 }
 
 function loadAndRender(index) {
@@ -128,18 +172,46 @@ function renderQuestion(index) {
                 <span id="question-counter">Task ${index + 1} / ${total}</span>
                 <button id="question-submit-btn" type="button">Submit →</button>
             </div>
-            <button id="tutorial-chart-guide-btn" type="button">Chart Guide</button>
+            <div id="question-secondary-controls">
+                <button id="question-pause-btn" type="button">Pause</button>
+                <button id="tutorial-chart-guide-btn" type="button">Chart Guide</button>
+            </div>
         </div>
     `;
 
     _startTime = performance.now();
+    _pausedMs = 0;
     startTracking();
+    document.getElementById('question-pause-btn').addEventListener('click', _pauseSurvey);
     document.getElementById('question-submit-btn').addEventListener('click', () => submitAnswer(index));
+}
+
+function _pauseSurvey() {
+    pauseTracking();
+    _pauseStartTime = performance.now();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'survey-pause-overlay';
+    overlay.innerHTML = `
+        <div id="survey-pause-card">
+            <p id="survey-pause-title">Survey paused</p>
+            <p id="survey-pause-sub">Take as long as you need. Click <strong>Resume</strong> when you&#8217;re ready to continue.</p>
+            <button id="survey-resume-btn" type="button">Resume →</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('survey-resume-btn').addEventListener('click', _resumeSurvey);
+}
+
+function _resumeSurvey() {
+    _pausedMs += performance.now() - _pauseStartTime;
+    resumeTracking();
+    document.getElementById('survey-pause-overlay')?.remove();
 }
 
 async function submitAnswer(index) {
     const question = _questions[index];
-    const timeToAnswerMs = Math.round(performance.now() - _startTime);
+    const timeToAnswerMs = Math.round(performance.now() - _startTime - _pausedMs);
     stopTracking();
     const telemetry = getTelemetryResult();
 
@@ -203,8 +275,10 @@ async function submitAnswer(index) {
 
     if (index < _questions.length - 1) {
         _currentIndex++;
+        _saveProgress();
         loadAndRender(_currentIndex);
     } else {
+        _clearProgress();
         _onComplete?.(_responses, _sessionId);
     }
 }

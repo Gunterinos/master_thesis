@@ -229,7 +229,8 @@
       { "id": "pq1", "type": "likert", "prompt": "I have to spend too much time correcting things with this system.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
       { "id": "pq2", "type": "likert", "prompt": "This system's capabilities meet my requirements.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
       { "id": "pq3", "type": "likert", "prompt": "This system is easy to use.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
-      { "id": "pq4", "type": "likert", "prompt": "Using this system is a frustrating experience.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } }
+      { "id": "pq4", "type": "likert", "prompt": "Using this system is a frustrating experience.", "scale": 7, "labels": { "min": "Strongly disagree", "max": "Strongly agree" } },
+      { "id": "pq5", "type": "open", "prompt": "Any other thoughts or comments?", "placeholder": "Feel free to share any additional thoughts…" }
     ]
   }
 }

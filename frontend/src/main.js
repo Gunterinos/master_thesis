@@ -5,9 +5,9 @@ import { initializeObjectivesSpacePanel } from './panels/objectivesSpacePanel.js
 import { initializeDecisionSpacePanel } from './panels/decisionSpacePanel.js';
 import { setActiveRowIndex, clearActiveRowIndex, setSelectionState, clearSelectionState,
          getSelectedRowIndexSet, getFilteredRowIndexSet, getIsZoomed } from './state/appState.js';
-import { loadIntroConfig, loadTutorialConfig, loadQuestionsConfig } from './survey/surveyConfig.js';
+import { loadIntroConfig, loadTutorialConfig, loadQuestionsConfig, getSurveyContext } from './survey/surveyConfig.js';
 import { startTutorial } from './survey/tutorialController.js';
-import { startQuestions } from './survey/questionController.js';
+import { startQuestions, hasSavedProgress } from './survey/questionController.js';
 import { showPostQuestionnaire } from './survey/postQuestionnaireController.js';
 import { initCheatsheet } from './cheatsheet/cheatsheetController.js';
 import { showSurveyIntro } from './survey/surveyIntroController.js';
@@ -332,7 +332,7 @@ async function finishSurvey(responses, sessionId) {
                 await fetch('/api/save-responses', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId, setupName: config?.setupName ?? null, responses, postQuestionnaire }),
+                    body: JSON.stringify({ sessionId, setupName: config?.setupName ?? null, surveySetup: getSurveyContext()?.setup ?? null, responses, postQuestionnaire }),
                 });
             } catch { /* non-critical */ }
 
@@ -397,13 +397,35 @@ function populateFrontierButtons(files, fileConstraints = {}, activeFiles = null
     });
 }
 
+(async function autoResumeSurvey() {
+    if (!hasSavedProgress()) return;
+    try {
+        const [{ dataset }, config] = await Promise.all([loadTutorialConfig(), loadQuestionsConfig()]);
+        const allQuestions = config.questionnaires.flatMap(q => q.questions);
+        const resume = () => {
+            document.body.classList.add('survey-active');
+            document.getElementById('start-tutorial-btn').style.display = 'none';
+            document.getElementById('chart-guide-btn').style.display = 'none';
+            startQuestions(allQuestions, { onComplete: finishSurvey });
+        };
+        if (dataset) {
+            window.addEventListener('survey:data-ready', () => resume(), { once: true });
+            window.dispatchEvent(new CustomEvent('survey:load-data', {
+                detail: { files: dataset.frontiers, benchmark: dataset.benchmark ?? null, disabledCharts: null, defaultScreen: null },
+            }));
+        } else {
+            resume();
+        }
+    } catch {  }
+})();
+
 d3.json("/api/data-files")
     .then(({ files, fileConstraints = {} }) => {
         _defaultFrontierFiles = files;
         _defaultFileConstraints = fileConstraints;
         _activeFrontierFiles = files;
         populateFrontierButtons(files, fileConstraints);
-        if (files.length > 0) { loadActiveFiles([files[0]]); }
+        if (files.length > 0 && !hasSavedProgress()) { loadActiveFiles([files[0]]); }
     })
     .catch(() => {
         d3.select("#load-error-msg")

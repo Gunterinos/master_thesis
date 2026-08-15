@@ -1,3 +1,4 @@
 /venv
 .claude
-frontend/package-lock.json
+__pycache__/
+survey_data/responses/
