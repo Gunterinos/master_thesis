@@ -4,15 +4,9 @@ import csv
 import json
 import os
 import re
-import smtplib
-import threading
 import urllib.error
 import urllib.request
 import uuid
-from datetime import datetime
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 from sklearn.decomposition import PCA
 from flask import Flask, jsonify, render_template, request
@@ -57,45 +51,6 @@ def _resolve_questions_path(setup: str | None = None, filename: str | None = Non
     d = _resolve_setup_dir(setup)
     fn = filename or os.environ.get("SURVEY_QUESTIONS_FILE", "questions_config.json").strip()
     return d / fn
-
-
-def _send_response_email(session_id: str, payload: dict, setup_name: str = "") -> None:
-    host = os.environ.get("SMTP_HOST", "")
-    port_str = os.environ.get("SMTP_PORT", "587")
-    user = os.environ.get("SMTP_USER", "")
-    password = os.environ.get("SMTP_PASSWORD", "")
-    notify = os.environ.get("NOTIFY_EMAIL", "")
-
-    if not all([host, user, password, notify]):
-        return
-
-    try:
-        port = int(port_str)
-        setup_name = setup_name or os.environ.get("SURVEY_SETUP", "default")
-
-        msg = MIMEMultipart()
-        msg["From"] = user
-        msg["To"] = notify
-        msg["Subject"] = f"[Survey] New response – {setup_name} – {session_id}"
-
-        body = (
-            f"A new survey response has been submitted.\n\n"
-            f"Setup:      {setup_name}\n"
-            f"Session ID: {session_id}\n"
-            f"Time:       {datetime.utcnow().isoformat()} UTC\n"
-        )
-        msg.attach(MIMEText(body, "plain"))
-
-        attachment = MIMEApplication(json.dumps(payload, indent=2).encode("utf-8"), Name=f"responses_{session_id}.json")
-        attachment["Content-Disposition"] = f'attachment; filename="responses_{session_id}.json"'
-        msg.attach(attachment)
-
-        with smtplib.SMTP(host, port, timeout=15) as smtp:
-            smtp.starttls()
-            smtp.login(user, password)
-            smtp.sendmail(user, notify, msg.as_string())
-    except Exception:  # never let email failure break the response save
-        pass
 
 
 def _is_numeric(val):
@@ -576,7 +531,6 @@ def save_responses():
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(body, f, indent=2)
     print(f"SURVEY_RESPONSE setup={setup_name} session={session_id} data={json.dumps(body)}", flush=True)
-    threading.Thread(target=_send_response_email, args=(session_id, body, setup_name), daemon=True).start()
     return jsonify({"ok": True})
 
 
@@ -593,31 +547,6 @@ def list_responses():
                         files.append(json.load(fh))
                 result[setup_dir.name] = files
     return jsonify(result)
-
-
-@app.get("/api/test-email")
-def test_email():
-    host = os.environ.get("SMTP_HOST", "")
-    port = os.environ.get("SMTP_PORT", "587")
-    user = os.environ.get("SMTP_USER", "")
-    password = os.environ.get("SMTP_PASSWORD", "")
-    notify = os.environ.get("NOTIFY_EMAIL", "")
-    missing = [k for k, v in {"SMTP_HOST": host, "SMTP_PORT": port, "SMTP_USER": user, "SMTP_PASSWORD": password, "NOTIFY_EMAIL": notify}.items() if not v]
-    if missing:
-        return jsonify({"ok": False, "error": f"Missing env vars: {', '.join(missing)}"}), 500
-    try:
-        with smtplib.SMTP(host, int(port), timeout=15) as smtp:
-            smtp.starttls()
-            smtp.login(user, password)
-            msg = MIMEMultipart()
-            msg["From"] = user
-            msg["To"] = notify
-            msg["Subject"] = "[Survey] Test email"
-            msg.attach(MIMEText("Email config is working correctly.", "plain"))
-            smtp.sendmail(user, notify, msg.as_string())
-        return jsonify({"ok": True, "message": f"Test email sent to {notify}"})
-    except Exception as e:
-        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 @app.get("/<path:path>")
